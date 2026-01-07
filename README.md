@@ -31,7 +31,3 @@ python3 projects/report-template-generator/generate_result_report.py --out "repo
 - `docs/specs/` : 함수정의서 등 스펙 문서
 - `docs/testing/` / `docs/dashboards/` : 테스트·검증 계획, 결과 대시보드
 - `docs/manuals/` : 구축/실습 매뉴얼
-
-## Notes (공개 레포 기준)
-- `_private/` : 이력서/원본 결과 CSV 등 민감정보가 포함될 수 있는 자료(기본적으로 Git에 포함하지 않는 것을 권장)
-- `_archive/` : 대용량·학습 자료(설치 파일/VM 이미지/교재 PDF 등, GitHub 공개 배포에 부적절할 수 있음)
