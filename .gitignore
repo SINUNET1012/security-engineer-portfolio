@@ -1,0 +1,46 @@
+# OS
+.DS_Store
+
+# Git metadata (Google Drive에서 .git 디렉터리 잠금 이슈 회피용)
+.git/
+gitdir/
+
+# Private / Archive (do not publish)
+_private/
+_archive/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Tool outputs
+**/_results/
+
+# Large binaries / VM images / installers
+*.iso
+*.img
+*.qcow2
+*.ova
+*.ovf
+*.vmdk
+*.vmem
+*.tgz
+*.tar
+*.gz
+*.zip
+*.7z
+*.rar
+*.exe
+*.msi
+*.dmg
+*.pkg
+*.jar
