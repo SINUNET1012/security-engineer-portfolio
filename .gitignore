@@ -44,3 +44,8 @@ ENV/
 *.dmg
 *.pkg
 *.jar
+
+# Coursework: spreadsheets may contain personal data
+coursework/**/*.xlsx
+coursework/**/*.xls
+coursework/**/*.xlsm

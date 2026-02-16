@@ -1,0 +1,15 @@
+from scapy.all import *
+
+packets = rdpcap("/mnt/hgfs/Ubuntu_share/wireshark1.pcapng")
+pkt = packets[3]
+pkt = Ether() / pkt[IP] ## <- 새로운 패킷 구성
+pkt[IP].src = "172.16.28.40"
+pkt[IP].dst = "172.16.28.1"
+pkt[TCP].window = 10
+pkt[IP].ttl =111
+pkt[TCP].flags = "FPU" 
+pkt[TCP].seq = 11
+pkt[TCP].ack = 222222
+
+
+sendp(pkt, iface="ens33")

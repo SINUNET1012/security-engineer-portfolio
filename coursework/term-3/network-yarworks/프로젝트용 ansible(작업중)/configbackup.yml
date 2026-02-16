@@ -1,0 +1,27 @@
+---
+- name: 장비 설정 백업
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: show running-config 실행
+      cisco.ios.ios_command:
+        commands:
+          - show running-config
+      register: config_output
+
+    - name: 백업 디렉토리 생성
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"  # 여기에 백업 경로 입력
+        state: directory
+      delegate_to: localhost
+
+    - name: 설정 파일 저장
+      ansible.builtin.copy:
+        content: "{{ config_output.stdout[0] }}"
+        dest: "{{ backup_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}.cfg"
+      delegate_to: localhost
+
+    - name: 백업 완료 메시지
+      ansible.builtin.debug:
+        msg: "백업 완료: {{ backup_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}.cfg"

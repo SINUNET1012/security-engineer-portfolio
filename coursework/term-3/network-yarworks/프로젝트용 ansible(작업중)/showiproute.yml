@@ -1,0 +1,15 @@
+---
+- name: show ip route 명령 실행
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: show ip route 실행
+      cisco.ios.ios_command:
+        commands:
+          - show ip route
+      register: output
+
+    - name: 결과 출력
+      ansible.builtin.debug:
+        msg: "{{ output.stdout_lines }}"

@@ -1,0 +1,58 @@
+local ftp       = require "ftp"
+local nmap      = require "nmap"
+local shortport = require "shortport"
+local stdnse    = require "stdnse"
+local string    = require "string"
+local table     = require "table"
+
+description = [[
+Checks if an FTP server allows anonymous logins.
+]]
+
+author = "Your Name"
+license = "Same as Nmap--See https://nmap.org/book/man-legal.html"
+categories = {"default", "auth", "safe"}
+
+portrule = shortport.port_or_service({21, 990}, {"ftp", "ftps"})
+
+action = function(host, port)
+  local out = {}
+
+  local socket, code, message, buffer =
+      ftp.connect(host, port, { request_timeout = 8000 })
+
+  if not socket then
+    table.insert(out,
+      string.format("Failed to connect: %s", message or code or "unknown error"))
+    return stdnse.format_output(false, out)
+  end
+
+  if code and code ~= 220 then
+    table.insert(out,
+      string.format("Unexpected FTP banner code %d (%s)", code, message or ""))
+    return stdnse.format_output(false, out)
+  end
+
+  local status, reply_code, reply_msg =
+      ftp.auth(socket, buffer, "anonymous", "anonymous@")
+
+  if not status then
+    if reply_code == 530 then
+      table.insert(out,
+        "Anonymous FTP login NOT allowed (FTP code 530)")
+    else
+      table.insert(out, string.format(
+        "Anonymous FTP login failed (code %s, message: %s)",
+        tostring(reply_code or "nil"), reply_msg or ""))
+    end
+    ftp.close(socket)
+    return stdnse.format_output(true, out)
+  end
+
+  table.insert(out,
+    string.format("Anonymous FTP login allowed (FTP code %d)",
+                  reply_code or code or 230))
+
+  ftp.close(socket)
+  return stdnse.format_output(true, out)
+end

@@ -1,0 +1,58 @@
+hostname,log_type,path_or_channel,collector,enabled,notes
+HQ-SOC-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+ASIA-DB-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+ASIA-DB-ROCKY-01,mariadb,journald:mariadb,filebeat,true,adjust DB log source
+ASIA-NGINX-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+ASIA-NGINX-ROCKY-01,nginx_access,/var/log/nginx/access.log,filebeat,true,
+ASIA-NGINX-ROCKY-01,nginx_error,/var/log/nginx/error.log,filebeat,true,
+ASIA-MAIL-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+ASIA-MAIL-ROCKY-01,mail,/var/log/maillog,filebeat,true,
+ASIA-DNS-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+ASIA-DNS-ROCKY-01,dns,/var/log/named/named.log,filebeat,true,enable named logging
+AU-DB-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+AU-DB-UBUNTU-01,mariadb,/var/log/mysql/error.log,filebeat,true,adjust DB log source
+AU-APACHE-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+AU-APACHE-UBUNTU-01,apache_access,/var/log/apache2/access.log,filebeat,true,
+AU-APACHE-UBUNTU-01,apache_error,/var/log/apache2/error.log,filebeat,true,
+AU-MAIL-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+AU-MAIL-ROCKY-01,mail,/var/log/maillog,filebeat,true,
+AU-DNS-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+AU-DNS-UBUNTU-01,dns,/var/log/syslog,filebeat,true,bind9 logs via syslog
+EU-DB-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+EU-DB-ROCKY-01,mariadb,journald:mariadb,filebeat,true,adjust DB log source
+EU-NGINX-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+EU-NGINX-ROCKY-01,nginx_access,/var/log/nginx/access.log,filebeat,true,
+EU-NGINX-ROCKY-01,nginx_error,/var/log/nginx/error.log,filebeat,true,
+EU-MAIL-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+EU-MAIL-ROCKY-01,mail,/var/log/maillog,filebeat,true,
+EU-DNS-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+EU-DNS-UBUNTU-01,dns,/var/log/syslog,filebeat,true,bind9 logs via syslog
+SA-DB-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+SA-DB-UBUNTU-01,mariadb,/var/log/mysql/error.log,filebeat,true,adjust DB log source
+SA-APACHE-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+SA-APACHE-ROCKY-01,apache_access,/var/log/httpd/access_log,filebeat,true,
+SA-APACHE-ROCKY-01,apache_error,/var/log/httpd/error_log,filebeat,true,
+SA-MAIL-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+SA-MAIL-ROCKY-01,mail,/var/log/maillog,filebeat,true,
+SA-DNS-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+SA-DNS-UBUNTU-01,dns,/var/log/syslog,filebeat,true,bind9 logs via syslog
+NA-DB-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+NA-DB-UBUNTU-01,mariadb,/var/log/mysql/error.log,filebeat,true,adjust DB log source
+NA-APACHE-UBUNTU-01,linux_auth,/var/log/auth.log,filebeat,true,
+NA-APACHE-UBUNTU-01,apache_access,/var/log/apache2/access.log,filebeat,true,
+NA-APACHE-UBUNTU-01,apache_error,/var/log/apache2/error.log,filebeat,true,
+NA-MAIL-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+NA-MAIL-ROCKY-01,mail,/var/log/maillog,filebeat,true,
+NA-DNS-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+NA-DNS-ROCKY-01,dns,/var/log/named/named.log,filebeat,true,enable named logging
+AF-DB-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+AF-DB-ROCKY-01,mariadb,journald:mariadb,filebeat,true,adjust DB log source
+AF-APACHEX-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+AF-APACHEX-ROCKY-01,apache_access,/var/log/httpd/access_log,filebeat,true,apachex path same as apache
+AF-APACHEX-ROCKY-01,apache_error,/var/log/httpd/error_log,filebeat,true,apachex path same as apache
+AF-MAIL-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+AF-MAIL-ROCKY-01,mail,/var/log/maillog,filebeat,true,
+AF-DNS-ROCKY-01,linux_auth,/var/log/secure,filebeat,true,
+AF-DNS-ROCKY-01,dns,/var/log/named/named.log,filebeat,true,enable named logging
+ASIA-FW-PFSENSE-01,device_syslog,tcp/514,syslog,true,
+EU-SW-CISCOIOS-01,device_syslog,tcp/514,syslog,true,

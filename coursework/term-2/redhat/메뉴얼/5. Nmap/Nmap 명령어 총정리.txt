@@ -1,0 +1,198 @@
+수업내용 명령어--------------------
+-PE  (ICMP Ping) → 기본 ICMP 에코로 호스트 살아있는지 확인
+-PS  (SYN Ping) → 지정 포트에 SYN 보내서 생존 여부 확인
+-PA  (ACK Ping) → ACK 보내고 RST 응답으로 생존 확인
+-PU  (UDP Ping) → UDP 보내고 ICMP 오류로 생존 확인
+-Pn  (No Ping) → 호스트 발견 생략하고 바로 스캔
+
+-sT  (TCP Connect) → 3-way handshake로 모든 연결 확인
+-sS  (SYN Scan) → SYN만 보내고 RST로 끊는 스텔스 스캔
+-sU  (UDP Scan) → UDP 특성 기반 포트 상태 추정
+-sN  (NULL Scan) → 플래그 없이 보내 방화벽/OS 반응 확인
+-sF  (FIN Scan) → FIN만 보내 포트 반응 분석
+-sX  (XMAS Scan) → 여러 플래그 켜서 비정상 반응 분석
+
+-sV  (Version Scan) → 서비스 버전 및 배너 분석
+-O   (OS Detection) → TTL/윈도우/플래그 기반 OS 지문 분석
+
+-T0  (Paranoid) → 매우 느리고 조용한 스캔
+-T1  (Sneaky) → 느리고 은밀하게 스캔
+-T2  (Polite) → 속도 제한하며 부담 적게 스캔
+-T3  (Normal) → 기본 속도
+-T4  (Aggressive) → 빠른 스캔
+-T5  (Insane) → 매우 빠르고 시끄러운 스캔
+
+-f   (Fragment) → 패킷 쪼개서 방화벽 우회 시도
+-D   (Decoy) → 가짜 IP 섞어 추적 혼란 유발
+-S   (Spoof IP) → 출발지 IP 위조
+--scan-delay  (Delay) → 패킷 간 시간 지연 주기
+--max-rate    (Rate Limit) → 초당 전송 패킷 수 제한
+--max-retries (Retry Limit) → 재전송 횟수 제한
+
+-D RND:5  (Random Decoys) → 랜덤 IP 5개 섞어 디코이 스캔
+-S <IP>   (Source Spoof) → 출발지 IP를 <IP>로 위조
+
+-iL <file>  (Input List) → 대상 IP 목록 파일로 입력
+-p $(cat <file>)  (Port List) → 파일의 포트 목록 불러오기
+-p $(paste -sd "," <file>) → 포트 목록을 , 로 이어서 사용
+
+-oN  (Normal Output) → 일반 텍스트 파일로 저장
+-oG  (Grepable Output) → grep 사용하기 좋은 형식
+-oX  (XML Output) → XML 형식으로 저장
+
+
+
+
+
+
+
+그 외 총정리 -----------------
+* nmap [IP]   기본 스캔
+nmap [IP1] [IP2] [IP3]   여러 호스트 스캔
+nmap [IP]/24   대역 스캔
+nmap 192.168.0.1-50   IP 범위 스캔
+nmap -iL hosts.txt   파일에서 대상 불러오기
+nmap --exclude [IP] [IP2]   특정 IP 제외
+nmap --excludefile exclude.txt   제외 목록 파일 사용
+
+nmap -v [IP]   자세한 출력
+nmap -vv [IP]   매우 자세한 출력
+* nmap -Pn [IP]   핑 무시하고 스캔
+* nmap -sn [IP]   호스트 살아있는지 확인(Ping Scan)
+* nmap -n [IP]   DNS 해석 없이 스캔
+nmap -R [IP]   역방향 DNS 강제
+nmap --dns-servers [DNS_IP] [IP]   특정 DNS 사용
+nmap --reason [IP]   포트 상태 이유 표시
+nmap --open [IP]   열린 포트만 표시
+nmap -6 [IP]   IPv6 스캔
+
+nmap -sL [IP]/24   실제 스캔 없이 목록만 출력
+
+* nmap -sT -p[PORT] [IP]   Connect 스캔
+nmap -sT -p- [IP]   전체 포트 Connect 스캔
+
+* nmap -sS -p[PORT] [IP]   SYN 스캔(스텔스)
+* nmap -sS -p- [IP]   SYN 전체 포트 스캔
+* nmap -sS -T1 -Pn -p- [IP]   조용한 스텔스 전체 스캔
+* nmap -sS -T4 -p- [IP]   빠른 전체 포트 스캔
+
+* nmap -sU -p[PORT] [IP]   UDP 스캔
+nmap -sU -p- [IP]   UDP 전체 스캔
+nmap -sSU -pT:22,U:53 [IP]   TCP/UDP 혼합
+
+* nmap -sN -p[PORT] [IP]   NULL 스캔
+* nmap -sF -p[PORT] [IP]   FIN 스캔
+* nmap -sX -p[PORT] [IP]   XMAS 스캔
+nmap -sA -p[PORT] [IP]   ACK 스캔(방화벽 분석)
+nmap -sW -p[PORT] [IP]   Window 스캔
+nmap -sM -p[PORT] [IP]   Maimon 스캔
+nmap -sO [IP]   프로토콜 스캔
+
+* nmap -p- [IP]   전체 포트 스캔
+* nmap -p[PORT1-PORT2] [IP]   포트 범위 스캔
+* nmap --top-ports 100 [IP]   인기 포트 100개 스캔
+
+* nmap -sV [IP]   서비스 버전 스캔
+* nmap -sV -p[PORT] [IP]   특정 서비스 버전 확인
+nmap -sV --version-intensity 0 [IP]   가벼운 스캔
+nmap -sV --version-intensity 9 [IP]   강한 스캔
+nmap -sR [IP]   RPC 스캔
+
+* nmap -O [IP]   OS 스캔
+nmap -O --osscan-limit [IP]   응답 있는 대상만 OS 스캔
+nmap -O --osscan-guess [IP]   OS 추측 강도 증가
+
+* nmap -A [IP]   OS + 버전 + traceroute + 스크립트
+nmap -A -T4 [IP]   빠른 Aggressive 스캔
+nmap -A -p- [IP]   전체 포트 Aggressive 스캔
+
+* nmap -sC [IP]   기본 NSE 스크립트 실행
+* nmap --script=default [IP]   기본 스크립트 실행
+* nmap --script=vuln [IP]   취약점 스크립트
+nmap --script=safe [IP]   안전한 스크립트만
+nmap --script=intrusive [IP]   침입성 높은 스크립트
+nmap --script=discovery [IP]   정보수집 계열
+nmap --script=auth [IP]   인증 관련
+nmap --script=brute [IP]   브루트포스 스크립트
+nmap --script=malware [IP]   악성코드 탐지
+nmap --script=default,safe [IP]   기본+안전
+
+* nmap --script=http-enum [IP]   웹 구조 열거
+nmap --script=http-title [IP]   웹 제목 보기
+nmap --script=http-methods [IP]   메서드 확인
+nmap --script=http-headers [IP]   HTTP 헤더 정보
+nmap --script=http-auth [IP]   HTTP 인증 분석
+nmap --script=http-robots.txt [IP]   robots.txt 분석
+nmap --script=http-server-header [IP]   Server 헤더 분석
+
+nmap --script=ftp-anon [IP]   익명 FTP 여부
+nmap --script=ftp-syst [IP]   FTP 시스템 정보
+
+nmap --script=smb-os-discovery [IP]   SMB OS 정보
+nmap --script=smb-enum-shares [IP]   SMB 공유
+nmap --script=smb-enum-users [IP]   SMB 유저 목록
+
+nmap -sV -p80,443 --script=http-enum [IP]   웹 구조+버전
+nmap -sV -p3306 --script=mysql-info [IP]   MySQL 정보
+nmap -sV -p1433 --script=ms-sql-info [IP]   MSSQL 정보
+nmap -sV -p139,445 --script=smb-enum-shares [IP]   SMB 공유 검사
+nmap -sV -p53 --script=dns-nsid [IP]   DNS 서버 ID
+nmap --script=ssh-hostkey [IP]   SSH 호스트 키 수집
+
+* nmap -sn [IP]   호스트 검색
+nmap -PE [IP]   ICMP Echo 핑
+nmap -PP [IP]   Timestamp 핑
+nmap -PM [IP]   Netmask 핑
+nmap -PS80,443 [IP]   SYN 핑
+nmap -PA80,443 [IP]   ACK 핑
+nmap -PU53 [IP]   UDP 핑
+nmap -PR [IP]   ARP 핑
+
+* nmap -T0 [IP]   은밀한 느린 스캔
+* nmap -T1 [IP]   IDS 회피형 느린 스캔
+nmap -T2 [IP]   조금 느림
+nmap -T3 [IP]   기본
+* nmap -T4 [IP]   빠른 스캔
+nmap -T5 [IP]   매우 빠름 (탐지 쉬움)
+
+* nmap [IP] -oN result.txt   텍스트 저장
+nmap [IP] -oG result.grep   grep 출력
+nmap [IP] -oX result.xml   XML 출력
+* nmap [IP] -oA scan_result   모든 출력 저장
+
+nmap --stats-every 1s [IP]   진행상황 표시
+nmap --max-retries 1 [IP]   재시도 줄이기
+nmap --max-retries 0 [IP]   재시도 없음
+nmap --min-rate 10 [IP]   초당 최소 패킷
+nmap --max-rate 100 [IP]   초당 최대 패킷
+nmap --min-parallelism 10 [IP]   최소 병렬
+nmap --max-parallelism 100 [IP]   최대 병렬
+nmap --host-timeout 60m [IP]   호스트당 시간 제한
+nmap --scan-delay 100ms [IP]   패킷 지연
+nmap --max-scan-delay 1s [IP]   최대 지연
+
+nmap --packet-trace [IP]   패킷 전부 출력
+nmap --iflist   인터페이스 목록 표시
+* nmap --traceroute [IP]   traceroute 포함
+nmap -e [IFACE] [IP]   인터페이스 지정
+nmap -S [SPOOF_IP] [IP]   IP 스푸핑
+nmap -g [PORT] [IP]   출발지 포트 지정
+nmap --source-port [PORT] [IP]   출발지 포트 강제
+nmap --spoof-mac 0 [IP]   무작위 MAC 스푸핑
+nmap --spoof-mac Cisco [IP]   벤더 기반 MAC 스푸핑
+
+nmap -f [IP]   패킷 분할(Fragment)
+nmap -ff [IP]   더 세분화된 분할
+nmap --mtu 16 [IP]   MTU 변경
+nmap --badsum [IP]   잘못된 체크섬 패킷
+
+nmap -sI [ZOMBIE_IP] [IP]   Idle 스캔(식별 어려움)
+nmap -sI [ZOMBIE_IP]:[PORT] [IP]   Idle 스캔 포트 지정
+
+* nmap -sS --script=vuln [IP]   SYN + 취약점 스캔
+* nmap -sS -sV --script=default,vuln [IP]   서비스버전+취약점
+nmap -sU --top-ports 50 [IP]   상위 UDP 50개 스캔
+
+* nmap -sS -p22 [IP]   SSH 포트 체크
+* nmap -sS -p80,443 [IP]   웹 포트 체크
+* nmap -sS -p21,22,23,25,80,110,143,443 [IP]   주요 서비스 포트 스캔

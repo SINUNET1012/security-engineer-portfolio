@@ -1,0 +1,84 @@
+[root@localhost ~]# mdadm -S /dev/md1
+mdadm: Cannot get exclusive access to /dev/md1:Perhaps a running process, mounted filesystem or active volume group?
+[root@localhost ~]# mdadm -S /dev/md0
+mdadm: Cannot get exclusive access to /dev/md0:Perhaps a running process, mounted filesystem or active volume group?
+
+mdadm -S (stop)
+======================================================================
+
+[root@localhost ~]# df
+Filesystem            1K-blocks     Used Available Use% Mounted on
+devtmpfs                   4096        0      4096   0% /dev
+tmpfs                   1855064        0   1855064   0% /dev/shm
+tmpfs                    742028     9316    732712   2% /run
+/dev/mapper/rl-root    27193344  6821440  20371904  26% /
+/dev/nvme0n1p1           983040   434084    548956  45% /boot
+//172.16.5.1/SSANGBAK 487796188 74979140 412817048  16% /mnt/win_share
+tmpfs                    371012        0    371012   0% /run/user/0
+/dev/md0                 184401       14    170195   1% /mnt/stripe
+/dev/md1                  90333       14     83151   1% /mnt/mirror
+
+======================================================================
+
+[root@localhost ~]# umount /mnt/stripe/
+[root@localhost ~]# umount /mnt/mirror/
+[root@localhost ~]# mdadm -S /dev/md0
+mdadm: stopped /dev/md0
+[root@localhost ~]# mdadm -S /dev/md1
+mdadm: stopped /dev/md1
+
+======================================================================
+
+======================================================================
+[root@localhost ~]# mdadm --create /dev/md10 --level=10 --raid-devices=4 /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/sdd1
+======================================================================
+
+
+mdadm: /dev/sda1 appears to be part of a raid array:
+       level=raid0 devices=2 ctime=Tue Oct 21 14:26:05 2025
+mdadm: /dev/sdb1 appears to be part of a raid array:
+       level=raid0 devices=2 ctime=Tue Oct 21 14:26:05 2025
+mdadm: /dev/sdc1 appears to be part of a raid array:
+       level=raid1 devices=2 ctime=Tue Oct 21 14:52:27 2025
+mdadm: /dev/sdd1 appears to be part of a raid array:
+       level=raid1 devices=2 ctime=Tue Oct 21 14:52:27 2025
+Continue creating array [y/N]? y
+
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md10 started.
+
+======================================================================
+
+[root@localhost ~]# mdadm -D /dev/md10
+/dev/md10:
+           Version : 1.2
+     Creation Time : Tue Oct 21 15:15:29 2025
+        Raid Level : raid10
+        Array Size : 202752 (198.00 MiB 207.62 MB)
+     Used Dev Size : 101376 (99.00 MiB 103.81 MB)
+      Raid Devices : 4
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Oct 21 15:15:30 2025
+             State : clean
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : near=2
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : localhost.localdomain:10  (local to host localhost.localdomain)
+              UUID : 6a1dc02d:dae3ff44:de5b5af1:ddb07e95
+            Events : 17
+
+    Number   Major   Minor   RaidDevice State
+       0       8        1        0      active sync set-A   /dev/sda1
+       1       8       17        1      active sync set-B   /dev/sdb1
+       2       8       33        2      active sync set-A   /dev/sdc1
+       3       8       49        3      active sync set-B   /dev/sdd1
+[root@localhost ~]#

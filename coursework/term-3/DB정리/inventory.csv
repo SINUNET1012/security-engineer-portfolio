@@ -1,0 +1,28 @@
+hostname,ansible_host,region,service,os,team,env,ansible_connection,ansible_user,ansible_port,ansible_become,ansible_become_method,ansible_network_os,logstash_host,logstash_port,syslog_host,syslog_port,syslog_proto,timezone,ntp_server,is_block_point,notes
+HQ-SOC-ROCKY-01,10.10.0.10,HQ,SOC,Rocky,PURPLE,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Asia/Seoul,10.10.0.1,false,ELK and Ansible control node
+ASIA-DB-ROCKY-01,10.10.10.11,ASIA,DB,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Asia/Seoul,10.10.0.1,false,DB server
+ASIA-NGINX-ROCKY-01,10.10.10.12,ASIA,NGINX,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Asia/Seoul,10.10.0.1,false,Web server nginx
+ASIA-MAIL-ROCKY-01,10.10.10.13,ASIA,MAIL,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Asia/Seoul,10.10.0.1,false,Mail server
+ASIA-DNS-ROCKY-01,10.10.10.14,ASIA,DNS,Rocky,NETWORK,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Asia/Seoul,10.10.0.1,false,DNS server
+AU-DB-UBUNTU-01,10.10.40.11,AU,DB,Ubuntu,SERVER,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Australia/Sydney,10.10.0.1,false,DB server
+AU-APACHE-UBUNTU-01,10.10.40.12,AU,APACHE,Ubuntu,SERVER,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Australia/Sydney,10.10.0.1,false,Web server apache
+AU-MAIL-ROCKY-01,10.10.40.13,AU,MAIL,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Australia/Sydney,10.10.0.1,false,Mail server
+AU-DNS-UBUNTU-01,10.10.40.14,AU,DNS,Ubuntu,NETWORK,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Australia/Sydney,10.10.0.1,false,DNS server
+EU-DB-ROCKY-01,10.10.20.11,EU,DB,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Europe/Berlin,10.10.0.1,false,DB server
+EU-NGINX-ROCKY-01,10.10.20.12,EU,NGINX,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Europe/Berlin,10.10.0.1,false,Web server nginx
+EU-MAIL-ROCKY-01,10.10.20.13,EU,MAIL,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Europe/Berlin,10.10.0.1,false,Mail server
+EU-DNS-UBUNTU-01,10.10.20.14,EU,DNS,Ubuntu,NETWORK,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Europe/Berlin,10.10.0.1,false,DNS server
+SA-DB-UBUNTU-01,10.10.50.11,SA,DB,Ubuntu,SERVER,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/Sao_Paulo,10.10.0.1,false,DB server
+SA-APACHE-ROCKY-01,10.10.50.12,SA,APACHE,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/Sao_Paulo,10.10.0.1,false,Web server apache
+SA-MAIL-ROCKY-01,10.10.50.13,SA,MAIL,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/Sao_Paulo,10.10.0.1,false,Mail server
+SA-DNS-UBUNTU-01,10.10.50.14,SA,DNS,Ubuntu,NETWORK,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/Sao_Paulo,10.10.0.1,false,DNS server
+NA-DB-UBUNTU-01,10.10.30.11,NA,DB,Ubuntu,SERVER,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/New_York,10.10.0.1,false,DB server
+NA-APACHE-UBUNTU-01,10.10.30.12,NA,APACHE,Ubuntu,SERVER,EDU,ssh,ubuntu,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/New_York,10.10.0.1,false,Web server apache
+NA-MAIL-ROCKY-01,10.10.30.13,NA,MAIL,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/New_York,10.10.0.1,false,Mail server
+NA-DNS-ROCKY-01,10.10.30.14,NA,DNS,Rocky,NETWORK,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,America/New_York,10.10.0.1,false,DNS server
+AF-DB-ROCKY-01,10.10.60.11,AF,DB,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Africa/Johannesburg,10.10.0.1,false,DB server
+AF-APACHEX-ROCKY-01,10.10.60.12,AF,APACHEX,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Africa/Johannesburg,10.10.0.1,false,Web server apachex
+AF-MAIL-ROCKY-01,10.10.60.13,AF,MAIL,Rocky,SERVER,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Africa/Johannesburg,10.10.0.1,false,Mail server
+AF-DNS-ROCKY-01,10.10.60.14,AF,DNS,Rocky,NETWORK,EDU,ssh,rocky,22,true,sudo,,10.10.0.10,5044,10.10.0.10,5514,tcp,Africa/Johannesburg,10.10.0.1,false,DNS server
+ASIA-FW-PFSENSE-01,10.10.10.1,ASIA,FW,pfSense,NETWORK,EDU,ssh,admin,22,false,,,10.10.0.10,5044,10.10.0.10,5514,tcp,Asia/Seoul,10.10.0.1,true,Block enforcement point
+EU-SW-CISCOIOS-01,10.10.20.1,EU,SW,CiscoIOS,NETWORK,EDU,network_cli,admin,22,false,,cisco.ios.ios,10.10.0.10,5044,10.10.0.10,5514,tcp,Europe/Berlin,10.10.0.1,false,Switch syslog sender

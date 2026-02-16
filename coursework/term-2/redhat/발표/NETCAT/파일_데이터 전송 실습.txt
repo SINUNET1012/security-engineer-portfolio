@@ -1,0 +1,9 @@
+서버 클라이언트 파일/데이터 전송 명령어
+
+파일 전송
+파일 수신자 : nc -lvp 8888 > [저장할 파일 이름]
+파일 송신자 : nc [서버의 IP주소] 8888 < [전송할 파일이름]
+
+로그 데이터 전송
+A 서버 : tail -f [자신의 apache accesslog] | nc [B의 IP주소] 8888
+B 서버 : nc -lvp 8888 | grep --line-buffered POST >> post.log

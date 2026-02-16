@@ -1,0 +1,21 @@
+---
+- name: 장비 설정 복구
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: 복구할 설정 파일 읽기
+      ansible.builtin.slurp:
+        src: "{{ restore_file }}"  # 여기에 복구할 설정 파일 경로 입력
+      register: config_file
+      delegate_to: localhost
+
+    - name: 설정 복구 실행
+      cisco.ios.ios_config:
+        src: "{{ restore_file }}"
+        backup: yes
+      register: restore_result
+
+    - name: 복구 완료 메시지
+      ansible.builtin.debug:
+        msg: "설정 복구 완료: {{ inventory_hostname }}"

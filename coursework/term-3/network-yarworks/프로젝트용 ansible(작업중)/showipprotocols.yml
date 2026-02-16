@@ -1,0 +1,15 @@
+---
+- name: show ip protocols 명령 실행
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: show ip protocols 실행
+      cisco.ios.ios_command:
+        commands:
+          - show ip protocols
+      register: output
+
+    - name: 결과 출력
+      ansible.builtin.debug:
+        msg: "{{ output.stdout_lines }}"

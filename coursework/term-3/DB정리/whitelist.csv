@@ -1,0 +1,9 @@
+cidr_or_ip,description,scope,enabled,notes
+10.10.0.0/24,HQ management network,both,true,do not block
+10.10.10.0/24,ASIA management network,both,true,do not block
+10.10.20.0/24,EU management network,both,true,do not block
+10.10.30.0/24,NA management network,both,true,do not block
+10.10.40.0/24,AU management network,both,true,do not block
+10.10.50.0/24,SA management network,both,true,do not block
+10.10.60.0/24,AF management network,both,true,do not block
+10.10.0.10,HQ SOC node,both,true,

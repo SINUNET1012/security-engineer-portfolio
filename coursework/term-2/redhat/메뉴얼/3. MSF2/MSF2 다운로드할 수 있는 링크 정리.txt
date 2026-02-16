@@ -1,0 +1,5 @@
+https://information.rapid7.com/metasploitable-download.html
+
+아니면 (저는 개인적으로 위에 것으로 했습니다 - 지형)
+
+https://sourceforge.net/projects/metasploitable/

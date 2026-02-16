@@ -31,3 +31,7 @@ python3 projects/report-template-generator/generate_result_report.py --out "repo
 - `docs/specs/` : 함수정의서 등 스펙 문서
 - `docs/testing/` / `docs/dashboards/` : 테스트·검증 계획, 결과 대시보드
 - `docs/manuals/` : 구축/실습 매뉴얼
+
+## Coursework / Notes
+- `coursework/` : 교육/팀 프로젝트 산출물(불필요한 대용량 파일 제외)
+- `notes/` : 수업/실습 중 정리한 메모(텍스트 위주)

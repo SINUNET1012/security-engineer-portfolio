@@ -1,0 +1,99 @@
+### ---------------------------------------------------------------
+### 1. 필요한 라이브러리 로드
+### require "xxx" 는 /usr/share/nmap/nselib/xxx.lua 파일을 불러와
+### 그 안의 함수들을 현재 스크립트에 테이블 형태로 제공한다.
+### ---------------------------------------------------------------
+local ftp       = require "ftp"        ### FTP 프로토콜 처리 라이브러리
+local nmap      = require "nmap"       ### Nmap 엔진 관련 기능(verbosity, socket 등)
+local shortport = require "shortport"  ### 포트/서비스 기반 실행 조건 생성 모듈
+local stdnse    = require "stdnse"     ### 출력 포맷, script-args 등 NSE 유틸리티
+local string    = require "string"     ### Lua 기본 문자열 모듈
+local table     = require "table"      ### Lua 기본 리스트/테이블 모듈
+
+### ---------------------------------------------------------------
+### 2. 스크립트 설명 (nmap 실행 시 출력됨)
+### ---------------------------------------------------------------
+description = [[
+Checks if an FTP server allows anonymous logins.
+
+This is a minimal teaching example based on ftp-anon.nse:
+it only tests anonymous login and does not list directories.
+]]
+
+### ---------------------------------------------------------------
+### 3. 메타 정보
+### categories:
+###   default → -sC 실행 시 자동 포함
+###   auth    → 인증 관련 스크립트
+###   safe    → 서비스에 영향을 주지 않는 안전한 스크립트
+### ---------------------------------------------------------------
+author = "Your Name"
+license = "Same as Nmap--See https://nmap.org/book/man-legal.html"
+categories = {"default", "auth", "safe"}
+
+### ---------------------------------------------------------------
+### 4. portrule : 이 스크립트가 언제 실행될지 정의
+### FTP(21), FTPS(990) 또는 ftp/ftps 서비스로 인식된 포트에서만 실행됨
+### ---------------------------------------------------------------
+portrule = shortport.port_or_service({21, 990}, {"ftp", "ftps"})
+
+### ---------------------------------------------------------------
+### 5. action(host, port)
+### portrule 조건을 만족할 때 Nmap에 의해 자동으로 호출되는 메인 함수
+### ---------------------------------------------------------------
+action = function(host, port)
+
+  ### out : 결과 문자열을 쌓아두는 리스트
+  local out = {}
+
+  ### ------------------------------------------------------------
+  ### (1) FTP 서버 접속 (배너 코드 수신)
+  ### ftp.connect()는 4개 값을 반환:
+  ###  socket : FTP 제어 채널 소켓 객체
+  ###  code   : FTP 배너 코드 (정상=220)
+  ###  message: 배너 메시지
+  ###  buffer : 초기 응답 데이터 버퍼
+  ### ------------------------------------------------------------
+  local socket, code, message, buffer =
+      ftp.connect(host, port, { request_timeout = 8000 })
+
+  ### 접속 실패
+  if not socket then
+    table.insert(out,
+      string.format("Failed to connect: %s", message or code or "unknown error"))
+    return stdnse.format_output(false, out)
+  end
+
+  ### ------------------------------------------------------------
+  ### 정상 FTP 서버는 접속 후 "220" 배너를 보낸다.
+  ### 220이 아니면 FTP 서비스라고 보기 어려움
+  ### ------------------------------------------------------------
+  if code and code ~= 220 then
+    table.insert(out,
+      string.format("Unexpected FTP banner code %d (%s)", code, message or ""))
+    return stdnse.format_output(false, out)
+  end
+
+  ### ------------------------------------------------------------
+  ### (2) 익명 로그인 시도
+  ### ftp.auth() → USER anonymous / PASS anonymous@
+  ### status = true/false
+  ### reply_code = FTP 응답 코드 (230이면 로그인 성공)
+  ### ------------------------------------------------------------
+  local status, reply_code, reply_msg =
+      ftp.auth(socket, buffer, "anonymous", "anonymous@")
+
+  ### 로그인 실패한 경우
+  if not status then
+    ### 530 = 로그인 거부 (Not logged in)
+    if reply_code == 530 then
+      table.insert(out,
+        "Anonymous FTP login NOT allowed (FTP code 530)")
+    else
+      table.insert(out, string.format(
+        "Anonymous FTP login failed (code %s, message: %s)",
+        tostring(reply_code or "nil"), reply_msg or ""))
+    end
+
+    ftp.close(socket)
+    return stdnse.format_output(true, out)_

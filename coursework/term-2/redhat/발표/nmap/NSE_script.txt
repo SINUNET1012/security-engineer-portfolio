@@ -1,0 +1,21 @@
+description = [[
+Checks if an FTP server allows anonymous logins.
+]]
+
+author = "Your Name"
+license = "Same as Nmap--See https://nmap.org/book/man-legal.html"
+categories = {"default", "auth", "safe"}
+
+local nmap = require "nmap"
+local shortport = require "shortport"
+local stdnse = require "stdnse"
+
+portrule = shortport.port_or_service(21, "ftp")
+
+action = function(host, port)
+  return "example result"
+end
+
+
+
+/user/share/nmap/scripts <<<스크립트 모음집

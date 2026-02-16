@@ -1,0 +1,11 @@
+[한글깨짐 해결]
+sudo apt update
+sudo apt install fonts-nanum
+sudo reboot
+
+[경로가 한글이라 들어가지지 않는 문제 해결]
+export LANG=C
+xdg-user-dirs-gtk-update
+
+“Would you like to update the standard folders to the current language?”
+→ “Update Names” 또는 “예” 선택하세요.

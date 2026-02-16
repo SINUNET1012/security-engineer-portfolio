@@ -1,0 +1,88 @@
+내가 알아낸 것
+BeeBox : bWAPP이 깔려있는 Ubuntu를 개조한 리눅스 환경 (Debian계열)
+bWAPP : DVWA와 같은 해킹을 테스트 및 연습하기 위한 취약한 사이트
+
+bWAPP을 깔기 위해 필요한 패키지 (Rocky 기준)
+ - php
+ - php-fpm
+ - mysql
+ - php-mysqli
+ - httpd
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+MSF2란?
+Metasplotiable 2라고도 부르며 일반적인 취약점을 테스트하도록(침투 테스트, 보안 연구 수행 목적) 의도적으로 취약하게 설계된 Ubuntu Linux 환경 - 공식 사이트 피셜
+
+MSF2의 Ubuntu 버전 : Ubuntu 8.04 (hardy) 32bit
+확인 방법 : lsb_release -a 명령어 실행 (몇 비트인지는 uname -m으로 확인 가능 | i686=32비트, x86_64=64비트)
+특이사항 : netplan 없음, nmtui 없음, systemctl 없음 | Ubuntu보다 비교적 취약점이 많다 (일부러 취약하게 만든거라서, 자세한 사항은 팀 폴더에 Ubuntu와 MSF2 비교분석 파일 참고)
+
+MSF2 환경 설치 과정
+1. Metasplotiable 2 vmdk 파일을 다운로드 받는다 (팀폴더 참고)
+2. 압축을 푼다
+3. VMware를 연다
+4. vmx를 연다
+5. ID : msfadmin , PWD : msfadmin 으로 로그인한다.  ** Mysql ID : root, PWD : password
+6. root로 로그인한다
+7. root의 비밀번호를 설정한다
+8. network 설정을 한다
+   - vim /etc/network/interfaces
+   - iface eth0 inet dhcp를 주석처리한다
+   - 아래 코드들을 작성하고 저장한다
+     iface eth0 inet static
+     address [원하는 IP주소]
+     netmask [서브넷마스크]
+     gateway [게이트웨이 주소]
+     dns-nameservers [dns주소]
+   - 네트워크를 재시작한다 : sudo /etc/init.d/networking restart
+   - ifconfig로 변경됐는지 확인한다
+   - 네트워크 인터페이스를 Bridge로 변경한다
+   - 172.16.0.1로 ping을 보내본다
+
+* 단, 공식 사이트에서는 NAT 아니면 Host-Only로 설정하는 것만 나온다 (Linux 서버를 실제 외부에 노출시키지 말라는 말이 있는 것을 보아 Bridged를 하는 것은 추천되지 않는 방법인 것 같다)
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+DVWA란?
+정말 취약한 웹 사이트로 해당 사이트를 통해서 보안 전문가들이 법적인 테두리 안에서 자신의 기술과 도구를 테스트할 수 있도록
+제공된 모의해킹 환경
+
+필요 패키지
+ - php (7.3 이상 필요)
+ - Apache
+ - DB (Mysql, MariaDB) - MariaDB root계정 사용 X, 계정 새로 만들어서 지정해줘야 함
+
+데비안 환경에서 필요한 패키지 종류
+ - apache2
+ - libapache2-mod-php : Apache와 PHP 사이를 연결해주는 패키지
+ - mariadb-server
+ - mariadb-client
+ - php
+ - php-mysqli
+ - php-gd : php에서 이미지 파일을 처리하기 위한 기능을 위해 존재하는 php의 GD 라이브러리 (썸네일 생성, 이미지 크기 변경, 이미지 파일 읽기 등)
+
+
+RHEL 계열
+ - httpd
+ - php-fpm (libapache2-mod-php와는 같은 기능을 한다)
+ - mariadb-server
+ - mariadb
+ - php
+ - php-mysqlnd
+ - php-gd
+
+패키지 확인 방법 : dnf list --installed | grep [찾고자 하는 패키지]
+
+MSF2에서의 DVWA는 버전이 낮아서 그런지 테스트할 수 있는 항목이 Rocky와 비교했을 때 많지 않다
+
+DVWA 로그 분석 결과 Apache 자체에서 만드는 로그만 분석하면 되는 것을 확인하였다. (접속 기록이 남음을 알아냄)
+DVWA 디렉터리 안에 부가적으로 로그를 기록하는 파일을 발견하지 못했다.
+자세한 사항은 팀폴더 매뉴얼 Rocky에서 운영한 DVWA 로그 분석 파일 참고
+--------------------------------------------------------------------------------------------------------
+To do list
+ - EFS2가 무엇인지 확인 V
+ - EFS2를 설치 V
+ - EFS2와 Ubuntu를 비교해서 어떤 점이 취약한지, 어떤 차이가 있는지 확인 V
+ - DVWA를 아파치로 구동할 때 아파치 자체 로그 파일에 접속 로그, 에러 로그가 남는지 V (접속 로그 남는것을 확인)
+ - 아파치 말고 DVWA 자체적인 로그 파일이 있는지 V (확인되지 않음)
+ - DVWA 로그 파일이 만약 있다면 어떤 정보가 기록이 되는지 V (Get, Post 모두 정상 기록됨을 확인)
+ - DVWA를 설치하기 위한 필요 패키지 목록화 (Debian, RHEL) V

