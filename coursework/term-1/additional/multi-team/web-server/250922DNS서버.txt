@@ -1,0 +1,50 @@
+📌 DNS 서버 설정 매뉴얼 (BIND)
+1. 환경 파일 위치
+
+주요 설정 파일:
+
+/etc/named.conf → 기본 설정
+
+/etc/named.rfc1912.zones → 존(zone) 등록
+
+/var/named/ → 실제 존 파일 저장
+
+2. named.conf 설정 예시
+options {
+    listen-on port 53 { any; };
+    listen-on-v6 port 53 { ::1; };
+    directory       "/var/named";
+    dump-file       "/var/named/data/cache_dump.db";
+    statistics-file "/var/named/data/named_stats.txt";
+    memstatistics-file "/var/named/data/named_mem_stats.txt";
+    secroots-file   "/var/named/data/named.secroots";
+    recursing-file  "/var/named/data/named.recursing";
+    allow-query     { any; };
+};
+
+3. 존(zone) 파일 등록 (/etc/named.rfc1912.zones)
+zone "lemon.com" IN {
+    type master;
+    file "lemon.com.zone";
+    allow-update { none; };
+};
+
+4. 존 파일 생성 (/var/named/lemon.com.zone)
+$TTL 1D
+@   IN SOA  ns1.lemon.com. root.lemon.com. (
+        2025092201 ; Serial
+        1D         ; Refresh
+        1H         ; Retry
+        1W         ; Expire
+        3H )       ; Minimum
+
+    IN  NS  ns1.lemon.com.
+ns1 IN  A   172.16.5.1
+ww1 IN  A   172.16.5.1
+ww2 IN  A   172.16.5.1
+
+
+5. named 서비스 관리
+systemctl enable named
+systemctl restart named
+systemctl status named

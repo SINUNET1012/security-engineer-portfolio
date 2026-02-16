@@ -1,0 +1,27 @@
+Jan 13 12:00:47.488 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 13 12:00:47.489 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 65123.
+Jan 13 12:00:47.936 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 13 12:00:47.937 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 13 12:00:47.938 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 13 12:00:47.938 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\06cb810c-3996-4623-96af-3bfe3e063be8 
+Jan 13 12:00:47.938 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\06cb810c-3996-4623-96af-3bfe3e063be8
+Jan 13 12:00:47.938 HYPERVISOR: exec_cmd: vm create R11 27 c7200 
+Jan 13 12:00:47.942 VM: VM R11 created.
+Jan 13 12:00:47.943 HYPERVISOR: exec_cmd: vm set_con_tcp_port R11 5054 
+Jan 13 12:00:47.943 HYPERVISOR: exec_cmd: c7200 get_mac_addr R11 
+Jan 13 12:00:47.943 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 13 12:00:47.943 HYPERVISOR: exec_cmd: vm slot_add_binding R11 0 0 C7200-IO-FE 
+Jan 13 12:00:47.944 HYPERVISOR: exec_cmd: vm set_disk0 R11 0 
+Jan 13 12:00:47.944 HYPERVISOR: exec_cmd: vm set_exec_area R11 64 
+Jan 13 12:00:47.944 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 13 12:00:47.944 HYPERVISOR: exec_cmd: vm set_idle_pc R11 0x60645960 
+Jan 13 12:00:47.945 HYPERVISOR: exec_cmd: vm set_ios R11 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 13 12:00:47.946 HYPERVISOR: exec_cmd: c7200 set_mac_addr R11 ca1b.bc48.0000 
+Jan 13 12:00:47.946 HYPERVISOR: exec_cmd: vm set_nvram R11 512 
+Jan 13 12:00:47.946 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 13 12:00:47.947 HYPERVISOR: exec_cmd: vm slot_add_binding R11 1 0 PA-4T+ 
+Jan 13 12:00:47.947 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 13 12:00:47.947 HYPERVISOR: exec_cmd: vm slot_add_binding R11 2 0 PA-4E 
+Jan 13 12:00:49.831 HYPERVISOR: Stopped.
+Jan 13 12:00:49.835 VM: VM R11 destroyed.
+Jan 13 12:00:55.079 GENERAL: reset done.

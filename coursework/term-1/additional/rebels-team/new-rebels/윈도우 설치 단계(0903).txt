@@ -1,0 +1,38 @@
+0. 가상머신 custom 설정, 운영체제 선택(윈도우 서버 2022, 윈도우 10)
+iso설정 (iso 파일은 후설치)
+
+1. CD키 입력
+VDYBN-27WPP-V4HQT-9VMD4-VMK7H (windows server 2022standard Evaluation 기준)
+윈도우 버전 standard기준
+계정 비밀번호 설정
+
+2. 하드웨어 설정
+CD-DVD 설정에서 iso파일 참조(윈도우 설치 파일)
+
+3. 부팅 단게에서 윈도우 설치 단계 진입(CD부팅 - F2키) ※필수는 아니나 부팅이 안되는 경우
+부팅 메뉴(BOOT)에서 CD-DVD 부팅 순위를 HardDrive보다 위로 변경(+,-로 컨트롤)
+
+4. windows server 2022standard Evaluation
+OS설치
+
+5. 파티션 선택
+
+6. 윈도우 환경 구축
+
+1) 언어(Language)설정에서 한국어팩 설치
+2) 윈도우 업데이트
+3) 방화벽 해제 확인
+
+4) MobaXterm에서 해당 ip와 administrator계정으로 연결
+안되는 경우 ↓↓↓↓↓↓
+단계 1. "시작" 버튼을 클릭하여 Server Manager
+단계 2. Server Manager 창 왼쪽의 "로컬 서버"를 클릭, 원격 데스크톱이 "비활성화"되어 있다면 "활성화"
+단계 3. "비활성화" 텍스트를 클릭하여 "시스템 속성" 창을 열고, "원격" 탭
+단계 4. "원격 데스크톱" 탭에서 "이 컴퓨터에 원격 연결 허용"을 선택
+단계 5. 위 단계를 수행한 후 경고 메시지가 표시됩니다. "확인"을 클릭
+
+이후에도 연결이 안된다면 참고 ↓↓↓↓↓
+https://www.anyviewer.com/kr/how-to/enable-remote-desktop-on-windows-server-2019-0007.html
+
+
+

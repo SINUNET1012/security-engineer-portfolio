@@ -1,0 +1,18 @@
+
+
+cd /etc/netplan/
+ls 해서 나오는 파일 이름 : 50-cloud-init/yaml
+nano 또는 vim 50-cloud-init/yaml
+
+또는
+nano /etc/netplan/50-cloud-init/yaml
+
+
+ip 변경
+서브넷 변경
+게이트웨이 변경
+
+파일 저장
+
+서버 재부팅 또는 netplan apply
+

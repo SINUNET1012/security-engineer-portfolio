@@ -1,0 +1,35 @@
+Jan 22 16:27:41.570 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 22 16:27:41.571 HYPERVISOR: Started on IP = localhost, TCP port = 50646.
+Jan 22 16:27:42.050 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 22 16:27:42.051 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\tjoeun\GNS3\projects\0122\project-files\dynamips 
+Jan 22 16:27:42.051 GENERAL: working_dir=C:\Users\tjoeun\GNS3\projects\0122\project-files\dynamips
+Jan 22 16:27:42.051 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\tjoeun\GNS3\projects\0122\project-files\dynamips\774bcf02-2052-4636-bab0-c0be940fa065 
+Jan 22 16:27:42.052 GENERAL: working_dir=C:\Users\tjoeun\GNS3\projects\0122\project-files\dynamips\774bcf02-2052-4636-bab0-c0be940fa065
+Jan 22 16:27:42.052 HYPERVISOR: exec_cmd: vm create R5 5 c7200 
+Jan 22 16:27:42.054 VM: VM R5 created.
+Jan 22 16:27:42.055 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5003 
+Jan 22 16:27:42.055 HYPERVISOR: exec_cmd: c7200 get_mac_addr R5 
+Jan 22 16:27:42.055 HYPERVISOR: exec_cmd: vm get_status R5 
+Jan 22 16:27:42.055 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-FE 
+Jan 22 16:27:42.056 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/tjoeun/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 22 16:27:42.057 HYPERVISOR: exec_cmd: vm get_status R5 
+Jan 22 16:27:42.057 HYPERVISOR: exec_cmd: vm set_idle_pc R5 0x601bde04 
+Jan 22 16:27:42.058 HYPERVISOR: exec_cmd: vm set_exec_area R5 64 
+Jan 22 16:27:42.059 HYPERVISOR: exec_cmd: vm set_ram R5 512 
+Jan 22 16:27:42.060 HYPERVISOR: exec_cmd: vm set_nvram R5 512 
+Jan 22 16:27:42.060 HYPERVISOR: exec_cmd: vm set_disk0 R5 0 
+Jan 22 16:27:42.061 HYPERVISOR: exec_cmd: vm get_status R5 
+Jan 22 16:27:42.061 HYPERVISOR: exec_cmd: vm slot_add_binding R5 1 0 PA-4T+ 
+Jan 22 16:27:42.062 HYPERVISOR: exec_cmd: vm get_status R5 
+Jan 22 16:27:42.062 HYPERVISOR: exec_cmd: vm slot_add_binding R5 2 0 PA-8E 
+Jan 22 16:27:42.225 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/tjoeun/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 22 16:27:44.582 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/tjoeun/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 22 16:27:44.809 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/tjoeun/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 22 16:27:45.112 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/tjoeun/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 22 16:27:55.491 HYPERVISOR: exec_cmd: vm get_status R5 
+Jan 22 16:27:55.498 HYPERVISOR: exec_cmd: vm extract_config R5 
+Jan 22 16:27:55.501 HYPERVISOR: exec_cmd: vm delete R5 
+Jan 22 16:27:55.502 VM: VM R5 destroyed.
+Jan 22 16:27:55.506 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 22 16:27:55.752 HYPERVISOR: Stopped.
+Jan 22 16:27:55.752 GENERAL: reset done.

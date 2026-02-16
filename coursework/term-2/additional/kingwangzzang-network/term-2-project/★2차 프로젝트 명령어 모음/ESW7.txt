@@ -1,0 +1,20 @@
+conf t
+int vlan 1
+ip add 50.1.0.2 255.255.0.0
+no sh 
+end
+conf t
+snmp-server community switch RO
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

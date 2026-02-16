@@ -1,0 +1,5 @@
+R2 
+access-list 10 permit 40.1.0.0 0.0.255.255
+router eigrp 100
+offset-list 10 in 5000 s1/0.23
+offset-list 10 in 5000 s1/0.27

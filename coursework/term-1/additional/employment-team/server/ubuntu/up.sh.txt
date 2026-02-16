@@ -1,0 +1,43 @@
+#!/bin/bash
+
+echo "=== 1. 패키지 업데이트 ==="
+sudo apt update && sudo apt upgrade -y
+
+echo "=== 2. 필수 패키지 설치 (vim 포함) ==="
+sudo apt install -y expect build-essential net-tools curl wget git vim htop unzip python3-pip python3-dev
+
+echo "=== 3. SSH 설치 및 시작 ==="
+sudo apt install -y openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+echo "=== 4. 방화벽(UFW) 설정 ==="
+sudo apt install -y ufw
+sudo ufw allow ssh
+sudo ufw --force enable
+
+echo "=== 5. DHCP 서버 설치 ==="
+sudo apt install -y isc-dhcp-server
+sudo systemctl enable isc-dhcp-server
+sudo systemctl start isc-dhcp-server
+
+echo "=== 6. DNS 서버 설치 ==="
+sudo apt install -y bind9 bind9-utils
+
+echo "===7. Apache 설치 ==="
+ufw disable
+sudo apt install -y apache2 
+sudo apt install -y vsftpd
+
+echo "===8. dpkg(단일 패키지) 설치 ==="
+sudo apt install -y dpkg
+
+echo "===9. php 설치 ==="
+sudo apt install -y php
+
+echo "===10. DB 서버 설치 설치 ==="
+sudo apt install -y mariadb-server mariadb-client
+
+echo "===11. Jupyter Notebook 설치하기 ==="
+sudo apt install python3-venv
+python3 -m pip config set global.break-system-packages true

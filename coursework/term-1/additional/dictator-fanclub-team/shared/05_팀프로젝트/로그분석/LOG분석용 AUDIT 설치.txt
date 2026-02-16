@@ -1,0 +1,29 @@
+로그분석용 Audit 로그 설치
+
+
+[[[설치]]]
+(로키)sudo yum install audit
+(우분투)sudo apt-get install auditd
+
+[[[시작]]]
+(로키)sudo systemctl start auditd
+(우분투)sudo systemctl enable auditd
+
+[[[감사규칙 영구추가]]]
+# /etc/audit/rules.d/audit.rules 파일 맨 아래에 규칙을 그대로 추가
+vim /etc/audit/rules.d/audit.rules
+
+# 파일 맨 아래에 아래 내용 추가
+-w /nfs/share -p warx -F exe=/usr/sbin/smbd -k samba-share-access    (SMB 폴더만 감시)
+-w /nfs/share -p warx -k nfs-share-access                                      (NFS & @ ㅠㅠ)
+
+
+[[[재시작]]]
+augenrules --load
+service auditd restart
+setsebool -P samba_audit on
+
+
+[[[확인]]]
+로그저장경로
+/var/log/audit/audit.log

@@ -1,0 +1,37 @@
+Oct 28 16:51:35.832 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 16:51:35.833 HYPERVISOR: Started on IP = 172.16.3.1, TCP port = 64637.
+Oct 28 16:51:36.247 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 16:51:36.249 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\project-files\dynamips 
+Oct 28 16:51:36.251 GENERAL: working_dir=Y:\4.여러명\project-files\dynamips
+Oct 28 16:51:36.251 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\project-files\dynamips\20f105d2-a308-417b-9f9e-07decd877212 
+Oct 28 16:51:36.252 GENERAL: working_dir=Y:\4.여러명\project-files\dynamips\20f105d2-a308-417b-9f9e-07decd877212
+Oct 28 16:51:36.252 HYPERVISOR: exec_cmd: vm create R6 5 c7200 
+Oct 28 16:51:36.265 VM: VM R6 created.
+Oct 28 16:51:36.267 HYPERVISOR: exec_cmd: vm set_con_tcp_port R6 5027 
+Oct 28 16:51:36.267 HYPERVISOR: exec_cmd: c7200 get_mac_addr R6 
+Oct 28 16:51:36.268 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:51:36.269 HYPERVISOR: exec_cmd: vm slot_add_binding R6 0 0 C7200-IO-FE 
+Oct 28 16:51:36.271 HYPERVISOR: exec_cmd: vm set_disk0 R6 0 
+Oct 28 16:51:36.273 HYPERVISOR: exec_cmd: vm set_exec_area R6 64 
+Oct 28 16:51:36.275 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:51:36.277 HYPERVISOR: exec_cmd: vm set_idle_pc R6 0x60645960 
+Oct 28 16:51:36.280 HYPERVISOR: exec_cmd: vm set_ios R6 Y:/4.여러명/20. 이하은/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 16:51:36.282 HYPERVISOR: exec_cmd: c7200 set_mac_addr R6 ca05.2e24.0000 
+Oct 28 16:51:36.284 HYPERVISOR: exec_cmd: vm set_nvram R6 512 
+Oct 28 16:51:36.285 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:51:36.286 HYPERVISOR: exec_cmd: vm slot_add_binding R6 1 0 PA-4T+ 
+Oct 28 16:51:36.287 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:51:36.287 HYPERVISOR: exec_cmd: vm slot_add_binding R6 2 0 PA-4E 
+Oct 28 16:51:40.505 HYPERVISOR: exec_cmd: nio create_udp udp-55cf4c02-6ea8-44bb-b678-d6cc434dd845 10046 127.0.0.1 10047 
+Oct 28 16:51:41.478 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R6 1 0 udp-55cf4c02-6ea8-44bb-b678-d6cc434dd845 
+Oct 28 16:51:41.480 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:52:12.061 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:52:12.061 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding R6 1 0 
+Oct 28 16:52:12.062 HYPERVISOR: exec_cmd: nio delete udp-55cf4c02-6ea8-44bb-b678-d6cc434dd845 
+Oct 28 16:52:12.607 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 16:52:12.609 HYPERVISOR: exec_cmd: vm extract_config R6 
+Oct 28 16:52:12.616 HYPERVISOR: exec_cmd: vm delete R6 
+Oct 28 16:52:12.617 VM: VM R6 destroyed.
+Oct 28 16:52:12.973 HYPERVISOR: exec_cmd: hypervisor stop 
+Oct 28 16:52:12.982 HYPERVISOR: Stopped.
+Oct 28 16:52:12.982 GENERAL: reset done.

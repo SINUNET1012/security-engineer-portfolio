@@ -1,0 +1,76 @@
+R2
+int s1/0
+enc fr
+no sh
+int s1/0.27 po
+ip add 10.1.72.1 255.255.248.0
+fra int 207
+int s1/0.21 po
+ip add 10.1.0.2 255.255.248.0
+fra int 201
+int s1/0.210 po
+ip add 10.1.8.1 255.255.248.0
+fra int 210
+int s1/0.23 po
+ip add 10.1.16.1 255.255.248.0
+fra int 203
+int s1/1
+enc fr
+no sh
+int s1/1.2 mul
+ip add 10.1.96.2 255.255.248.0
+frame-relay map ip 10.1.96.5 205 b
+frame-relay map ip 10.1.96.6 206 b
+router eigrp 100
+net 10.1.72.0 0.0.7.255
+net 10.1.0.0 0.0.7.255
+net 10.1.8.0 0.0.7.255
+net 10.1.16.0 0.0.7.255
+no auto
+key chain A
+key 1
+key-string cisco
+no ip split-horizon eigrp 200
+int s1/0.27 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.21 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.210 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.23 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+router eigrp 200
+net 10.1.96.0 0.0.7.255
+no auto
+end
+---200을 100으로
+conf t 
+router eigrp 100 
+redistribute eigrp 200 metric 1544 100 255 1 1500
+end
+---100을 200 으로
+conf t
+router eigrp 200
+redistribute eigrp 100 metric 1544 100 255 1 1500
+end
+
+conf t
+snmp-server community router RO
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

@@ -1,0 +1,98 @@
+***ip : 172.16.18.100***
+
+echo "DNS 서버를 구축하자"
+
+echo "1. DNS 서버 설치"
+apt update
+apt -y install bind9 bind9utils bind9-doc dnsutils
+
+echo "2. DNS 서버 설치 확인"
+dpkg -l | grep bind9
+
+echo "3. DNS 서버 상태 확인"
+systemctl status bind9
+
+echo "4. BIND 메인 설정 파일 수정 (named.conf.options)"
+cd /etc/bind
+vim named.conf.options
+
+options {
+        directory "/var/cache/bind";
+
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+        // If your ISP provided one or more IP addresses for stable
+        // nameservers, you probably want to use them as forwarders.
+        // Uncomment the following block, and insert the addresses replacing
+        // the all-0's placeholder.
+
+         forwarders {
+                8.8.8.8;
+                1.1.1.1;
+         };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-validation auto;
+
+        listen-on-v6 { any; };
+
+        listen-on { any; };
+        allow-query { any; };
+
+};
+
+
+echo "5. 도메인 설정 파일 추가 (named.conf.local 수정)"
+vim named.conf.local
+
+# 맨 아래에 추가
+zone "wj.com" {
+    type master;
+    file "/etc/bind/db.wj.com";
+};
+
+echo "6. 도메인(zone) 파일 생성"
+cp -ap /etc/bind/db.local /etc/bind/db.wj.com
+vim /etc/bind/db.wj.com
+
+# 아래와 같이 수정
+;
+; BIND data file for local loopback interface
+;
+$TTL    1D
+@       IN      SOA     ns.wj.com. wj.wj.com. (
+                              25091801          ; Serial
+                         1D             ; Refresh
+                         1H             ; Retry
+                         1W             ; Expire
+                         3H    )        ; Negative Cache TTL
+;
+@       IN      NS      ns.wj.com.
+@       IN      A       172.16.18.100
+@       IN      AAAA    ::1
+
+
+ns      IN      A       172.16.18.100
+ww1     IN      A       172.16.18.100
+ww2     IN      A       172.16.18.100
+ftp     IN      A       172.16.18.100
+
+echo "7. 설정 확인"
+named-checkconf
+named-checkzone wj.com /etc/bind/db.wj.com
+
+echo "8. BIND 서비스 재시작 및 부팅 시 자동 실행 설정"
+systemctl enable --now bind9
+systemctl restart bind9
+systemctl enable bind9
+
+echo "9. 방화벽 허용 (UFW 사용하는 경우만 실행)"
+ufw allow 53
+ufw reload
+
+echo "DNS 서버 설정 완료"

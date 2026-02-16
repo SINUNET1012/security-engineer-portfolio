@@ -1,0 +1,127 @@
+
+import csv
+from datetime import datetime, timedelta
+
+
+# --- 파일경로 ---
+SECURE_LOG_PATH = '/var/log/secure'      # 분석할 원본 로그 파일 경로
+
+# --- 설정값 ---
+PARSED_LOG_CSV = 'login_logs.csv'           # 1차 목표 결과물 파일명
+ATTACK_LOG_FILE = 'bruteforce_attempts.log' # 2차 목표 결과물 파일명
+
+# --- 1차 목표: 로그를 파싱하여 CSV 파일로 저장하는 함수 ---
+def parse_log_to_csv():
+    """secure 파일에서 접속 기록을 CSV 파일로 저장합니다."""
+    
+    print("1단계: 로그 파일 분석 및 CSV 저장 시작...")
+    
+    extracted_data = []
+    
+    try:
+        with open(SECURE_LOG_PATH, 'r') as f:
+            for line in f:
+                line = line.strip()
+                words = line.split()
+                
+                # 'Accepted' 또는 'Failed'가 포함된 줄만 처리
+                if 'sshd' in line and ('Accepted' in line or 'Failed' in line):
+                    try:
+                        # 공통 데이터 추출 (월, 일, 시간)
+                        # 예: Oct 30 01:10:25
+                        timestamp_str = f"{words[0]} {words[1]} {words[2]}"
+                        
+                        status = ''
+                        ip_address = ''
+                        
+                        if 'Accepted password' in line:
+                            status = 'Success'
+                            ip_address = words[words.index('from') + 1]
+                        elif 'Failed password' in line:
+                            status = 'Failure'
+                            ip_address = words[words.index('from') + 1]
+
+                        if status and ip_address:
+                            extracted_data.append([timestamp_str, ip_address, status])
+
+                    except (ValueError, IndexError):
+                        # 로그 형식이 예상과 다를 경우 건너뜀
+                        continue
+    except FileNotFoundError:
+        print(f"오류: 로그 파일 '{SECURE_LOG_PATH}'를 찾을 수 없습니다.")
+        return
+
+    # CSV 파일로 저장
+    with open(PARSED_LOG_CSV, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        # 헤더(제목) 추가
+        writer.writerow(['Timestamp', 'IPAddress', 'Status'])
+        # 데이터 추가
+        writer.writerows(extracted_data)
+        
+    print(f"1단계 완료: 총 {len(extracted_data)}개의 접속 기록을 '{PARSED_LOG_CSV}'에 저장했습니다.")
+
+
+# --- 2차 목표: 30분 내 5회 이상 접속 실패한 IP를 탐지하는 함수 ---
+def detect_brute_force_attempts():
+    """CSV 파일을 읽어 비정상 접속 시도(Brute-force)를 탐지합니다."""
+    
+    print("\n2단계: 비정상 접속 시도 탐지 시작...")
+    
+    failures_by_ip = {} # IP별 실패 기록을 저장할 딕셔너리
+    
+    try:
+        with open(PARSED_LOG_CSV, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader) # 헤더는 건너뜀
+            
+            for row in reader:
+                timestamp_str, ip_address, status = row
+                
+                if status == 'Failure':
+                    # 현재 년도를 추가하여 datetime 객체로 변환 (로그에는 년도 정보가 없음)
+                    current_year = datetime.now().year
+                    full_timestamp_str = f"{current_year} {timestamp_str}"
+                    # strptime 포맷: 년 월 일 시:분:초
+                    dt_object = datetime.strptime(full_timestamp_str, '%Y %b %d %H:%M:%S')
+                    
+                    if ip_address not in failures_by_ip:
+                        failures_by_ip[ip_address] = []
+                    failures_by_ip[ip_address].append(dt_object)
+    except FileNotFoundError:
+        print(f"오류: 분석할 CSV 파일 '{PARSED_LOG_CSV}'가 없습니다. 1단계를 먼저 실행하세요.")
+        return
+
+    detected_attacks = []
+    
+    # 각 IP별로 시간 분석
+    for ip, timestamps in failures_by_ip.items():
+        timestamps.sort() # 시간 순으로 정렬
+        
+        # 5개 이상의 실패 기록이 있는 IP만 검사
+        if len(timestamps) >= 5:
+            # 슬라이딩 윈도우: 0~4번, 1~5번, 2~6번... 이런 식으로 5개씩 묶어서 검사
+            for i in range(len(timestamps) - 4):
+                start_time = timestamps[i]
+                end_time = timestamps[i+4]
+                
+                # 5번째 시도와 첫 시도의 시간 차이가 30분 이내인지 확인
+                if (end_time - start_time) < timedelta(minutes=30):
+                    attack_info = f"공격 탐지! IP: {ip}, 5회 실패 시작 시간: {start_time}"
+                    if attack_info not in detected_attacks:
+                        detected_attacks.append(attack_info)
+
+    # 탐지된 공격을 파일에 저장
+    if detected_attacks:
+        with open(ATTACK_LOG_FILE, 'w') as f:
+            for attack in detected_attacks:
+                print(attack)
+                f.write(attack + '\n')
+        print(f"\n2단계 완료: 총 {len(detected_attacks)}개의 공격 시도를 '{ATTACK_LOG_FILE}'에 저장했습니다.")
+    else:
+        print("\n2단계 완료: 탐지된 공격 시도가 없습니다.")
+
+# --- 메인 코드 실행 ---
+if __name__ == "__main__":
+    parse_log_to_csv()
+    detect_brute_force_attempts()

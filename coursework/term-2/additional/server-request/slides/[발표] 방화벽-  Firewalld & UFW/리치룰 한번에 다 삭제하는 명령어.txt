@@ -1,0 +1,1 @@
+firewall-cmd --permanent --list-rich-rules | xargs -I {} firewall-cmd --permanent --remove-rich-rule="{}" && firewall-cmd --reload

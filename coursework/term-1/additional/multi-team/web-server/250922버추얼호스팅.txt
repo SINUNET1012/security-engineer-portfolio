@@ -1,0 +1,49 @@
+1. 기본 설정 파일 위치
+
+/etc/httpd/conf/httpd.conf
+
+/etc/httpd/conf.d/vhost.conf (버추얼호스트 개별 관리 권장)
+
+2. DocumentRoot 및 Directory 권한
+DocumentRoot "/home/lemon"
+
+<Directory "/home/lemon">
+    AllowOverride None
+    Require all granted
+</Directory>
+
+3. VirtualHost 설정 (/etc/httpd/conf.d/vhost.conf)
+<VirtualHost *:80>
+    ServerName ww1.kong.com
+    DocumentRoot "/home/kong"
+    ErrorLog "/var/log/httpd/ww1_error_log"
+    CustomLog "/var/log/httpd/ww1_access_log" combined
+    <Directory "/home/kong/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName ww2.kong.com
+    DocumentRoot "/home/test"
+    ErrorLog "/var/log/httpd/ww2_error_log"
+    CustomLog "/var/log/httpd/ww2_access_log" combined
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+4. Apache 서비스 관리
+systemctl enable httpd
+systemctl restart httpd
+systemctl status httpd
+
+5. 로그 확인
+tail -f /var/log/httpd/ww1_access_log
+tail -f /var/log/httpd/ww2_access_log
+
+

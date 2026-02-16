@@ -1,0 +1,35 @@
+# 1. vhost 파일 생성 및 추가
+
+mkdir /home/heeyoung
+mkdir /home/test
+
+cat <<EOL | sudo tee /etc/httpd/conf.d/vhost.conf
+<VirtualHost *:80>
+    DocumentRoot "/home/heeyoung"
+    <Directory "/home/heeyoung">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   </Directory>
+</VirtualHost>
+
+<VirtualHost *:81>
+    DocumentRoot "/home/test"
+    <Directory "/home/test">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   </Directory>
+</VirtualHost>
+
+EOL
+
+## 2. conf파일에 Listen 81 추가
+sudo sed -i "48c\Listen 81" /etc/httpd/conf/httpd.conf
+
+## 3. 권한 부여
+chmod 777 /home/heeyoung
+chmod 777 /home/test
+
+## 4. 실행
+sudo systemctl restart httpd

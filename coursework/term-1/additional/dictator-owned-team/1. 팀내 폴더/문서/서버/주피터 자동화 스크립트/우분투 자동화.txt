@@ -1,0 +1,129 @@
+#!/bin/bash
+# =============================
+# Ubuntu + Miniconda + Jupyter 설치 및 systemd 자동 등록
+# (IP 자동 감지 & 비밀번호 로그인 설정 포함)
+# =============================
+
+set -e
+
+# -----------------------------
+# 변수 정의
+# -----------------------------
+# 현재 시스템의 기본 IP 자동 감지
+SERVER_IP=$(hostname -I | awk '{print $1}')    # 첫 번째 IP 자동 추출
+JUPYTER_PORT=8000                              # Jupyter Notebook 포트
+CONDA_ROOT="/root/miniconda3"                  # Miniconda 설치 경로
+JUPYTER_BIN="$CONDA_ROOT/bin/jupyter"          # Jupyter 실행 파일 경로
+USER="root"                                    # systemd 서비스 실행 사용자
+HOME_DIR="/root"                               # systemd 서비스 작업 디렉터리
+JUPYTER_PASSWORD="<REDACTED>"                  # Jupyter 접속 비밀번호 (원하면 수정 가능)
+
+# -----------------------------
+# 1️ 시스템 초기화
+# -----------------------------
+echo "=== 1. 현재 IP 확인 ==="
+echo "서버 IP: $SERVER_IP"
+
+echo "=== 2. 게이트웨이 ping 테스트 ==="
+ping -c 5 172.16.0.1 || echo "⚠️ 게이트웨이 응답 없음 (무시 가능)"
+
+echo "=== 3. DNS 서버 확인 ==="
+cat /etc/resolv.conf
+
+echo "=== 4. 시스템 업데이트 및 필수 패키지 설치 ==="
+sudo apt update && sudo apt -y upgrade
+sudo apt -y install vim wget net-tools curl gnupg2 lsb-release software-properties-common ufw python3-pip
+
+# -----------------------------
+# 2️ Miniconda 설치
+# -----------------------------
+if [ ! -d "$CONDA_ROOT" ]; then
+    echo "✅ Miniconda 설치 중..."
+    cd /root
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda3.sh
+    chmod +x Miniconda3.sh
+    ./Miniconda3.sh -b -p "$CONDA_ROOT"
+else
+    echo "Miniconda 이미 설치됨."
+fi
+
+# 환경 변수 설정
+export PATH="$CONDA_ROOT/bin:$PATH"
+grep -qxF "export PATH=$CONDA_ROOT/bin:\$PATH" /root/.bashrc || echo "export PATH=$CONDA_ROOT/bin:\$PATH" >> /root/.bashrc
+
+# conda 기본 환경 자동 실행 끄기
+$CONDA_ROOT/bin/conda config --set auto_activate_base false
+
+# -----------------------------
+# 3 Jupyter 설치
+# -----------------------------
+if [ ! -f "$JUPYTER_BIN" ]; then
+    echo "✅ Jupyter 설치 중..."
+    $CONDA_ROOT/bin/pip install jupyter --quiet
+else
+    echo "✅ Jupyter 이미 설치됨"
+fi
+
+# -----------------------------
+# 3-1 Jupyter 비밀번호 자동 설정
+# -----------------------------
+echo -e "$JUPYTER_PASSWORD\n$JUPYTER_PASSWORD" | $JUPYTER_BIN notebook password
+echo "✅ Jupyter 비밀번호 설정 완료"
+
+# -----------------------------
+# 4 IP 확인
+# -----------------------------
+if [ -z "$SERVER_IP" ]; then
+    echo "❌ 서버 IP를 자동으로 찾지 못했습니다."
+    exit 1
+else
+    echo "✅ 감지된 IP: $SERVER_IP"
+fi
+
+# -----------------------------
+# 5 systemd 서비스 등록
+# -----------------------------
+SERVICE_FILE="/etc/systemd/system/jupyter.service"
+
+sudo bash -c "cat > $SERVICE_FILE" <<EOF
+[Unit]
+Description=Jupyter Notebook Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=$JUPYTER_BIN notebook --ip=$SERVER_IP --port=$JUPYTER_PORT --allow-root
+WorkingDirectory=$HOME_DIR
+User=$USER
+Group=$USER
+Restart=always
+RestartSec=10
+Environment="PATH=$CONDA_ROOT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+echo "✅ 서비스 파일 생성 완료: $SERVICE_FILE"
+
+sudo systemctl daemon-reload
+sudo systemctl enable jupyter
+sudo systemctl restart jupyter
+
+# -----------------------------
+# 6️ 방화벽 설정
+# -----------------------------
+echo "=== 6. 방화벽(UFW) 설정 ==="
+sudo ufw allow $JUPYTER_PORT/tcp
+sudo ufw --force enable
+sudo ufw status
+
+# -----------------------------
+# 7️ 상태 확인
+# -----------------------------
+echo "=== 7. Jupyter 상태 확인 ==="
+sudo systemctl status jupyter
+
+echo "✅ 모든 작업 완료!"
+echo "👉 접속 주소: http://$SERVER_IP:$JUPYTER_PORT"
+echo "🔑 비밀번호: $JUPYTER_PASSWORD"

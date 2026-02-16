@@ -1,0 +1,15 @@
+TTL 1D
+@       IN SOA  mr.bon.com mr.bon.com (
+                                        110301 ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+        NS     mr.bon.com
+        A       37.0.0.3
+        AAAA    ::1
+ns	IN	A	37.0.0.3
+wv	IN	A	37.64.0.14
+w2	IN	A	37.64.0.17
+u1	IN 	A	37.0.0.12
+frp	IN 	A	37.64.0.12

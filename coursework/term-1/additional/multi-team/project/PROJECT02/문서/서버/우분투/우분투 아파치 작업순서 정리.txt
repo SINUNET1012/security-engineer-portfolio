@@ -1,0 +1,69 @@
+1. 사전 작업 확인
+-selinux 확인 : getenforce -> 값이 Disabled
+-방화벽 확인 : systemctl status firewalld
+-리포지터리 확인 : dnf config-manager --set-enabled crb \n dnf install epel-next-release -y
+-에러방지 : dnf -y install inxi
+2. 아파치 서버 설치
+- sudo apt update
+  sudo apt install apache2
+3. httpd 재시작
+- systemctl restart httpd
+4. http://자신의 IP 주소 : 80으로 접속 확인
+--------------------------------------------------------------------------------------------------------
+
+웹페이지 커스텀
+
+1. cd /var/www/html
+2. echo "8team" > index.html 로 html 파일 생성
+3. cd /etc/httpd/conf -> vim httpd.conf로 파일 열기
+4. 124번째 줄 DocumentRoot "/var/www/html" -> /home/8team 으로 변경
+5. 136번째 줄 <Directory "/var/www/html"> -> <Directory "/home/8team"> 으로 변경
+6. systemctl reload httpd
+7. cd /etc/httpd/conf.d -> vim vhost.conf
+8. 
+<VirtualHost *:80>
+    DocumentRoot "/home/kong" -> "/home/8team" 으로 변경
+    <Directory "/home/kong/"> -> "/home/8team" 으로 변경
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   </Directory>
+</VirtualHost>
+
+<VirtualHost *:81>
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   위 내용 입력
+9. test 계정 추가 : useradd -m test // passwd test
+
+-------------------------------------------------------------------------------------------------------
+
+도메인 베이스 버츄얼호스팅
+1. Listen 80/81을 80/80으로 변경
+2. cd /etc/httpd/conf -> vim httpd.conf
+3. 48번째 줄 Listen 81 삭제
+4. cd /etc/httpd/conf.d -> vim vhost.conf
+5. 13번째 줄 <VirtualHost *:81> --> <VirtualHost *:80>으로 변경
+<VirtualHost *:80>
+    ServerName ww1.8team.com
+    DocumentRoot "/home/8team"
+    <Directory "/home/8team/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName ww2.8team.com
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   </Directory>
+</VirtualHost>
+

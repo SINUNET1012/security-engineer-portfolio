@@ -1,0 +1,24 @@
+Oct 29 17:57:37.862 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 29 17:57:37.863 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 50501.
+Oct 29 17:57:38.358 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 29 17:57:38.360 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips 
+Oct 29 17:57:38.362 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips
+Oct 29 17:57:38.362 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips\b25afc26-c0e1-45dc-8f1a-c86ad254be00 
+Oct 29 17:57:38.364 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips\b25afc26-c0e1-45dc-8f1a-c86ad254be00
+Oct 29 17:57:38.364 HYPERVISOR: exec_cmd: vm create R4 4 c7200 
+Oct 29 17:57:38.380 VM: VM R4 created.
+Oct 29 17:57:38.382 HYPERVISOR: exec_cmd: vm set_con_tcp_port R4 5003 
+Oct 29 17:57:38.383 HYPERVISOR: exec_cmd: c7200 get_mac_addr R4 
+Oct 29 17:57:38.384 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 29 17:57:38.384 HYPERVISOR: exec_cmd: vm slot_add_binding R4 0 0 C7200-IO-FE 
+Oct 29 17:57:38.387 HYPERVISOR: exec_cmd: vm set_disk0 R4 0 
+Oct 29 17:57:38.389 HYPERVISOR: exec_cmd: vm set_exec_area R4 64 
+Oct 29 17:57:38.391 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 29 17:57:38.392 HYPERVISOR: exec_cmd: vm set_idle_pc R4 0x60645960 
+Oct 29 17:57:38.396 HYPERVISOR: exec_cmd: vm set_ios R4 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 17:57:38.398 HYPERVISOR: exec_cmd: c7200 set_mac_addr R4 ca04.1d1c.0000 
+Oct 29 17:57:38.400 HYPERVISOR: exec_cmd: vm set_nvram R4 512 
+Oct 29 17:57:38.401 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 29 17:57:38.402 HYPERVISOR: exec_cmd: vm slot_add_binding R4 1 0 PA-4T+ 
+Oct 29 17:57:38.404 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 29 17:57:38.404 HYPERVISOR: exec_cmd: vm slot_add_binding R4 2 0 PA-4E 

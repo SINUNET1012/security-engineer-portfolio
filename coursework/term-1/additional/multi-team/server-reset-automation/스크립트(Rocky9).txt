@@ -1,0 +1,123 @@
+#!/bin/bash
+
+echo "====================================================="
+# --- 스크립트 실행 환경 설정 ---
+JUPYTER_USER="root"
+# 경로를 /root/miniconda3으로 변경하여 사용자 홈 디렉터리에 설치
+MINICONDA_FULL_PATH="/root/miniconda3"
+JUPYTER_BASE_PATH="${MINICONDA_FULL_PATH}/bin"
+JUPYTER_CONFIG_DIR="/root/.jupyter"
+JUPYTER_CONFIG_FILE="${JUPYTER_CONFIG_DIR}/jupyter_notebook_config.py"
+SERVICE_FILE="/etc/systemd/system/jupyter.service"
+NOTEBOOK_PORT=8000
+
+
+echo "====================================================="
+echo "Jupyter Notebook 완전 자동화 스크립트 시작..."
+# root 권한 확인
+if [[ $EUID -ne 0 ]]; then
+    echo "오류: 이 스크립트는 root 권한으로 실행해야 합니다. sudo를 사용해 주세요."
+    exit 1
+fi
+
+echo "====================================================="
+# 1. 네트워크 정보 확인
+echo "1. 현재 IP를 확인합니다."
+NET_IFACE=$(ip -4 route get 1.1.1.1 | grep -oP '(?<=dev\s)\S+')
+CURRENT_IP=$(ip -4 addr show "$NET_IFACE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -1)
+echo "감지된 네트워크 인터페이스: ${NET_IFACE}"
+echo "현재 시스템 IP: ${CURRENT_IP}"
+echo "2. 게이트웨이(172.16.0.1)와 ping 테스트를 실행합니다."
+ping -c 5 172.16.0.1
+echo "3. DNS 서버 주소 확인."
+cat /etc/resolv.conf
+
+echo "====================================================="
+# 2. 방화벽 및 SELinux 비활성화
+echo "4. 방화벽 및 SELinux 비활성화 시작..."
+setenforce 0
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+echo "SELinux 설정 완료."
+systemctl stop firewalld
+systemctl disable firewalld
+echo "firewalld 서비스 비활성화 완료."
+
+echo "====================================================="
+# 3. Repository 및 패키지 설치
+echo "5. Repository 및 필수 패키지 설치..."
+dnf install epel-release -y
+dnf -y update && dnf -y upgrade
+dnf -y install vim wget net-tools
+
+echo "====================================================="
+# 4. Miniconda3 설치 (이미 설치되어 있으면 건너뛰기)
+echo "6. Miniconda3 설치..."
+# 설치 경로를 변수로 변경
+if [ ! -d "${MINICONDA_FULL_PATH}" ]; then
+    # Miniconda 설치 스크립트 다운로드 및 실행
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
+    chmod +x /tmp/miniconda.sh
+    # 설치 경로를 변수로 변경
+    /tmp/miniconda.sh -b -p "${MINICONDA_FULL_PATH}"
+    rm /tmp/miniconda.sh
+    "${MINICONDA_FULL_PATH}/bin/conda" config --set auto_activate_base false
+    # 환경 변수 설정 경로를 변수로 변경
+    echo "export PATH=\$PATH:${MINICONDA_FULL_PATH}/bin/" >> /etc/bashrc
+    source /etc/bashrc
+else
+    echo "Miniconda3가 이미 설치되어 있습니다. 설치 단계를 건너뜁니다."
+fi
+
+echo "====================================================="
+# 5. Jupyter Notebook 설치 및 설정
+echo "7. Jupyter Notebook 설치 및 초기 설정..."
+# Conda 명령어 경로를 변수로 변경
+"${MINICONDA_FULL_PATH}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+"${MINICONDA_FULL_PATH}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+"${MINICONDA_FULL_PATH}/bin/conda" install jupyter -y
+
+# Jupyter 설정 파일 생성 및 IP/포트 설정 추가
+if [ ! -f "$JUPYTER_CONFIG_FILE" ]; then
+    "${JUPYTER_BASE_PATH}/jupyter" notebook --generate-config
+fi
+if ! grep -q "c.NotebookApp.ip" "$JUPYTER_CONFIG_FILE"; then
+    echo "c.NotebookApp.ip = '${CURRENT_IP}'" >> "$JUPYTER_CONFIG_FILE"
+fi
+if ! grep -q "c.NotebookApp.port" "$JUPYTER_CONFIG_FILE"; then
+    echo "c.NotebookApp.port = ${NOTEBOOK_PORT}" >> "$JUPYTER_CONFIG_FILE"
+fi
+if ! grep -q "c.NotebookApp.token" "$JUPYTER_CONFIG_FILE"; then
+    echo "c.NotebookApp.token = ''" >> "$JUPYTER_CONFIG_FILE"
+fi
+
+
+echo "====================================================="
+# 6. Systemd 서비스 파일 생성
+echo "8. Systemd 서비스 파일 생성 및 등록..."
+cat << EOF > "$SERVICE_FILE"
+[Unit]
+Description=Jupyter Notebook Server
+After=network.target
+
+[Service]
+User=${JUPYTER_USER}
+# WorkingDirectory를 /root로 명시적으로 지정하여 실행 경로 문제 해결
+WorkingDirectory=/root
+# ExecStart 경로를 변수로 변경
+ExecStart=${JUPYTER_BASE_PATH}/jupyter notebook --allow-root --notebook-dir=/root -f "${JUPYTER_CONFIG_FILE}"
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+
+echo "====================================================="
+# 7. 서비스 활성화 및 시작
+systemctl daemon-reload
+systemctl start jupyter
+systemctl enable jupyter
+systemctl restart jupyter
+
+echo "====================================================="
+echo "Jupyter Notebook 서비스 설정이 모두 완료되었습니다."
+echo "서비스 상태 확인: sudo systemctl status jupyter"
+echo "웹 브라우저에서 http://${CURRENT_IP}:${NOTEBOOK_PORT} 로 접속하세요."

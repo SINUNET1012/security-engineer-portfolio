@@ -1,0 +1,12 @@
+
+# nmap 스탤스
+alert tcp any any -> any 53 (msg:"Nmap TCP SYN Scan Detected (DNS Port)"; flags:S; threshold:type threshold, track by_src, count 5, seconds 1; sid:1000113; rev:1;)
+
+# nmap php 버전확인
+alert tcp any any -> any 80 (msg:"Nmap Scripting Engine User-Agent Detected"; flow:to_server,established; content:"User-Agent|3a| Nmap Scripting Engine"; http_header; sid:1000114; rev:1;)
+
+# CSRF
+alert tcp any any -> any 80 (msg:"CSRF Attack Detected - Password Change via Python Script"; flow:to_server,established; content:"GET"; http_method; content:"/vulnerabilities/csrf/"; http_uri; content:"password_new="; http_uri; content:"python-requests"; http_header; sid:1000115; rev:1;)
+
+# 리버스쉘
+alert tcp any any -> any 80 (msg:"Reverse Shell Trigger Detected - backdoor.php Execution"; flow:to_server,established; content:"GET"; http_method; content:"/hackable/uploads/backdoor.php"; http_uri; sid:1000116; rev:1;)

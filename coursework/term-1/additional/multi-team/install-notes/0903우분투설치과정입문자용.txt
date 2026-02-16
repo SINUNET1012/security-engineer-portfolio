@@ -1,0 +1,52 @@
+팀 공용폴더에 ubuntu-24.04.2-live-server-amd64(우분투파일) 있습니다!
+
+VMware 접속
+Create a New Virtual Machine클릭
+Typical 체크
+Installer disc image file 브라우저선택
+다운받은 우분투파일 ubuntu-24.04.2-live-server-amd64.iso 파일선택 후 next
+Virtual machine name 설정 (이름은 자유)
+Location 경로 그대로(변경가능, 자유)
+Maximum disk size 50GB설정 넥스트
+Customize Haedware..클릭
+Memory 4GB
+Network Adapter > Bridged
+Display > Accelerate 3D 해제
+close  > finish
+
+power on
+try or instsall ubunta server 선택
+English 선택
+Update to the new installer > 기다리기
+방향키 위로 올려서 layout > korean으로 변경 > done (사실 상관 없는 과정!)
+done
+방향키 위로 올려서 ens33칸에서 엔터 edit ipv4 엔터 method > manual
+
+서브넷 : 172.16.0.0/16 (고정)
+어드레스 : 172.16.15.7 (새로 생성하는 ip, 본인이 사용 할 ip)
+게이트웨이 : 172.16.0.1 (고정)
+네임 서버 : 8.8.8.8 (고정)
+도메인 : (입력 안함)
+save > done
+프록시 어드레스 : 입력안함 > done
+미러 컨피그레이션에서 잠시 기다리기 리딩 패키지 리시트.. 뜨면 > done
+done
+done
+컨티뉴
+아이디설정 
+kkk
+kkk
+kkk
+kkk
+kkk
+컨티뉴
+Install OpenSSH server 체크 [x] <요 모양 나오게
+done
+아무것도 체크 하지 않고 done
+기다렸다가 Reboot Now
+failed 2줄 뜨면 엔터 눌러서 넘어가기
+모바엑스텀에서 로그인 하기(본인이 설정했던 아이디, 비밀번호)
+ping 172.16.0.1 ping 8.8.8.8 확인하기 
+sudo su -
+비밀번호 입력 > (루트모드로 접속 완료)
+

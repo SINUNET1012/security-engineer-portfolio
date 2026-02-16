@@ -1,0 +1,104 @@
+import paramiko
+
+# --- 접속지 정보 ---
+server_ip = '172.16.11.100'
+server_port = 22
+username = 'root'
+password = '<REDACTED>'
+
+# --- 경로 ---
+log_file_path = '/var/log/messages'
+
+# --- 결과저장 ----
+output_filename = 'smb_access_report.txt'
+
+
+# --- 프로그램 코드 부분 ---
+
+# 접속 기록을 저장할 리스트 (=접속기록관리대장)
+access_ledger = []
+
+try:
+    # 1. SSH 클라이언트 준비 및 서버 연결
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    print(f"{server_ip} 서버에 연결을 시도합니다...")
+    ssh_client.connect(hostname=server_ip,
+                       port=server_port,
+                       username=username,
+                       password=password)
+    print("서버에 성공적으로 연결되었습니다.")
+
+    # 2. SFTP를 통해 원격 파일 읽기
+    sftp_client = ssh_client.open_sftp()
+    print(f"'{log_file_path}' 로그 파일을 열어 분석을 시작합니다.")
+
+    remote_file = sftp_client.open(log_file_path)
+    # 로그 파일의 모든 줄을 한번에 리스트로 읽어옵니다.
+    log_lines = remote_file.readlines()
+    remote_file.close() # 파일을 다 읽었으니 닫아줍니다.
+
+    # 3. 로그 분석 시작 (한 줄씩 반복)
+    # for 문에 index를 사용하기 위해 range와 len 함수를 사용합니다.
+    for i in range(len(log_lines)):
+        current_line = log_lines[i]
+
+        # 'CIFS: Attempting to mount' 키워드가 포함된 줄인지 확인합니다.
+        if "CIFS: Attempting to mount" in current_line:
+            # 로그 라인을 공백으로 쪼개서 단어 리스트로 만듭니다.
+            words = current_line.split()
+
+            # 필요한 정보 추출
+            log_time = " ".join(words[0:3]) # 예: "Nov  5 12:12:53"
+            shared_folder = words[-1]      # 예: "//172.16.11.1/SMB_log"
+            status = "성공" # 일단 '성공'으로 가정합니다.
+
+            # '실패'인지 확인하는 로직 (가장 중요한 부분)
+            # 현재 줄이 파일의 마지막 줄이 아닌지 먼저 확인해야 다음 줄을 볼 수 있습니다.
+            if (i + 1) < len(log_lines):
+                next_line = log_lines[i+1]
+                # 다음 줄에 실패를 의미하는 키워드가 있는지 확인합니다.
+                if "STATUS_ACCOUNT_DISABLED" in next_line or "cifs_mount failed" in next_line:
+                    status = "실패 (계정 문제 또는 기타 오류)"
+
+            # 추출한 정보를 기록 대장에 추가합니다.
+            record = [log_time, shared_folder, status]
+            access_ledger.append(record)
+
+    # 4. 연결 종료
+    ssh_client.close()
+    print("분석을 완료하고 연결을 종료했습니다.")
+
+
+    # --- 결과 출력 및 파일 저장 부분 ---
+    print("\n--- SMB/CIFS 접속 기록 관리 대장 ---")
+
+    with open(output_filename, 'w', encoding='utf-8') as f:
+        if len(access_ledger) > 0:
+            # 파일에 제목쓰고 줄바꿈
+            f.write("--- SMB/CIFS 접속 기록 관리 대장 ---\n")
+
+            for record in access_ledger:
+                # 화면 출력과 파일 저장을 위해 한 줄의 내용을 변수에 저장합니다.
+                log_entry = f"시간: {record[0]}, 공유 폴더: {record[1]}, 상태: {record[2]}"
+
+                # 1. 화면에 출력
+                print(log_entry)
+
+                # 2. 파일에 기록 (줄바꿈 \n 추가)
+                f.write(log_entry + "\n")
+
+            # ## 추가 ##: 파일 저장이 완료되었음을 알려줍니다.
+            print("---------------------------------")
+            print(f"\n>> 결과가 '{output_filename}' 파일에 성공적으로 저장되었습니다.")
+
+        else:
+            message = "로그 파일에서 유효한 SMB/CIFS 접속 시도 기록을 찾지 못했습니다."
+            print(message)
+            f.write(message + "\n") # ## 추가 ##: 기록이 없는 경우에도 파일에 해당 내용을 기록
+            print("---------------------------------")
+
+
+except Exception as e:
+    print(f"오류가 발생했습니다: {e}")

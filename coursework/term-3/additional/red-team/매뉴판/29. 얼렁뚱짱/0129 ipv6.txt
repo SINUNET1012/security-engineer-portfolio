@@ -1,0 +1,359 @@
+시작하기 전 ipv6는 아이피 등록을 통해
+링크로컬 주소부터 얻고 프레임릴레이 브로드캐스트설정과 라우팅을 해야함. it means 'step by step'
+
+관리자 모드 > 유니캐스트 라우팅 설정
+인터페이스 > 프레임릴레이 설정
+인터페이스 > ipv6 enable > ipv6 add ~~
+
+R1
+conf t
+ipv6 unicast/routing
+
+int s1/0
+enc fra
+no sh
+
+int lo 0
+ipv6 enable
+ipv6 add 2001::1:1:1:1/64
+
+int s1/0.1 mul
+ipv6 enable
+ipv6 add 2000::10:0:0:1/64
+///////////////////////////////////////////////////
+Loopback0                  [up/up]
+    FE80::C801:1CFF:FED0:0
+    2001::1:1:1:1
+Serial1/0.1                [up/up]
+    FE80::C801:1CFF:FED0:0
+    2000::10:0:0:1
+///////////////////////////////////////////////////
+
+frame/relay map ipv6 2000::10:0:0:2/64 102 b
+frame/relay map ipv6 2000::10:0:0:3/64 103 b
+frame/relay map ipv6 FE80::C802:2CFF:FE34:0
+frame/relay map ipv6 FE80::C803:22FF:FE0C:0
+
+R2
+conf t
+ipv6 unicast/routing
+
+int s1/0
+enc fra
+no sh
+
+int lo 0
+ipv6 enable
+ipv6 add 2002::2:2:2:2/64
+
+int s1/0.1 mul
+ipv6 enable
+ipv6 add 2000::10:0:0:2/64
+
+int s1/0.23 po
+ipv6 enable
+ipv6 add 2100::10:0:0:1/64
+////////////////////////////////////////////////////////
+Loopback0                  [up/up]
+    FE80::C802:2CFF:FE34:0
+    2002::2:2:2:2
+Serial1/0.1                [up/down]
+    FE80::C802:2CFF:FE34:0
+    2000::10:0:0:2
+Serial1/0.23               [up/down]
+    FE80::C802:2CFF:FE34:0
+    2100::10:0:0:1
+////////////////////////////////////////////////
+
+R3
+conf t
+ipv6 unicast/routing
+
+int lo 0
+ipv6 enable
+ipv6 add 2003::3:3:3:3/64
+
+int s1/0
+enc fra
+no sh
+
+int s1/3
+enc fra
+no sh
+
+int s1/0.1 mul
+ipv6 enable
+ipv6 add 2000::10:0:0:3/64
+
+int s1/0.32 po
+ipv6 enable
+ipv6 add 2100::10:0:0:2/64
+
+int s1/3.34 po
+ipv6 enable
+ipv6 add 1000::10:0:0:1/64
+
+int s1/3.35 po
+ipv6 enable
+ipv6 add 1200::10:0:0:1/64
+/////////////////////////
+Loopback0                  [up/up]
+    FE80::C803:22FF:FE0C:0
+    2003::3:3:3:3
+Serial1/0.1                [up/up]
+    FE80::C803:22FF:FE0C:0
+    2000::10:0:0:3
+Serial1/0.32               [up/up]
+    FE80::C803:22FF:FE0C:0
+    2100::10:0:0:2
+Serial1/3.34               [up/up]
+    FE80::C803:22FF:FE0C:0
+    1000::10:0:0:1
+Serial1/3.35               [up/up]
+    FE80::C803:22FF:FE0C:0
+    1200::10:0:0:1
+/////////////////////////////
+
+R4
+conf t
+ipv6 unicast-routing
+int lo 0
+ipv6 enable
+ipv6 add 2004::4:4:4:4/64
+int s1/3
+enc fra
+no sh
+int s1/3.43 po
+ipv6 enable
+ipv6 add 1000::10:0:0:2/64
+int s1/3.45 po
+ipv6 enable
+ipv6 add 1100::10:0:0:1/64
+/////////////////////////////////
+Loopback0                  [up/up]
+    FE80::C805:52FF:FE84:0
+    2004::4:4:4:4
+Serial1/3.43               [up/up]
+    FE80::C805:52FF:FE84:0
+    1000::10:0:0:2
+Serial1/3.45               [up/up]
+    FE80::C805:52FF:FE84:0
+    1100::10:0:0:1
+////////////////////////////////////
+
+R5
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 enable
+ ipv6 add 2005::5:5:5:5/64
+int s1/3
+ enc fra
+ no sh
+int s1/0
+ enc fra
+ no sh
+int s1/3.53 po
+ ipv6 enable
+ ipv6 add 1200::10:0:0:2/64
+int s1/3.54 po
+ ipv6 enable
+ ipv6 add 1100::10:0:0:2/64
+int s1/0.56 po
+ ipv6 enable
+ ipv6 add 1300::10:0:0:1/64
+int s1/0.57 po
+ ipv6 enable
+ ipv6 add 1400::10:0:0:1/64
+///////////////////////////////
+Loopback0                  [up/up]
+    FE80::C806:38FF:FE58:0
+    2005::5:5:5:5
+Serial1/0.56               [up/up]
+    FE80::C806:38FF:FE58:0
+    1300::10:0:0:1
+Serial1/0.57               [up/up]
+    FE80::C806:38FF:FE58:0
+    1400::10:0:0:1
+Serial1/3.53               [up/up]
+    FE80::C806:38FF:FE58:0
+    1200::10:0:0:2
+Serial1/3.54               [up/up]
+    FE80::C806:38FF:FE58:0
+    1100::10:0:0:2
+////////////////////////////////
+
+
+R6
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 enable
+ ipv6 add 2006::6:6:6:6/64
+int s1/0
+ enc fra
+ no sh
+int s1/0.65 po
+ ipv6 enable
+ ipv6 add 1300::10:0:0:2/64
+int s1/0.67 po
+ ipv6 enable
+ ipv6 add 1500::10:0:0:1/64
+///////////////////////////////
+Loopback0                  [up/up]
+    FE80::C807:42FF:FED0:0
+    2006::6:6:6:6
+Serial1/0.65               [up/down]
+    FE80::C807:42FF:FED0:0
+    1300::10:0:0:2
+Serial1/0.67               [up/down]
+    FE80::C807:42FF:FED0:0
+    1500::10:0:0:1
+/////////////////////////////////
+
+R7
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 add 2007::7:7:7:7/64
+int s1/0
+ enc fra
+ no sh
+int s1/3
+ enc fra
+ no sh
+int s1/0.75 po
+ ipv6 add 1400::10:0:0:2/64
+int s1/0.76 po
+ ipv6 add 1500::10:0:0:2/64
+int s1/3.7 mul
+ ipv6 add 1600::10:0:0:1/64
+///////////////////////////////
+Loopback0                  [up/up]
+    FE80::C808:29FF:FEC4:0
+    2007::7:7:7:7
+Serial1/0.75               [up/up]
+    FE80::C808:29FF:FEC4:0
+    1400::10:0:0:2
+Serial1/0.76               [up/up]
+    FE80::C808:29FF:FEC4:0
+    1500::10:0:0:2
+Serial1/3.7                [up/up]
+    FE80::C808:29FF:FEC4:0
+    1600::10:0:0:1
+     
+//////////////////////////////////
+
+R8
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 add 2008::8:8:8:8/64
+int s1/3
+ enc fra
+ no sh
+int s1/0
+ enc fra
+ no sh
+int s1/3.8 mul
+ ipv6 add 1600::10:0:0:2/64
+int s1/3.89 po
+ ipv6 add 1700::10:0:0:1/64
+///////////////////////////
+Loopback0                  [up/up]
+    FE80::C809:35FF:FE10:0
+    2008::8:8:8:8
+Serial1/3.8                [up/up]
+    FE80::C809:35FF:FE10:0
+    1600::10:0:0:2
+Serial1/3.89               [up/up]
+    FE80::C809:35FF:FE10:0
+    1700::10:0:0:1
+///////////////////////////
+R9
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 add 2009::9:9:9:9/64
+int s1/3
+ enc fra
+ no sh
+int s1/0
+ enc fra
+ no sh
+int s1/3.9 mul
+ ipv6 add 1600::10:0:0:3/64
+int s1/3.98 po
+ ipv6 add 1700::10:0:0:2/64
+int s1/0.911 mul
+ ipv6 add 3000::10:0:0:2/64
+int s1/0.910 po
+ ipv6 add 3100::10:0:0:1/64
+////////////////////////////
+Loopback0                  [up/up]
+    FE80::C80A:31FF:FE24:0
+    2009::9:9:9:9
+Serial1/0.910              [up/up]
+    FE80::C80A:31FF:FE24:0
+    3100::10:0:0:1
+Serial1/0.911              [up/up]
+    FE80::C80A:31FF:FE24:0
+    3000::10:0:0:2
+Serial1/3.9                [up/up]
+    FE80::C80A:31FF:FE24:0
+    1600::10:0:0:3
+Serial1/3.98               [up/up]
+    FE80::C80A:31FF:FE24:0
+    1700::10:0:0:2
+////////////////////////////
+
+R10
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 add 2010::10:10:10:10/64
+int s1/3
+ enc fra
+ no sh
+int s1/0
+ enc fra
+ no sh
+int s1/0.10 mul
+ ipv6 add 3000::10:0:0:3/64
+int s1/0.109 po
+ ipv6 add 3100::10:0:0:2/64
+//////////////////////////////
+Loopback0                  [up/up]
+    FE80::C80B:46FF:FE98:0
+    2010::10:10:10:10
+Serial1/0.10               [up/down]
+    FE80::C80B:46FF:FE98:0
+    3000::10:0:0:3
+Serial1/0.109              [up/down]
+    FE80::C80B:46FF:FE98:0
+    3100::10:0:0:2
+/////////////////////////////
+
+
+R11
+conf t
+ipv6 unicast-routing
+int lo 0
+ ipv6 add 2011::11:11:11:11/64
+int s1/3
+ enc fra
+ no sh
+int s1/0
+ enc fra
+ no sh
+int s1/0.10 mul
+ ipv6 add 3000::10:0:0:1/64
+////////////////////////////////
+Loopback0                  [up/up]
+    FE80::C80C:1FFF:FEBC:0
+    2011::11:11:11:11
+Serial1/0.10               [up/down]
+    FE80::C80C:1FFF:FEBC:0
+    3000::10:0:0:1
+//////////////////////////////////
+진짜개힘드네진짜이건아니지

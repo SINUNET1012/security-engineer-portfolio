@@ -1,0 +1,32 @@
+Oct 28 16:06:45.048 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 16:06:45.049 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 52910.
+Oct 28 16:06:45.310 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 16:06:45.312 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\PROJECT02\project-files\dynamips 
+Oct 28 16:06:45.314 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\PROJECT02\project-files\dynamips
+Oct 28 16:06:45.314 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\PROJECT02\project-files\dynamips\0ad506ce-38c8-4da0-b2bd-3a515737a904 
+Oct 28 16:06:45.316 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\PROJECT02\project-files\dynamips\0ad506ce-38c8-4da0-b2bd-3a515737a904
+Oct 28 16:06:45.316 HYPERVISOR: exec_cmd: vm create R5 4 c7200 
+Oct 28 16:06:45.333 VM: VM R5 created.
+Oct 28 16:06:45.335 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5068 
+Oct 28 16:06:45.335 HYPERVISOR: exec_cmd: c7200 get_mac_addr R5 
+Oct 28 16:06:45.336 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 28 16:06:45.337 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-FE 
+Oct 28 16:06:45.341 HYPERVISOR: exec_cmd: vm set_disk0 R5 0 
+Oct 28 16:06:45.343 HYPERVISOR: exec_cmd: vm set_exec_area R5 64 
+Oct 28 16:06:45.345 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 28 16:06:45.346 HYPERVISOR: exec_cmd: vm set_idle_pc R5 0x60645960 
+Oct 28 16:06:45.350 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 16:06:45.351 HYPERVISOR: exec_cmd: c7200 set_mac_addr R5 ca04.2068.0000 
+Oct 28 16:06:45.354 HYPERVISOR: exec_cmd: vm set_nvram R5 512 
+Oct 28 16:06:45.356 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 28 16:06:45.357 HYPERVISOR: exec_cmd: vm slot_add_binding R5 1 0 PA-4T+ 
+Oct 28 16:06:45.358 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 28 16:06:45.358 HYPERVISOR: exec_cmd: vm slot_add_binding R5 2 0 PA-4E 
+Oct 28 16:06:45.361 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5068 
+Oct 28 16:07:18.239 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 28 16:07:18.247 HYPERVISOR: exec_cmd: vm extract_config R5 
+Oct 28 16:07:18.254 HYPERVISOR: exec_cmd: vm delete R5 
+Oct 28 16:07:18.254 VM: VM R5 destroyed.
+Oct 28 16:07:18.407 HYPERVISOR: exec_cmd: hypervisor stop 
+Oct 28 16:07:18.815 HYPERVISOR: Stopped.
+Oct 28 16:07:18.815 GENERAL: reset done.

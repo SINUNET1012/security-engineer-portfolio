@@ -1,0 +1,15 @@
+# EDU custom ModSecurity rules (lab use only).
+#
+# Rule IDs:
+# - 100010: SQL Injection (SQLi)
+# - 100020: File Inclusion / Directory Traversal (LFI/RFI)
+# - 100030: Cross-Site Scripting (XSS)
+
+# (1) SQL Injection
+#SecRule REQUEST_URI|ARGS "(?i)(\bunion\b\s+\bselect\b|\bor\b\s*1\s*=\s*1\b)" "id:100010,phase:2,deny,status:403,log,msg:'EDU SQLi detected',t:none,t:urlDecodeUni"
+
+# (2) File Inclusion / Directory Traversal
+#SecRule REQUEST_URI|ARGS "(?i)(\.\./|\.\.\\|/etc/passwd|boot\.ini|win\.ini|php://|file://)" "id:100020,phase:2,deny,status:403,log,msg:'EDU File Inclusion/Traversal detected',t:none,t:urlDecodeUni"
+
+# (3) XSS
+#SecRule REQUEST_URI|ARGS "(?i)(<\s*script\b|onerror\s*=|javascript:)" "id:100030,phase:2,deny,status:403,log,msg:'EDU XSS detected',t:none,t:urlDecodeUni"

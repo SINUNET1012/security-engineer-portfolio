@@ -1,0 +1,26 @@
+<R1>
+10.5.48.0/20 next hop 10.5.32.2 static
+0.0.0.0/0 next hop 10.5.0.2 default
+<R3>
+10.5.16.0/20 next hop 10.5.32.1 static
+0.0.0.0/0 next hop 10.5.32.3 default
+<R5>
+10.5.16.0/20 next hop 10.5.0.1 static
+10.5.48.0/20 next hop 10.5.32.2 static
+10.5.208.0/20 next hop 10.5.192.2 static
+10.5.64.0/18 next hop 10.5.64.2 summary
+172.16.0.0/16 next hop 10.5.128.2 default
+0.0.0.0/0 next hop 10.5.128.2 default
+<R2>
+0.0.0.0/0 next hop 10.5.80.2 default
+<R9>
+0.0.0.0/0 next hop 10.5.64.1 default
+<R6>
+10.5.0.0/16 next hop 10.5.128.1 summary
+0.0.0.0/0 next hop 172.16.0.1 default
+<R7>
+0.0.0.0/0 next hop 10.5.192.1 default
+<R8>
+0.0.0.0/0 next hop 10.5.208.1 default
+
+

@@ -1,0 +1,144 @@
+오후 2:30 2026-01-15IP/Frame-Relay 설정
+
+<R1>
+R1(config)#int s1/0
+R1(config-if)#enc fr
+R1(config-if)#no sh
+
+R1(config-if)#int s1/0.1 mul
+R1(config-subif)#ip add 123.1.1.1 255.255.255.0
+R1(config-subif)#frame-relay map ip 123.1.1.2 102 b
+R1(config-subif)#frame-relay map ip 123.1.1.3 103 b
+
+R1(config)#int lo 0
+R1(config-if)#ip add 1.1.1.1 255.255.255.0
+R1(config-if)#no sh
+
+
+<R2>
+R2(config)#int s1/0
+R2(config-if)#enc fr
+R2(config-if)#no sh
+
+R2(config-if)#int s1/0.23 po
+R2(config-subif)#ip add 23.1.1.1 255.255.255.0
+R2(config-subif)#frame-relay interface-dlci 203 b
+
+R2(config)#int s1/0.21 mul
+R2(config-subif)#ip add 123.1.1.2 255.255.255.0
+R2(config-subif)#frame-relay map ip 123.1.1.1 201 b
+R2(config-subif)#frame-relay map ip 123.1.1.3 201 b
+
+R2(config)#int lo 0
+R2(config-if)#ip add 2.2.2.2 255.255.255.0
+R2(config-if)#no sh
+
+
+<R3>
+R3(config)#int s1/0
+R3(config-if)#enc fr
+R3(config-if)#no sh
+
+R3(config-if)#int s1/0.32 po
+R3(config-subif)#ip add 23.1.1.2 255.255.255.0
+R3(config-subif)#frame-relay interface-dlci 302 b
+
+R3(config)#int s1/0.34 po
+R3(config-subif)#ip add 34.1.1.1 255.255.255.0
+R3(config-subif)#frame-relay interface-dlci 304
+
+R3(config)#int s1/0.304 po
+R3(config-subif)#ip add 43.1.1.1 255.255.255.0
+R3(config-subif)#frame-relay interface-dlci 314
+
+R3(config)#int s1/0.31 mul
+R3(config-subif)#ip add 123.1.1.3 255.255.255.0
+R3(config-subif)#frame-relay map ip 123.1.1.1 301 b
+R3(config-subif)#frame-relay map ip 123.1.1.2 301
+
+R3(config)#int lo 0
+R3(config-if)#ip add 3.3.3.3 255.255.255.0
+R3(config-if)#no sh
+
+<R4>
+R4(config)#int s1/0
+R4(config-if)#enc fr
+R4(config-if)#no sh
+
+R4(config-if)#int s1/0.43 po
+R4(config-subif)#ip add 34.1.1.2 255.255.255.0
+R4(config-subif)#frame-relay interface-dlci 403 b
+
+R4(config)#int s1/0.403 po
+R4(config-subif)#ip add 43.1.1.2 255.255.255.0
+R4(config-subif)#frame-relay interface-dlci 413 b
+
+R4(config)#int lo 0
+R4(config-if)#ip add 4.4.4.4 255.255.255.0
+R4(config-if)#no sh
+
+
+OSPF 설정
+<R1>
+R1#conf t
+R1(config)#router ospf 1
+R1(config-router)#router-id 1.1.1.1
+R1(config-router)#network 1.1.1.0 0.0.0.255 area 0
+R1(config-router)#network 123.1.1.0 0.0.0.255 area 0
+
+<R2>
+R2#conf t
+R2(config)#router ospf 1
+R2(config-router)#router-id 2.2.2.2
+R2(config-router)#network 2.2.2.0 0.0.0.255 area 0
+R2(config-router)#network 123.1.1.0 0.0.0.255 area 0
+
+<R3>
+R3#conf t
+R3(config)#router ospf 1
+R3(config-router)#router-id 3.3.3.3
+R3(config-router)#network 3.3.3.0 0.0.0.255 area 0
+R3(config-router)#network 123.1.1.0 0.0.0.255 area 0
+R3(config-router)#network 23.1.1.0 0.0.0.255 area 0
+R3(config-router)#network 34.1.1.0 0.0.0.255 area 1
+R3(config-router)#network 34.1.1.0 0.0.0.255 area 1
+R3(config-router)#network 43.1.1.0 0.0.0.255 area 1
+
+<R4>
+R4#conf t
+R4(config)#router ospf 1
+R4(config-router)#router-id 4.4.4.4
+R4(config-router)#network 4.4.4.0 0.0.0.255 area 1
+R4(config-router)#network 34.1.1.0 0.0.0.255 area 1
+R4(config-router)#network 43.1.1.0 0.0.0.255 area 1
+
+
+
+
+
+[neighbor 설정]
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#router ospf 1
+R1(config-router)#neig
+R1(config-router)#neighbor 123.1.1.2
+R1(config-router)#neighbor 123.1.1.3
+R1(config-router)#
+R1(config-router)#
+*Jan 15 14:22:44.359: %OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on Serial1/0.123 from LOADING to FULL, Loading Done
+*Jan 15 14:22:44.359: %OSPF-5-ADJCHG: Process 1, Nbr 3.3.3.3 on Serial1/0.123 from LOADING to FULL, Loading Done
+R1(config-router)#
+
+
+
+R2(config-router)#neighbor 123.1.1.1
+R2(config-router)#neighbor 123.1.1.31
+R2(config-router)#
+
+R3(config-router)#nei 123.1.1.1
+R3(config-router)#nei 123.1.1.2
+R3(config-router)#nei 34.1.1.2
+R3(config-router)#
+
+R4(config-router)#neighbor 34.1.1.1
+

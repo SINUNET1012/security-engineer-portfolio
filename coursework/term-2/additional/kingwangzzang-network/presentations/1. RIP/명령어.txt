@@ -1,0 +1,64 @@
+명령어 모음
+
+1.key-chain
+
+R1
+conf t
+key chain RIP
+key 1
+key-string cisco
+ex
+ex
+int s1/0
+ip rip authentication mode md5
+ip rip authentication key-chain RIP
+
+R2
+conf t
+key chain RIP
+key 1
+key-string cisco
+ex
+ex
+int s1/0
+ip rip authentication mode md5
+ip rip authentication key-chain RIP
+-----------------------------------------------------------------------------------------------
+2. distribute-list
+
+R1
+conf t
+router rip
+version 2
+network 10.32.0.0
+network 10.64.0.0
+no auto-summary
+end
+
+conf t
+access-list 10 deny 10.32.0.0 0.15.255.255
+access-list 10 permit any
+
+conf t
+router rip
+distribute-list 10 out s1/0
+
+R2
+sh ip route
+------------------------------------------------------------------------------------------------
+3. offset-list 설정
+
+R1
+1). ACL 만들기
+access-list 20 permit 10.64.0.0 0.15.255.255
+
+2). R4에서 offset-list 적용
+conf t
+router rip
+offset-list 20 out 5 s1/1
+
+확인
+각 라우터 들어가서
+sh ip route
++ 각 라우터구간 와이어샤크 캡쳐
+

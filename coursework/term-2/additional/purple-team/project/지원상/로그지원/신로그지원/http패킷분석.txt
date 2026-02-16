@@ -1,0 +1,183 @@
+#번호가 다를 수 있음 ㅎㅎ;
+#이게 연속으로 시도해서 비정상처럼 보인걸지도..?
+
+1️. 로그인 크래킹(Brute Force) 의심 구간
+
+[119276]
+POST /login.php (application/x-www-form-urlencoded)
+
+비정상 사유:
+짧은 시간 내 인증 시도 발생 (첫 시도)
+
+공격 유형:
+Brute Force Login 시작 지점
+
+[119548]
+POST /login.php
+
+비정상 사유:
+같은 세션에서 즉시 재시도 발생
+→ 수동 로그인 패턴과 다름
+
+공격 유형:
+Password Guessing / Credential Attack
+
+[119594]
+POST /login.php
+
+비정상 사유:
+같은 목적지로 지속적인 POST 반복 요청
+
+공격 유형:
+자동화 로그인 크래킹 패턴
+
+[120268]
+POST /login.php
+
+비정상 사유:
+인증 실패 이후 즉각 재시도 지속
+
+공격 유형:
+계정 무차별 대입(Brute Force)
+
+[120286]
+POST /login.php
+
+비정상 사유:
+요청 간 간격이 매우 짧음
+→ 도구 사용 가능성 높음
+
+공격 단계:
+초기 침투(계정 크래킹 단계)
+
+32. SQL Injection 취약점 페이지 접근
+
+[120150]
+GET /vulnerabilities/sqli/
+
+비정상 사유:
+운영 서비스 사용 경로가 아닌
+취약점 테스트 전용 URL 접근
+
+공격 유형:
+SQL Injection Reconnaissance
+
+[121224]
+GET /vulnerabilities/sqli/
+
+비정상 사유:
+보안레벨 변경 이후 재접근
+→ 의도적 공격 시나리오 흐름
+
+공격 단계:
+취약점 확인 및 사전 탐색
+
+3. Command Injection 공격 시도
+
+[121258]
+GET /vulnerabilities/exec/
+
+분석:
+Command Injection 페이지 진입
+
+판정:
+취약점 공격 단계 돌입
+
+[121469]
+POST /vulnerabilities/exec/
+
+비정상 사유:
+명령 실행 파라미터 전달
+→ 서버 측 명령 실행 여부 확인
+
+공격 유형:
+OS Command Injection Attempt
+
+[121585]
+POST /vulnerabilities/exec/
+
+비정상 사유:
+값 변경 → 결과 확인 패턴 반복
+
+공격 단계:
+취약점 악용
+
+[125005]
+POST /vulnerabilities/exec/
+
+비정상 사유:
+시간이 지나도 동일 요청 반복
+→ 장기간 침투 테스트 패턴
+
+공격 의미:
+지속적 명령 실행 검증
+
+4. 웹쉘 업로드 및 명령 실행
+
+[139965]
+GET /vulnerabilities/exec/shell.php?cmd=…
+
+비정상 사유:
+cmd 파라미터에 OS 명령 포함
+(/bin/sh, 인코딩 포함)
+
+판정:
+웹쉘 기반 원격 명령 실행(RCE)
+
+[139973]
+GET /vulnerabilities/exec/shell.php
+
+비정상 사유:
+웹쉘 정상 동작 여부 재확인
+
+공격 단계:
+권한 유지 / 쉘 확보 단계
+
+5. 백도어 실행 및 지속적 접근 시도
+
+[141568]
+GET /vulnerabilities/exec/backdoor.php
+
+비정상 사유:
+정상 서비스 구조에 존재할 수 없는 파일명
+→ 의도적 백도어 파일 호출
+
+공격 유형:
+Backdoor Execution Attempt
+
+[141812]
+GET /vulnerabilities/exec/backdoor.php
+
+비정상 사유:
+504 Gateway Timeout 이후 재시도 발생
+→ persistent 연결 시도 패턴
+
+공격 단계:
+지속성 확보(Persistence)
+
+[144174]
+GET /vulnerabilities/exec/backdoor.php
+
+비정상 사유:
+시간 경과 후 다시 접근
+→ 시스템 내 잔존 여부 확인
+
+공격 의미:
+사후 침투 유지 점검
+
+🟡 최종 공격 흐름 요약 (Kill Chain)
+
+① 로그인 인증 반복 시도
+→ Brute Force 의심
+
+② security.php 보안 레벨 변경
+→ 방어 환경 약화
+
+③ SQLi / Command Injection 접근
+→ 취약점 악용 단계
+
+④ shell.php 실행
+→ 웹쉘 기반 RCE
+
+⑤ backdoor.php 반복 호출
+→ 지속적 원격 접근 시도

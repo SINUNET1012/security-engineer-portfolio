@@ -1,0 +1,191 @@
+<R1>
+conf t
+int loopback 0
+ip add 2.1.1.1 255.255.255.0
+
+interface e2/0
+ip add 1.1.7.1 255.255.255.0
+no shutdown
+
+interface e2/1
+ip address 1.1.8.1 255.255.255.0 
+no shutdown
+
+interface e2/2
+ip address 1.1.9.1 255.255.255.0
+no shutdown
+exit
+
+conf t
+router eigrp 100 (AS넘버)
+network 1.1.7.0 0.0.0.255
+network 1.1.8.0 0.0.0.255
+network 1.1.9.0 0.0.0.255
+network 2.1.1.0 0.0.0.255
+no au
+-------------------------------------------
+<ESW10>
+enable
+vlan database
+vlan 50
+vlan 60
+exit
+conf t
+no ip routing 
+
+interface f1/0
+switchport mode access
+switchport access vlan 50
+no shutdown
+exit
+
+interface f1/1
+switchport mode access
+switchport access vlan 50
+no shutdown
+exit
+
+interface f1/2
+switchport mode access
+switchport access vlan 60
+no shutdown
+exit
+
+interface f1/3
+switchport mode access
+switchport access vlan 60
+no shutdown
+exit
+
+interface f1/14
+switchport mode access
+switchport access vlan 60
+no shutdown
+exit
+
+interface f1/15
+switchport mode access
+switchport access vlan 50
+no shutdown
+exit
+end
+---------------------------------------
+<ESW7>
+vlan database
+vlan 50
+exit
+
+conf t
+ip routing
+router eigrp 100
+network 1.1.7.0 0.0.0.255
+network 3.1.5.0 0.0.0.255
+
+track 10 int f0/0 line-protocol
+
+interface f0/0
+ip address 1.1.7.2 255.255.255.0
+no shutdown
+
+interface f1/0
+switchport mode access
+switchport access vlan 50
+no shutdown
+
+int vlan 50
+ip address 3.1.5.1 255.255.255.0
+glbp 1 ip 3.1.5.254
+glbp 1 priority 150
+glbp 1 weighting track 10 decrement 20
+glbp 1 preempt
+no shutdown
+exit
+-------------------------------------------
+<ESW8>
+vlan database
+vlan 50
+vlan 60
+exit
+
+configure terminal
+ip routing
+router eigrp 100
+network 1.1.8.0 0.0.0.255
+network 3.1.5.0 0.0.0.255
+network 3.1.6.0 0.0.0.255
+
+track 10 int f0/0 line-protocol
+
+interface f0/0
+ip address 1.1.8.2 255.255.255.0
+no shutdown
+
+int f1/1
+switchport mode access
+switchport access vlan 50
+no sh
+
+int f1/2
+switchport mode access
+switchport access vlan 60
+no sh
+exit
+
+ip routing
+int vlan 50
+ip address 3.1.5.2 255.255.255.0
+glbp 1 ip 3.1.5.254
+glbp 1 priority 145
+glbp 1 weighting track 10 decrement 20
+glbp 1 preempt
+no shutdown
+exit
+
+int vlan 60
+ip add 3.1.6.1 255.255.255.0
+glbp 2 ip 3.1.6.254
+glbp 2 priority 150
+glbp 2 weighting track 10 decrement 20
+glbp 2 preempt
+no shutdown
+exit
+------------------------------------
+<ESW9>
+vlan database
+vlan 60
+exit
+
+conf t
+ip routing
+router eigrp 100
+network 1.1.9.0 0.0.0.255
+network 3.1.6.0 0.0.0.255
+
+track 10 int f0/0 line-protocol
+
+interface f0/0
+ip address 1.1.9.2 255.255.255.0
+no shutdown
+
+interface f1/3
+switchport mode access
+switchport access vlan 60
+no shutdown
+
+int vlan 60
+ip address 3.1.6.2 255.255.255.0
+glbp 2 ip 3.1.6.254
+glbp 2 priority 145
+glbp 2 weighting track 10 decrement 20
+glbp 2 preempt
+no shutdown
+exit
+---------------------------------
+• PC1 (VLAN 50): ip 3.1.5.10 3.1.5.254
+• PC2 (VLAN 60): ip 3.1.6.10 3.1.6.254
+----------------------------------
+[최종 확인 명령어]
+glbp 정보 : show glbp brief
+ip 할당정보 : show ip in bri
+routing 정보 : sh ip route
+protocol정보 : sh ip protocols

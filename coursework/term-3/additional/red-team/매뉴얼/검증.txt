@@ -1,0 +1,1 @@
+sudo grep -nE 'id "100010"|id "100020"|id "100030"|EDU ' /var/log/httpd/modsec_audit.log | tail -n 50

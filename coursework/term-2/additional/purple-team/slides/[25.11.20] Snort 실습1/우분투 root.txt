@@ -1,0 +1,12 @@
+sudo passwd root
+<REDACTED>
+
+sudo nano /etc/ssh/sshd_config
+
+PermitRootLogin yes
+PasswordAuthentication yes
+PubkeyAuthentication yes
+추가
+
+sudo systemctl restart ssh
+재시작

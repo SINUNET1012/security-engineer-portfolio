@@ -1,0 +1,84 @@
+# ==========================================
+# 1. 정찰 및 스캔 탐지 (Reconnaissance)
+# ==========================================
+# ICMP Ping 탐지
+alert icmp any any -> any any (msg:"ICMP Ping Detected"; itype:8; sid:1000001; rev:1;)
+
+# DNS 영역 전송 시도 탐지 (dnsenum 등 도구 사용 시)
+# TCP/UDP 모두 감시하고 가변적인 위치의 AXFR 코드를 탐지
+alert ip any any -> any 53 (msg:"DNS Zone Transfer Attempt (AXFR)"; content:"|00 fc|"; sid:1000002; rev:2;)
+
+# Generic DNSENUM 활동 탐지 (UDP 기반 활동 감시)
+alert udp any any -> any 53 (msg:"Generic DNSENUM Tool Activity Detected"; content:"|01 00 00 01 00 00 00 00 00 00|"; offset:2; pcre:"/\x0c[a-z]{12}[\x01-\x3f]/"; content:"|00 01 00 01|"; distance:1; sid:1000003; rev:1;)
+
+# Nmap Stealth Scan (SYN Scan) 탐지
+alert tcp any any -> any 80,443 (msg:"SCAN Nmap SYN Stealth Scan Detected"; flags:S; flow:stateless; detection_filter:track by_src, count 20, seconds 10; sid:1000004; rev:1;)
+
+# Nmap PHP Version Probe 탐지 (수식어 위치 최적화)
+alert tcp any any -> any 80 (msg:"SCAN Nmap PHP Version Probe"; flow:to_server,established; content:"User-Agent|3A|"; http_header; nocase; content:"Nmap"; distance:0; within:40; sid:1000005; rev:1;)
+
+# Nmap OS/Service Detection (GenericLines) 탐지
+alert tcp any any -> any any (msg:"Nmap GenericLines Service Probe Detected"; content:"|0d 0a 0d 0a|"; depth:4; sid:1000006; rev:1;)
+
+# Web Fingerprinting (WhatWeb) 탐지
+alert tcp any any -> any any (msg:"WhatWeb Scan Detected"; content:"WhatWeb"; http_header; nocase; sid:1000007; rev:1;)
+
+# ==========================================
+# 2. 무차별 대입 및 서비스 거부 공격 (Brute Force & DoS)
+# ==========================================
+# FTP 로그인 시도 탐지 (USER/PASS)
+alert tcp any any -> any 21 (msg:"FTP Login Attempt - USER"; content:"USER"; nocase; sid:1000008; rev:1;)
+alert tcp any any -> any 21 (msg:"FTP Login Attempt - PASS"; content:"PASS"; nocase; sid:1000009; rev:1;)
+
+# SSH Brute Force 공격 탐지
+alert tcp any any -> any 22 (msg:"SSH Brute Force Attack Detected"; flags:S; detection_filter:track by_src, count 10, seconds 60; sid:1000010; rev:1;)
+
+# HTTP DoS 공격 탐지 (임계치를 200으로 상향 조정)
+alert udp any any -> any any (msg:"DoS Attack - Excessive HTTP Requests"; flow:to_server; detection_filter:track by_src, count 200, seconds 10; sid:1000011; rev:2;)
+
+# ==========================================
+# 3. 웹 취약점 및 주입 공격 (Injection & XSS & CSRF)
+# ==========================================
+# SQL Injection 탐지 (특수문자 Hex 처리로 구문 에러 방지)
+alert tcp any any -> any 80 (msg:"SQLi Attempt - Semicolon"; content:"|3b|"; http_uri; sid:1000012; rev:1;)
+alert tcp any any -> any 80 (msg:"SQLi Attempt - Hash"; content:"|23|"; http_uri; sid:1000013; rev:1;)
+alert tcp any any -> any 80 (msg:"SQLi Attempt - Quotes"; content:"|27|"; http_uri; sid:1000014; rev:1;)
+alert tcp any any -> any 80 (msg:"SQLi Attempt - UNION"; content:"union"; http_uri; nocase; sid:1000015; rev:1;)
+alert tcp any any -> any 80 (msg:"SQLi Attempt - SUBSTRING"; content:"substring"; http_uri; nocase; sid:1000016; rev:1;)
+
+# Command Injection 탐지 (POST 데이터 내 특수문자 감시)
+alert tcp any any -> any 80 (msg:"Command Injection Attempt (Semicolon)"; flow:established,to_server; content:"POST"; http_method; pcre:"/(\x3b|%3b)/P"; sid:1000017; rev:2;)
+
+# Reflected XSS 탐지 (스크립트 태그)
+alert tcp any any -> any any (msg:"XSS Attempt - Script Tag"; content:"<script>"; http_uri; nocase; sid:1000018; rev:1;)
+
+# 쿠키 탈취 시도 탐지 (JavaScript 쿠키 접근)
+alert tcp any any -> any any (msg:"Possible Cookie Theft Attempt"; flow:to_server,established; content:"document.cookie"; http_uri; nocase; sid:1000019; rev:1;)
+
+# CSRF 공격 탐지 (Referer 헤더 및 키워드 감시)
+alert tcp any any -> any 80 (msg:"CSRF Attempt Detected"; content:"Referer|3a|"; http_header; content:"csrf"; http_uri; nocase; sid:1000020; rev:1;)
+
+# ==========================================
+# 4. 파일 취약점 및 사후 활동 (LFI, File Upload, Exploit)
+# ==========================================
+# LFI 공격 탐지 (경로 탐색 및 시스템 파일 접근)
+alert tcp any any -> any 80 (msg:"LFI Attempt - Path Traversal"; content:"|2e 2e 2f|"; http_uri; nocase; sid:1000021; rev:1;)
+alert tcp any any -> any 80 (msg:"LFI Attempt - /etc/passwd"; content:"/etc/passwd"; http_uri; nocase; sid:1000022; rev:1;)
+
+# 파일 업로드 공격 탐지 (웹쉘 의심 확장자 감시)
+alert tcp any any -> any 80 (msg:"Suspicious File Upload - PHP"; flow:to_server,established; content:"filename="; http_client_body; content:".php"; http_client_body; sid:1000023; rev:1;)
+
+# 리버스 쉘/백도어 접근 탐지
+alert tcp any any -> any any (msg:"Exploit - Backdoor Access Detected"; flow:to_server,established; content:"/vulnerabilities/exec/backdoor.php"; nocase; sid:1000024; rev:1;)
+
+# 수정된 웹쉘 업로드 탐지 룰
+alert tcp any any -> any 80 (msg:"Webshell Upload Attempt - PHP"; flow:established,to_server; content:"POST"; http_method; content:"Content-Disposition: form-data|3b|"; content:".php"; distance:1; http_client_body; nocase; sid:1000025; rev:3;)
+
+# 세미콜론(;)을 이용한 명령어 삽입 시도 탐지
+alert tcp any any -> any 80 (msg:"Command Injection Attempt - Semicolon"; content:"|3b|"; http_client_body; sid:1000026; rev:1;)
+
+# 일반적인 쉘 명령어(id, cat, whoami 등) 실행 탐지
+alert tcp any any -> any 80 (msg:"Suspicious Shell Command Execution"; pcre:"/(id|whoami|ifconfig|cat\s+\/etc\/passwd)/i"; sid:1000027; rev:1;)
+
+# Netcat 리버스 쉘 코드가 포함된 웹쉘 업로드 탐지 룰
+alert tcp any any -> any any (msg:"Webshell Upload - Netcat Reverse Shell Payload Detected"; flow:established,to_server; content:"POST"; http_method; content:"Content-Disposition: form-data|3b|"; http_client_body; content:".php"; http_client_body; pcre:"/(nc|netcat)\s+[\d\.]+\s+\d+.*-e/Pi"; classtype:attempted-admin; sid:1000028; rev:2;)

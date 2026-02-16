@@ -1,0 +1,42 @@
+
+
+
+
+pap :아이디와 비밀번호를 설정하고 아이디와 비밀번호를 비교하며 회선 인증 
+R1
+conf t
+username R1 password cisco
+
+int s1/0
+ppp authentication pap
+ppp pap sent-username R2 password cisco
+
+R2
+conf t
+username R1 password cisco
+
+int s1/0
+ppp authentication pap
+ppp pap sent-username R1 password cisco
+
+
+
+chap : 아이디와 비밀번호를 설정하고 아이디와 비밀번호 암호화 한 후 비교하며 회선 인증 
+R1
+ppp authentication chap
+ppp chap hostname R2
+ppp chap password cisco
+
+R2
+ppp authentication chap
+ppp chap hostname R1
+ppp chap password cisco
+
+
+
+
+debug ppp authentication : 로그 확인 
+
+un all: 모든 디버깅 끄는 명령어
+
+실무에선 시스템 다운 가능성 있으니 쓰지 말자

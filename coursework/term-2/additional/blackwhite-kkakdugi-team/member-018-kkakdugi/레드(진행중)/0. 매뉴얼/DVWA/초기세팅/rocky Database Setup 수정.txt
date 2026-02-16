@@ -1,0 +1,64 @@
+*mariadb 가 켜져있는지 확인 필수
+systemctl status mariadb
+
+
+1. vim /etc/php.ini 설정파일에서 3가지 항목 on으로 변경
+
+ - display_errors=On
+ - display_startup_errors=On
+ - allow_url_include=On
+
+1-1. systemctl restart php-fpm 으로 설정 적용
+
+2. mod_rewrite는 기본적으로 Enable이 되어있으나 로키 오류로 인해 disabled라고 뜸
+
+ - 수정할 필요 X
+
+3. reCAPTCHA Key 설정 방법
+
+- https://www.google.com/recaptcha/
+  구글에 검색 후 시작하기 클릭
+
+3-1. 라벨
+ - dvwa
+
+3-2. reCAPTCHA 유형
+ - 테스트(v2)
+   - "로봇이 아닙니다." 체크박스
+
+3-3. 도메인
+ - dvwa.diaudwo.com
+    - + 클릭하여 추가
+
+3-4. 제출
+
+3-5. 키 복사
+
+3-6. 사이트 키 복사
+ - 6LfjWyMsAAAAAFZEeGeqMODNz8eOCIVlCMdCI8t_
+
+3-7. 비밀 키 복사
+ - 6LfjWyMsAAAAAMEc5bLBB5qN4_s4BU1eH_nvvdCj
+
+3-8. vim /home/dvwa/config/config.inc.php
+
+$_DVWA[ 'recaptcha_public_key' ]  = getenv('RECAPTCHA_PUBLIC_KEY') ?: ' 안에 사이트 키 넣기 ';
+$_DVWA[ 'recaptcha_private_key' ] = getenv('RECAPTCHA_PRIVATE_KEY') ?: ' 안에 비밀 키 넣기 ';
+
+3-9. 새로고침
+
+4. Writable folder 경로 
+
+   - chmod 777 /home/dvwa/hackable/uploads
+   - chmod 777 -R /home/dvwa/config
+ 권한 문제로 위 두 파일 777 주면 되는되는데 나는 귀찮아서
+
+   - chmod -R 777 /home/dvwa
+ dvwa 폴더와 하위파일 전체 다 준다
+
+적용 완료 시 다시 한 번 Create/Reset Database 눌러서 초기화 진행
+
+로그인 아이디/비번 admin/password
+
+5. DVWA Security 설정
+ - 취약사이트로서 Security level을 Low로 변경

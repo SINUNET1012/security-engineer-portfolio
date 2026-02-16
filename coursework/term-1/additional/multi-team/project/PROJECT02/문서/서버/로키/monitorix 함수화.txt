@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import subprocess
+
+def run_cmd(cmd):
+    print(f">>> 실행: {cmd}")
+    result = subprocess.run(cmd, shell=True, text=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    print(result.stdout)
+    if result.returncode != 0:
+        print(f"❗ 명령어 실패: {cmd}")
+        exit(1)
+
+def install_dependencies():
+    run_cmd("sudo dnf install -y epel-release")
+    run_cmd("sudo dnf install -y perl perl-FindBin")
+    run_cmd("sudo dnf install -y perl-Config-General perl-HTTP-Server-Simple perl-File-Which perl-Data-Dumper perl-Time-HiRes")
+    run_cmd("sudo dnf install -y perl-libwww-perl")
+    run_cmd("sudo dnf clean all")
+    run_cmd("sudo dnf install -y rrdtool-perl")
+
+def restart_monitorix():
+    run_cmd("sudo systemctl restart monitorix")
+    run_cmd("sudo systemctl status monitorix --no-pager")
+
+def main():
+    install_dependencies()
+    restart_monitorix()
+
+if __name__ == "__main__":
+    main()
+
+

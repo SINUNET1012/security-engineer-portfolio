@@ -1,0 +1,52 @@
+Proxy)
+HAproxy
+Reversproxy
+
+IPS)
+PFsense
+suricata
+
+IDS)
+logstesh
+wazuh
+zabbix
+
+보안 정책)
+IPtables
+fail2ban
+mod_security
+portsentry
+SSH 키인증
+
+보안검사)
+rkhunter
+amavis
+clamav
+spamassassin
+
+WAS)
+Nginx
+Apache
+
+WEB)
+pydio
+roundcube (postfix, dovecot)
+wordpress
+https
+Guacamole
+
+자동화)
+Ansible
+
+DB)
+Maria DB
+
+동기화, 백업)
+Rsync
+SQL dump
+cron tab
+NFS
+
+WIN10 보안 정책)
+방화벽 설정
+

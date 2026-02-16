@@ -1,0 +1,36 @@
+Oct 28 18:10:04.320 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 18:10:04.321 HYPERVISOR: Started on IP = 172.16.8.1, TCP port = 57501.
+Oct 28 18:10:04.833 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 18:10:04.833 HYPERVISOR: exec_cmd: hypervisor working_dir D:\gns3\23.resistnetwork\project-files\dynamips 
+Oct 28 18:10:04.833 GENERAL: working_dir=D:\gns3\23.resistnetwork\project-files\dynamips
+Oct 28 18:10:04.833 HYPERVISOR: exec_cmd: hypervisor working_dir D:\gns3\23.resistnetwork\project-files\dynamips\56604ef4-81bb-4811-bba0-0404884c2a4d 
+Oct 28 18:10:04.834 GENERAL: working_dir=D:\gns3\23.resistnetwork\project-files\dynamips\56604ef4-81bb-4811-bba0-0404884c2a4d
+Oct 28 18:10:04.834 HYPERVISOR: exec_cmd: vm create R6 6 c7200 
+Oct 28 18:10:04.835 VM: VM R6 created.
+Oct 28 18:10:04.835 HYPERVISOR: exec_cmd: vm set_con_tcp_port R6 5006 
+Oct 28 18:10:04.835 HYPERVISOR: exec_cmd: c7200 get_mac_addr R6 
+Oct 28 18:10:04.836 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 18:10:04.836 HYPERVISOR: exec_cmd: vm slot_add_binding R6 0 0 C7200-IO-FE 
+Oct 28 18:10:04.837 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 18:10:04.837 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 18:10:04.837 HYPERVISOR: exec_cmd: vm set_idle_pc R6 0x601bde04 
+Oct 28 18:10:04.838 HYPERVISOR: exec_cmd: vm set_exec_area R6 64 
+Oct 28 18:10:04.838 HYPERVISOR: exec_cmd: vm set_nvram R6 512 
+Oct 28 18:10:04.838 HYPERVISOR: exec_cmd: vm set_disk0 R6 0 
+Oct 28 18:10:04.839 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 18:10:04.839 HYPERVISOR: exec_cmd: vm slot_add_binding R6 1 0 PA-4T+ 
+Oct 28 18:10:04.840 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 28 18:10:04.840 HYPERVISOR: exec_cmd: vm slot_add_binding R6 2 0 PA-4E 
+Oct 28 18:10:04.917 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 18:10:10.178 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 18:12:44.227 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 18:12:50.966 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 02:15:59.236 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 02:16:36.543 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 02:17:45.573 HYPERVISOR: exec_cmd: vm set_ios R6 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 04:02:26.728 HYPERVISOR: exec_cmd: nio create_udp udp-d6a6a2c5-8bf4-4c8b-b710-ff9b601ccaa0 10028 127.0.0.1 10029 
+Oct 29 04:02:27.055 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R6 1 0 udp-d6a6a2c5-8bf4-4c8b-b710-ff9b601ccaa0 
+Oct 29 04:02:27.056 HYPERVISOR: exec_cmd: vm get_status R6 
+Oct 29 04:02:44.054 HYPERVISOR: exec_cmd: nio create_udp udp-414c06f3-dd6f-4067-9242-f229c2cd5ed9 10042 127.0.0.1 10043 
+Oct 29 04:02:44.057 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R6 2 0 udp-414c06f3-dd6f-4067-9242-f229c2cd5ed9 
+Oct 29 04:02:44.057 HYPERVISOR: exec_cmd: vm get_status R6 

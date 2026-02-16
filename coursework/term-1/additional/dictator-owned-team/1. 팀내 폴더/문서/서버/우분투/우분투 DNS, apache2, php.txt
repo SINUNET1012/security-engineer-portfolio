@@ -1,0 +1,100 @@
+# Ubuntu DNS 서버 만들기
+
+# home 디렉터 diaudwo와 test만들기
+cd /home/ 
+useradd -m test
+chmod 777 test
+
+useradd -m diaudwo
+chmod 777 diaudwo
+
+# A기본 Apache 설정에 포트 80 하나로 설정
+vim /etc/apache2/ports.conf
+
+# VirtualHost 추가를 위해 vhost 설정 파일 만들기
+cd /etc/apache2/sites-available/
+cp -ap 000-default.conf vhost.conf
+
+# 만든 vhost 설정 파일에 홈페이지 둘다 포트 80으로 통일
+vim /etc/apache2/sites-available/vhost.conf
+
+
+<VirtualHost *:80>
+        ServerAdmin ww1.diaudwo.com
+        DocumentRoot /home/diaudwo
+        ErrorLog "/var/log/apache2/ww1_error_log"
+        CustomLog "/var/log/apache2/ww1_access_log" combined
+
+        <Directory "/home/diaudwo/">
+                AllowOverride None
+                Options Indexes FollowSymLinks
+                Require all granted
+       </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+        ServerAdmin ww2.diaudwo.com
+        DocumentRoot /home/test
+        ErrorLog "/var/log/apache2/ww2_error_log"
+        CustomLog "/var/log/apache2/ww2_access_log" combined
+
+        <Directory "/home/test/">
+                AllowOverride None
+                Options Indexes FollowSymLinks
+                Require all granted
+       </Directory>
+</VirtualHost>
+
+
+# 설정 변경후 활성화, Apache 재시작
+a2ensite vhost.conf
+systemctl restart apache2
+
+# 내가 가진 도메인 zone파일 설정
+vim /etc/bind/named.conf.local
+
+zone "diaudwo.com" {
+    type master;
+    file "/etc/bind/db.diaudwo.com";
+};
+
+# zone 데이터베이스 파일 만들기
+cp -ap /etc/bind/db.local /etc/bind/db.diaudwo.com
+
+chmod 777 db.diaudwo.com
+chown root:bind db.diaudwo.com
+
+# 만든 zone파일 설정
+vim /etc/bind/db.diaudwo.com
+; BIND data file for local loopback interface
+;
+$TTL    1D
+@       IN      SOA     ns.diaudwo.com. diaudwo.diaudwo.com. (
+                         25092401    ; Serial
+                         1D             ; Refresh
+                         1H             ; Retry
+                         1W             ; Expire
+                         3H    )        ; Negative Cache TTL
+;
+@       IN      NS      ns.diaudwo.com.
+@       IN      A       172.16.17.25
+@       IN      AAAA    ::1
+
+
+ns        IN A    172.16.17.25
+ww1     IN A    172.16.17.25
+ww2     IN A    172.16.17.25
+ftp       IN A    172.16.17.25
+ww3     IN A    172.16.17.25
+
+
+php
+
+apt update
+apt-get install php
+설치 확인 : php –version
+apache2 파일 폴더로 이동 : cd /var/www/html
+vim a.php파일 만들어 다음과 같이 작성
+메롱 <?php phpinfo(); ?>
+http://{VM IP}/a.php 로 접속
+

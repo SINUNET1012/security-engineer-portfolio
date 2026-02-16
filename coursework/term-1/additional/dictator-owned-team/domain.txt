@@ -1,0 +1,10 @@
+rocky_bon: 37.0.0.3
+rocky_backbon: 37.128.0.2
+rocky_data: 37.96.0.2
+Ubuntu_dae: 37.232.0.3
+Ubuntu_data: 
+Ubuntu_bon: 37.64.0.14
+w10_bon: 37.64.0.12
+w10_data:
+w10_dae: 37.232.0.3
+w10_user:192.168.0.2/24

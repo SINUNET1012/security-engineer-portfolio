@@ -1,0 +1,146 @@
+import paramiko
+from datetime import datetime
+
+# --- 1. 탐지 규칙 설정 ---
+# 서버의 접속 정보를 입력해주세요.
+server_ip = '172.16.11.100'
+server_port = 22
+username = 'root'
+password = '<REDACTED>'
+
+# 경로
+log_file_path = '/var/log/xferlog'
+
+# 결과를 저장할 파일 이름입니다.
+output_filename = 'ftp_inspection_report.xferlog.txt'
+
+# --- "수상한 행동"의 기준은 이전과 동일합니다. ---
+# 1. 업무 외 시간 (시작 시간 >= 16시, 종료 시간 < 24시)
+OFF_HOURS_START = 16
+OFF_HOURS_END = 24
+
+# 2. 전송 용량 기준 (단위: GB)
+SIZE_THRESHOLD_GB = 0.0001
+# GB를 바이트(byte) 단위로 변환
+SIZE_THRESHOLD_BYTES = SIZE_THRESHOLD_GB * 1024 * 1024 * 1024
+
+# 3. 무시할 시스템 계정 목록
+SYSTEM_USERS_TO_IGNORE = ['root', 'ftp', 'anonymous']
+
+
+# --- 2. 프로그램 코드 부분 (수정됨) ---
+
+# [수정 1] "점검 대상" 기록을 업로드와 다운로드로 나누어 저장할 리스트
+upload_list = []
+download_list = []
+
+try:
+    # SSH 클라이언트 준비 및 서버 연결
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    print(f"{server_ip} 서버에 연결을 시도합니다...")
+    ssh_client.connect(hostname=server_ip, port=server_port, username=username, password=password)
+    print("서버에 성공적으로 연결되었습니다.")
+
+    # SFTP를 통해 원격 로그 파일 읽기
+    sftp_client = ssh_client.open_sftp()
+    print(f"'{log_file_path}' 로그 파일을 열어 분석을 시작합니다.")
+
+    remote_file = sftp_client.open(log_file_path)
+    log_lines = remote_file.readlines()
+    remote_file.close()
+
+    # for문으로 로그를 한 줄씩 분석 시작
+    for line in log_lines:
+        try:
+            words = line.split()
+
+            if len(words) < 15:
+                continue
+
+            # --- "수사 규칙"과 하나씩 대조하는 부분 (수정됨) ---
+            
+            # [수정 2] 규칙 A: "업로드" 또는 "다운로드" 기록인지 확인
+            direction = words[11] # 'i': incoming(업로드), 'o': outgoing(다운로드)
+            
+            # 업로드나 다운로드가 아니면 분석할 필요가 없으므로 다음 줄로 넘어감
+            if direction not in ['i', 'o']:
+                continue
+
+            # 규칙 1: 시간을 분석해서 업무 외 시간인지 확인
+            time_str = words[3]
+            hour = int(time_str.split(':')[0])
+            is_off_hours = (hour >= OFF_HOURS_START) or (hour < OFF_HOURS_END)
+            
+            # 규칙 2: 사용자 계정 분석
+            access_mode = words[12]
+            user = words[13]
+            is_real_user = (access_mode == 'r') and (user not in SYSTEM_USERS_TO_IGNORE)
+            
+            # 규칙 3: 파일 크기 분석
+            file_size_bytes = int(words[7])
+            is_large_file = file_size_bytes >= SIZE_THRESHOLD_BYTES
+            
+            # --- 최종 판정: 모든 규칙에 해당하면 "점검 대상"으로 분류 ---
+            if is_off_hours and is_real_user and is_large_file:
+                # 보고서에 추가할 공통 정보들을 추출
+                log_date_str = " ".join(words[0:3] + [words[4]])
+                file_path = words[8]
+                file_size_gb = round(file_size_bytes / (1024*1024*1024), 4)
+                
+                record = [f"{log_date_str} {time_str}", user, file_path, f"{file_size_gb} GB"]
+                
+                # [수정 3] 방향(direction)에 따라 올바른 리스트에 추가
+                if direction == 'i':
+                    upload_list.append(record)
+                elif direction == 'o':
+                    download_list.append(record)
+        
+        except (IndexError, ValueError):
+            continue
+
+    ssh_client.close()
+    print("분석을 완료하고 연결을 종료했습니다.")
+
+
+    # --- 3. 결과 보고서 작성 부분 (수정됨) ---
+    print(f"\n--- FTP 이상 기록 탐지 결과 ---")
+    with open(output_filename, 'w', encoding='utf-8') as f:
+        f.write("--- FTP 이상 기록 탐지 결과 ---\n")
+        f.write(f"탐지 기준: 업무 외 시간({OFF_HOURS_START}:00~{OFF_HOURS_END}:00)에 {SIZE_THRESHOLD_GB}GB 이상 전송\n")
+        
+        # --- 업로드 결과 출력 ---
+        f.write("\n--- [이상 업로드 기록] ---\n")
+        print("\n--- [이상 업로드 기록] ---")
+        if len(upload_list) > 0:
+            for record in upload_list:
+                log_entry = f"시간: {record[0]}, 사용자: {record[1]}, 파일: {record[2]}, 크기: {record[3]}"
+                print(log_entry)
+                f.write(log_entry + "\n")
+        else:
+            message = "탐지된 점검 대상 업로드 기록이 없습니다."
+            print(message)
+            f.write(message + "\n")
+        
+        # --- 다운로드 결과 출력 ---
+        f.write("\n--- [이상 다운로드 기록] ---\n")
+        print("\n--- [이상 다운로드 기록] ---")
+        if len(download_list) > 0:
+            for record in download_list:
+                log_entry = f"시간: {record[0]}, 사용자: {record[1]}, 파일: {record[2]}, 크기: {record[3]}"
+                print(log_entry)
+                f.write(log_entry + "\n")
+        else:
+            message = "탐지된 점검 대상 다운로드 기록이 없습니다."
+            print(message)
+            f.write(message + "\n")
+            
+        print("---------------------------------------------")
+        summary = f"\n>> 총 {len(upload_list)}건의 업로드, {len(download_list)}건의 다운로드 기록을 '{output_filename}' 파일에 저장했습니다."
+        print(summary)
+        f.write(summary + "\n")
+
+
+except Exception as e:
+    print(f"오류가 발생했습니다: {e}")

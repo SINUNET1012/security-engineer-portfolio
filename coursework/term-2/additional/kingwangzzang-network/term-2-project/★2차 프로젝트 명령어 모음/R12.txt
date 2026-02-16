@@ -1,0 +1,57 @@
+R12
+
+conf t
+int s1/0
+enc fr
+no sh
+int s1/0.12 mul
+ip add 20.1.0.2 255.255.224.0
+frame-relay map ip 20.1.0.1 128 b
+frame-relay map ip 20.1.0.3 129 b
+no sh
+ex
+
+router rip
+version 2
+network 20.0.0.0
+no auto-summary
+
+router eigrp 100
+network 10.0.0.0
+no auto-summary
+ex
+
+conf t
+int f0/0
+ip add 10.1.48.2 255.255.248.0
+no sh
+
+rip -> eigrp로 재분배
+router eigrp 100
+redistribute rip metric 1544 100 255 1 1500
+ex
+eigrp -> rip로 재분배
+router rip
+version 2
+redistribute eigrp 100 metric 2
+end
+
+conf t
+int s1/1
+ip summary-address eigrp 100 20.1.0.0 255.255.0.0
+snmp-server community router RO
+end
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

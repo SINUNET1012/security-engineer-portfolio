@@ -1,0 +1,4 @@
+mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.off
+
+
+경로는 각자 상황에 맞게 수정.  

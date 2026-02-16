@@ -1,0 +1,35 @@
+관리 IP
+router@10.1.80.1
+router@10.1.0.2
+router@10.1.16.2
+router@10.1.56.2
+router@10.1.96.5
+router@10.1.96.6
+router@10.1.80.2
+router@20.1.0.8
+router@20.1.0.9
+router@10.1.40.2
+router@10.1.64.2
+router@10.1.48.2
+router@10.1.88.2
+switch@10.1.104.2
+switch@10.1.112.2
+switch@10.1.120.2
+switch@10.1.128.2
+switch@10.1.136.2
+switch@10.1.144.2
+switch@50.1.0.2
+switch@20.1.128.2
+switch@20.1.96.2
+switch@20.1.64.2
+switch@40.1.0.2
+switch@40.1.64.2
+switch@40.1.128.2
+switch@10.1.192.2
+switch@10.1.160.254
+switch@10.1.168.254
+switch@10.1.176.254
+switch@10.1.152.254
+switch@30.1.0.254
+
+FRSW 관리 IP X

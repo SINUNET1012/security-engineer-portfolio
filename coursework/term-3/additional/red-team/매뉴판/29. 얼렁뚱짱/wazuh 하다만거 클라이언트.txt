@@ -1,0 +1,42 @@
+설치
+sudo apt update
+sudo apt install -y auditd audispd-plugins
+서비스 시작/부팅등록
+sudo systemctl enable --now auditd
+sudo systemctl status auditd --no-pager -l
+룰 파일 생성/편집
+sudo vi /etc/audit/rules.d/custom.rules
+-------------------------------------------------
+## 관리자 권한 상승 감시 (sudoers 변경)
+-w /etc/sudoers -p wa -k priv_esc
+-w /etc/sudoers.d/ -p wa -k priv_esc
+
+## 쉘/프로그램 실행 감시 (execve)
+-a always,exit -F arch=b64 -S execve -k shell_activity
+-a always,exit -F arch=b32 -S execve -k shell_activity
+
+## 네트워크 설정 변경 감시 (Ubuntu 기준 후보들)
+-w /etc/netplan/ -p wa -k network_mod
+-w /etc/network/interfaces -p wa -k network_mod
+-w /etc/hosts -p wa -k network_mod
+-w /etc/resolv.conf -p wa -k network_mod
+
+## 계정/인증 관련 변경 감시
+-w /etc/passwd -p wa -k passwd_change
+-w /etc/shadow -p wa -k shadow_change
+-w /etc/group  -p wa -k group_change
+-w /etc/gshadow -p wa -k gshadow_change
+---------------------------------------------------
+룰 적용
+sudo augenrules --load
+sudo systemctl restart auditd
+룰 확인
+sudo auditctl -l
+
+우분투 클라이언트에 wazuh agent 설치
+curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --dearmor -o /usr/share/keyrings/wazuh-archive-keyring.gpg
+
+wazuh GPG 키 + repo 등록
+echo "deb [signed-by=/usr/share/keyrings/wazuh-archive-keyring.gpg] https://packages.wazuh.com/4.x/apt/ stable main" \
+| sudo tee /etc/apt/sources.list.d/wazuh.list
+

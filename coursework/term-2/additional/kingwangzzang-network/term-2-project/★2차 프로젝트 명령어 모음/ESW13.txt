@@ -1,0 +1,52 @@
+vlan database
+vlan 50
+vlan 60
+exit
+
+conf t
+no ip routing
+
+int f1/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shutdown
+exit
+
+int f1/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no shutdown
+end
+
+interface f1/2
+switchport mode access
+switchport access vlan 50
+no shutdown
+
+int f1/3
+switchport mode access
+switchport access vlan 60
+no shutdown
+
+int f1/4
+switchport mode access
+switchport access vlan 60
+no shutdown
+
+conf t
+snmp-server community switch RO
+end
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

@@ -1,0 +1,21 @@
+cygwin warning:
+  MS-DOS style path detected: Y:\4.\xEC\x97\xAC\xEB\x9F\xAC\xEB\xAA\x85\1\xEC\xB0\xA8 \xED\x94\x84\xEB\xA1\x9C\xEC\xA0\x9D\xED\x8A\xB8\PROJECT02\project-files\dynamips
+  Preferred POSIX equivalent is: /cygdrive/y/4.\xEC\x97\xAC\xEB\x9F\xAC\xEB\xAA\x85/1\xEC\xB0\xA8 \xED\x94\x84\xEB\xA1\x9C\xEC\xA0\x9D\xED\x8A\xB8/PROJECT02/project-files/dynamips
+  CYGWIN environment variable option "nodosfilewarning" turns off this warning.
+  Consult the user's guide for more details about POSIX paths:
+    http://cygwin.com/cygwin-ug-net/using.html#using-pathnames
+vm_mmap_open_file: unable to open file 'c3745_i12_rom' (No such file or directory)
+Cisco Router Simulation Platform (version 0.2.17-x86/Windows stable)
+Copyright (c) 2005-2011 Christophe Fillot.
+Build date: Aug 28 2017 08:26:42
+
+Log file: writing to dynamips_i1_log.txt
+ILT: loaded table "mips64j" from cache.
+ILT: loaded table "mips64e" from cache.
+ILT: loaded table "ppc32j" from cache.
+ILT: loaded table "ppc32e" from cache.
+Hypervisor TCP control server started (IP 172.16.26.1 port 50387).
+Hypervisor: closing control sockets.
+Hypervisor: closing remote client connections.
+Shutdown in progress...
+Shutdown completed.

@@ -1,0 +1,75 @@
+#!/bin/bash
+# 파일명: lamp.sh
+# 설명: Apache + PHP + MariaDB 기본 설치 및 웹 루트 변경
+# 사용자: purple
+
+echo "=== 1. LAMP 스택 기본 인프라 설치 시작 ==="
+
+# 설정 변수
+USER_HOME="/home/purple"
+HTTPD_CONF="/etc/apache2/sites-available/000-default.conf"
+APACHE_MAIN_CONF="/etc/apache2/apache2.conf"
+
+# 1. 시스템 업데이트
+echo "[1/7] 시스템 업데이트 및 필수 패키지 설치..."
+apt update -y
+apt install -y software-properties-common curl
+
+# 2. 패키지 설치
+echo "[2/7] Apache2, MariaDB, PHP 설치..."
+# 나중에 DB를 쓸 수 있게 php-mysql 모듈은 미리 설치합니다.
+apt install -y apache2 mariadb-server php libapache2-mod-php php-mbstring php-zip php-gd php-curl php-mysql
+
+# 3. 서비스 시작
+echo "[3/7] 서비스 시작 및 활성화..."
+systemctl enable apache2 mariadb
+systemctl start apache2 mariadb
+
+# 4. 방화벽 설정
+echo "[4/7] UFW 방화벽 (80번 포트) 허용..."
+if command -v ufw &> /dev/null; then
+    ufw allow http
+    ufw reload
+fi
+
+# 5. Apache 웹 루트 변경 (/var/www/html -> 사용자 홈)
+echo "[5/7] 웹 루트 경로를 $USER_HOME 으로 변경..."
+
+if [ ! -d "$USER_HOME" ]; then
+    echo "오류: $USER_HOME 디렉토리가 없습니다."
+    exit 1
+fi
+
+# 기존 설정 백업
+cp "$HTTPD_CONF" "${HTTPD_CONF}.bak_$(date +%F_%T)"
+cp "$APACHE_MAIN_CONF" "${APACHE_MAIN_CONF}.bak_$(date +%F_%T)"
+
+# 설정 변경
+sed -i "s|DocumentRoot /var/www/html|DocumentRoot $USER_HOME|g" "$HTTPD_CONF"
+sed -i "s|<Directory /var/www/>|<Directory $USER_HOME>|g" "$APACHE_MAIN_CONF"
+
+# 6. 권한 설정
+echo "[6/7] 디렉토리 권한 설정..."
+chmod 755 "$USER_HOME"
+chown -R purple:purple "$USER_HOME"
+
+# 7. 설치 확인용 파일 생성
+echo "[7/7] 설치 확인 파일(index.php) 생성..."
+# 기존 파일 백업
+[ -f "$USER_HOME/index.html" ] && mv "$USER_HOME/index.html" "$USER_HOME/index.html.bak"
+
+cat <<EOF > "$USER_HOME/index.php"
+<?php
+echo "<h1>LAMP Stack Infra Installed!</h1>";
+echo "<li>Apache is running.</li>";
+echo "<li>PHP version: " . phpversion() . "</li>";
+echo "<li>MariaDB is installed (Not configured yet).</li>";
+phpinfo();
+?>
+EOF
+chown purple:purple "$USER_HOME/index.php"
+
+# 서비스 재시작
+systemctl restart apache2
+
+echo "=== 설치 완료! (IP주소로 접속해서 확인하세요) ==="

@@ -1,0 +1,13 @@
+
+<VirtualHost *:80>
+    ServerName wp.ppp.com
+    DocumentRoot "/home/wp"
+    ErrorLog "/var/log/httpd/wp_error_log"
+    CustomLog "/var/log/httpd/wp_access_log" combined
+    <Directory "/home/wp/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+   </Directory>
+</VirtualHost>
+

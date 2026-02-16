@@ -1,0 +1,44 @@
+Feb 08 14:42:24.548 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Feb 08 14:42:24.549 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 62458.
+Feb 08 14:42:24.986 HYPERVISOR: exec_cmd: hypervisor version 
+Feb 08 14:42:24.988 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips 
+Feb 08 14:42:24.990 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips
+Feb 08 14:42:24.990 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips\d51810d5-752f-4c3f-b197-c17476c4d9b9 
+Feb 08 14:42:24.992 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips\d51810d5-752f-4c3f-b197-c17476c4d9b9
+Feb 08 14:42:24.993 HYPERVISOR: exec_cmd: vm create R12 33 c7200 
+Feb 08 14:42:25.010 VM: VM R12 created.
+Feb 08 14:42:25.012 HYPERVISOR: exec_cmd: vm set_con_tcp_port R12 5072 
+Feb 08 14:42:25.013 HYPERVISOR: exec_cmd: c7200 get_mac_addr R12 
+Feb 08 14:42:25.014 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:42:25.015 HYPERVISOR: exec_cmd: vm slot_add_binding R12 0 0 C7200-IO-FE 
+Feb 08 14:42:25.019 HYPERVISOR: exec_cmd: vm set_disk0 R12 0 
+Feb 08 14:42:25.020 HYPERVISOR: exec_cmd: vm set_exec_area R12 64 
+Feb 08 14:42:25.024 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:42:25.024 HYPERVISOR: exec_cmd: vm set_idle_pc R12 0x60645960 
+Feb 08 14:42:25.028 HYPERVISOR: exec_cmd: vm set_ios R12 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Feb 08 14:42:25.031 HYPERVISOR: exec_cmd: c7200 set_mac_addr R12 ca21.9174.0000 
+Feb 08 14:42:25.032 HYPERVISOR: exec_cmd: vm set_nvram R12 512 
+Feb 08 14:42:25.034 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:42:25.035 HYPERVISOR: exec_cmd: vm slot_add_binding R12 1 0 PA-4T+ 
+Feb 08 14:42:25.036 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:42:25.037 HYPERVISOR: exec_cmd: vm slot_add_binding R12 2 0 PA-4T+ 
+Feb 08 14:42:25.038 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:42:25.038 HYPERVISOR: exec_cmd: vm slot_add_binding R12 3 0 PA-4E 
+Feb 08 14:45:09.228 HYPERVISOR: exec_cmd: nio create_udp udp-3bff0acc-8786-4d82-9dc5-0814d79617a6 10544 127.0.0.1 10545 
+Feb 08 14:45:11.443 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R12 1 2 udp-3bff0acc-8786-4d82-9dc5-0814d79617a6 
+Feb 08 14:45:11.445 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:45:28.756 HYPERVISOR: exec_cmd: nio create_udp udp-bc59ed7c-b391-475c-bb9a-1368a72ab549 10598 127.0.0.1 10599 
+Feb 08 14:45:28.759 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R12 0 0 udp-bc59ed7c-b391-475c-bb9a-1368a72ab549 
+Feb 08 14:45:28.759 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 14:45:29.737 HYPERVISOR: exec_cmd: nio create_udp udp-a707de45-6c35-45f8-9455-6a4c3d73333b 10610 127.0.0.1 10611 
+Feb 08 14:45:29.740 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R12 3 1 udp-a707de45-6c35-45f8-9455-6a4c3d73333b 
+Feb 08 14:45:29.740 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 20:35:22.378 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 20:35:22.379 HYPERVISOR: exec_cmd: vm extract_config R12 
+Feb 08 20:35:29.189 HYPERVISOR: exec_cmd: vm get_status R12 
+Feb 08 20:35:29.767 HYPERVISOR: exec_cmd: vm extract_config R12 
+Feb 08 20:35:30.126 HYPERVISOR: exec_cmd: vm delete R12 
+Feb 08 20:35:30.473 VM: VM R12 destroyed.
+Feb 08 20:35:32.868 HYPERVISOR: exec_cmd: hypervisor stop 
+Feb 08 20:35:32.911 HYPERVISOR: Stopped.
+Feb 08 20:35:32.911 GENERAL: reset done.

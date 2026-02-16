@@ -1,0 +1,174 @@
+#!/bin/bash
+
+echo "===== [1] 사전 작업 확인 (Ubuntu) ====="
+echo "[+] SELinux 상태 확인"
+if command -v getenforce &>/dev/null; then
+    getenforce
+else
+    echo "SELinux 패키지가 설치되어 있지 않음 (Ubuntu는 기본적으로 SELinux 비활성화)"
+fi
+
+echo "[+] 방화벽 상태 확인 (ufw)"
+sudo ufw status
+
+echo "[+] 시스템 정보 도구 설치 (inxi)"
+sudo apt update && sudo apt install -y inxi
+
+echo "===== [2] Apache2 설치 ====="
+sudo apt install -y apache2
+
+echo "===== [3] Apache2 서비스 재시작 및 활성화 ====="
+sudo systemctl restart apache2
+sudo systemctl enable apache2
+
+echo "===== [4] 웹 서버 접속 확인 ====="
+IP=$(hostname -I | awk '{print $1}')
+echo "웹 브라우저에서 다음 주소로 접속해 보세요:"
+echo "👉 http://$IP:80"
+
+------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+# 1. 기본 웹 디렉터리 설정
+echo "===== [1] 기본 웹페이지 생성 ====="
+sudo mkdir -p /var/www/html
+echo "8team" | sudo tee /var/www/html/index.html
+
+# 2. 새 사용자 디렉터리 생성
+echo "===== [2] 사용자 디렉터리 생성 (/home/8team) ====="
+sudo mkdir -p /home/8team
+echo "8team custom page" | sudo tee /home/8team/index.html
+sudo chown -R www-data:www-data /home/8team
+
+# 3. Apache 설정 변경 - DocumentRoot 및 Directory
+echo "===== [3] Apache 설정 변경 (000-default.conf) ====="
+APACHE_CONF="/etc/apache2/sites-available/000-default.conf"
+
+# 백업
+sudo cp $APACHE_CONF ${APACHE_CONF}.bak
+
+# DocumentRoot 변경
+sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /home/8team|' $APACHE_CONF
+
+# <Directory> 설정 추가
+sudo tee /etc/apache2/conf-available/custom-dir.conf > /dev/null <<EOF
+<Directory "/home/8team">
+    AllowOverride None
+    Options Indexes FollowSymLinks
+    Require all granted
+</Directory>
+EOF
+
+sudo a2enconf custom-dir.conf
+
+# 4. VirtualHost 설정 추가
+echo "===== [4] VirtualHost 설정 추가 ====="
+sudo tee /etc/apache2/sites-available/vhost.conf > /dev/null <<EOF
+<VirtualHost *:80>
+    DocumentRoot "/home/8team"
+    <Directory "/home/8team/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:81>
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+
+sudo a2ensite vhost.conf
+
+# 5. 포트 81 활성화
+echo "===== [5] Apache가 포트 81을 리스닝하도록 설정 ====="
+sudo sed -i '/^Listen 80$/a Listen 81' /etc/apache2/ports.conf
+
+# 6. test 계정 추가
+echo "===== [6] 사용자 test 계정 생성 ====="
+sudo useradd -m test
+echo "test:test" | sudo chpasswd
+
+# 기본 웹 페이지 파일 생성
+sudo mkdir -p /home/test
+echo "test page on port 81" | sudo tee /home/test/index.html
+sudo chown -R www-data:www-data /home/test
+
+# 7. Apache 재시작
+echo "===== [7] Apache 재시작 ====="
+sudo systemctl reload apache2
+
+# 8. 결과 안내
+echo "===== [8] 설정 완료 ====="
+IP=$(hostname -I | awk '{print $1}')
+echo "✅ http://$IP        → /home/8team"
+echo "✅ http://$IP:81     → /home/test"
+
+--------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+echo "===== [1] Apache 포트 설정 (Listen 80만 사용) ====="
+# ports.conf 에서 Listen 81 제거
+sudo sed -i '/^Listen 81$/d' /etc/apache2/ports.conf
+
+# Listen 80이 없으면 추가
+grep -q "^Listen 80" /etc/apache2/ports.conf || echo "Listen 80" | sudo tee -a /etc/apache2/ports.conf
+
+echo "===== [2] 웹 루트 디렉터리 생성 및 권한 설정 ====="
+# /home/8team 디렉터리
+sudo mkdir -p /home/8team
+echo "<h1>Welcome to ww1.8team.com</h1>" | sudo tee /home/8team/index.html
+sudo chown -R www-data:www-data /home/8team
+
+# /home/test 디렉터리
+sudo mkdir -p /home/test
+echo "<h1>Welcome to ww2.8team.com</h1>" | sudo tee /home/test/index.html
+sudo chown -R www-data:www-data /home/test
+
+echo "===== [3] VirtualHost 설정 파일 생성 ====="
+VHOST_CONF="/etc/apache2/sites-available/vhost.conf"
+
+sudo tee "$VHOST_CONF" > /dev/null <<EOF
+<VirtualHost *:80>
+    ServerName ww1.8team.com
+    DocumentRoot "/home/8team"
+    <Directory "/home/8team/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName ww2.8team.com
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+
+echo "===== [4] 사이트 설정 적용 ====="
+sudo a2dissite 000-default.conf
+sudo a2ensite vhost.conf
+
+echo "===== [5] Apache 재시작 ====="
+sudo systemctl reload apache2
+
+echo "===== [6] 로컬 도메인 테스트 안내 ====="
+echo ""
+echo "※ 실제 도메인 대신 테스트하려면 /etc/hosts 파일에 다음을 추가하세요:"
+echo "------------------------------------------------------"
+echo "127.0.0.1   ww1.8team.com"
+echo "127.0.0.1   ww2.8team.com"
+echo "------------------------------------------------------"
+echo "그 후 웹 브라우저에서 접속:"
+echo "➡ http://ww1.8team.com"
+echo "➡ http://ww2.8team.com"

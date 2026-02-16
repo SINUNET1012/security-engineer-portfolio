@@ -1,0 +1,26 @@
+dhcp 서버 설정
+sudo apt install isc-dhcp-server
+
+
+sudo nano /etc/dhcp/dhcpd.conf 설정 변경
+
+default-lease-time 600;
+max-lease-time 7200;
+
+
+subnet 192.168.0.0 netmask 255.255.255.0 {    -<<0.0으로 수정을 함 해봅시다(수정완)
+    range 192.168.0.10 192.168.0.50;
+    option routers 192.168.0.1;
+    option domain-name-servers 8.8.8.8;
+}
+
+
+ip addr 인터페이스 이름 확인 후 (ens33)
+sudo nano /etc/default/isc-dhcp-server 에서
+INTERFACESv4="eth33" 으로 수정
+
+시작
+sudo systemctl start isc-dhcp-server
+
+상태확인
+sudo systemctl status isc-dhcp-server

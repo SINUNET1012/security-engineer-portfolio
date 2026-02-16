@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+echo ">>> EPEL 저장소 활성화"
+sudo dnf install -y epel-release
+
+echo ">>> 기본 perl 패키지 설치"
+sudo dnf install -y perl perl-FindBin
+
+echo ">>> perl 모듈 설치"
+sudo dnf install -y perl-Config-General perl-HTTP-Server-Simple perl-File-Which perl-Data-Dumper perl-Time-HiRes
+
+echo ">>> 추가 perl 모듈 설치"
+sudo dnf install -y perl-libwww-perl
+
+echo ">>> 캐시 정리"
+sudo dnf clean all
+
+echo ">>> rrdtool perl 모듈 설치"
+sudo dnf install -y rrdtool-perl
+
+echo ">>> Monitorix 서비스 재시작"
+sudo systemctl restart monitorix
+
+echo ">>> Monitorix 서비스 상태 확인"
+sudo systemctl status monitorix --no-pager

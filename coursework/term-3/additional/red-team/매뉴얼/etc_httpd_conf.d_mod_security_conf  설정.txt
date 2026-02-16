@@ -1,0 +1,9 @@
+SecRuleEngine On   <- 변경, 기본 On이면 냅두세여
+
+
+        IncludeOptional modsecurity.d/*.conf
+        IncludeOptional modsecurity.d/activated_rules/*.conf
+        IncludeOptional modsecurity.d/local_rules/*.conf
+
+
+위 내용을 </IfModule> 요기 바로 위에 붙여넣으셈요

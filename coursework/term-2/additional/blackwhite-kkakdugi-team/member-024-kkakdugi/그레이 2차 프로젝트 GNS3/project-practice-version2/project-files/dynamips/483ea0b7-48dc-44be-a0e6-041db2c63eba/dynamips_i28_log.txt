@@ -1,0 +1,35 @@
+Jan 03 16:43:00.824 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 03 16:43:00.824 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 58458.
+Jan 03 16:43:01.046 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 03 16:43:01.047 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 03 16:43:01.047 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 03 16:43:01.049 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\14dcfe77-f62f-4f4a-98fa-e6799ca64c0b 
+Jan 03 16:43:01.049 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\14dcfe77-f62f-4f4a-98fa-e6799ca64c0b
+Jan 03 16:43:01.060 HYPERVISOR: exec_cmd: vm create ESW10 14 c3745 
+Jan 03 16:43:01.061 VM: VM ESW10 created.
+Jan 03 16:43:01.071 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW10 5038 
+Jan 03 16:43:01.076 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW10 
+Jan 03 16:43:01.077 HYPERVISOR: exec_cmd: vm set_ios ESW10 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 03 16:43:01.078 HYPERVISOR: exec_cmd: vm get_status ESW10 
+Jan 03 16:43:01.078 HYPERVISOR: exec_cmd: vm set_idle_pc ESW10 0x60a7fc00 
+Jan 03 16:43:01.079 HYPERVISOR: exec_cmd: vm set_exec_area ESW10 64 
+Jan 03 16:43:01.080 HYPERVISOR: exec_cmd: vm set_ram ESW10 256 
+Jan 03 16:43:01.080 HYPERVISOR: exec_cmd: vm set_nvram ESW10 256 
+Jan 03 16:43:01.081 HYPERVISOR: exec_cmd: vm set_disk0 ESW10 1 
+Jan 03 16:43:01.082 HYPERVISOR: exec_cmd: vm get_status ESW10 
+Jan 03 16:43:01.082 HYPERVISOR: exec_cmd: vm slot_add_binding ESW10 1 0 NM-16ESW 
+Jan 03 16:43:01.083 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW10 5038 
+Jan 03 16:43:01.238 HYPERVISOR: exec_cmd: vm rename ESW10 ESW4 
+Jan 03 16:43:01.249 HYPERVISOR: exec_cmd: vm rename ESW4 ESW10 
+Jan 03 16:43:07.890 HYPERVISOR: exec_cmd: vm set_ios ESW10 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 03 16:43:28.698 HYPERVISOR: exec_cmd: vm set_ios ESW10 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 03 16:44:42.696 HYPERVISOR: exec_cmd: vm set_ios ESW10 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 03 16:45:26.334 HYPERVISOR: exec_cmd: vm set_ios ESW10 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 03 16:50:32.556 HYPERVISOR: exec_cmd: vm set_ios ESW10 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 03 17:00:42.963 HYPERVISOR: exec_cmd: vm get_status ESW10 
+Jan 03 17:00:42.963 HYPERVISOR: exec_cmd: vm extract_config ESW10 
+Jan 03 17:00:42.964 HYPERVISOR: exec_cmd: vm delete ESW10 
+Jan 03 17:00:42.964 VM: VM ESW10 destroyed.
+Jan 03 17:00:42.965 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 03 17:00:43.254 HYPERVISOR: Stopped.
+Jan 03 17:00:43.254 GENERAL: reset done.

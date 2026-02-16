@@ -1,0 +1,25 @@
+echo "8. 방화벽 설정"
+sudo sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+
+# 2) root 계정 로그인 시 firewalld 상태 출력
+PROFILE="/root/.bash_profile"
+if ! grep -q "firewalld --no-pager" "$PROFILE" 2>/dev/null; then
+    cat <<'EOF' >> "$PROFILE"
+
+echo "===== Firewall Status after Reboot ====="
+systemctl status firewalld --no-pager
+firewall-cmd --list-all
+echo "========================================"
+EOF
+fi
+
+# systemd 반영
+sudo systemctl daemon-reexec
+
+# ============ 재부팅 ============
+echo "모든 설정이 완료되었습니다. 곧 재부팅합니다..."
+sleep 3
+sudo reboot
+
+echo "9. jupyter notebook 실행 테스트"
+jupyter notebook --allow-root -ip=172.16.0.21 --port=8000

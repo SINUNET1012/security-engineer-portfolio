@@ -1,0 +1,50 @@
+Jan 05 17:04:22.368 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 05 17:04:22.369 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 54878.
+Jan 05 17:04:22.848 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 05 17:04:22.848 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 05 17:04:22.848 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 05 17:04:22.849 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\c44f3370-cd78-4706-a3e2-b5cf7cd1fd1e 
+Jan 05 17:04:22.849 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\c44f3370-cd78-4706-a3e2-b5cf7cd1fd1e
+Jan 05 17:04:22.849 HYPERVISOR: exec_cmd: vm create ESW25 56 c3745 
+Jan 05 17:04:22.850 VM: VM ESW25 created.
+Jan 05 17:04:22.850 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW25 5113 
+Jan 05 17:04:22.850 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW25 
+Jan 05 17:04:22.851 HYPERVISOR: exec_cmd: vm set_disk0 ESW25 1 
+Jan 05 17:04:22.851 HYPERVISOR: exec_cmd: vm set_exec_area ESW25 64 
+Jan 05 17:04:22.852 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 17:04:22.852 HYPERVISOR: exec_cmd: vm set_idle_pc ESW25 0x60a7fc00 
+Jan 05 17:04:22.853 HYPERVISOR: exec_cmd: vm set_ios ESW25 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 05 17:04:22.854 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW25 c438.bc5c.0000 
+Jan 05 17:04:22.854 HYPERVISOR: exec_cmd: vm set_nvram ESW25 256 
+Jan 05 17:04:22.855 HYPERVISOR: exec_cmd: vm set_ram ESW25 256 
+Jan 05 17:04:22.855 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 17:04:22.856 HYPERVISOR: exec_cmd: vm slot_add_binding ESW25 1 0 NM-16ESW 
+Jan 05 17:06:02.990 HYPERVISOR: exec_cmd: nio create_udp udp-e6f6eedd-8479-4813-a92a-609f00d88722 10616 127.0.0.1 10617 
+Jan 05 17:06:04.166 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW25 1 0 udp-e6f6eedd-8479-4813-a92a-609f00d88722 
+Jan 05 17:06:04.168 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 17:06:04.473 HYPERVISOR: exec_cmd: nio create_udp udp-3937573d-eb8a-4d56-832c-d62be4c0f49f 10620 127.0.0.1 10621 
+Jan 05 17:06:04.475 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW25 1 1 udp-3937573d-eb8a-4d56-832c-d62be4c0f49f 
+Jan 05 17:06:04.475 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 17:06:04.763 HYPERVISOR: exec_cmd: nio create_udp udp-8f2d8cbc-c2bd-421d-9bc7-28e9f5f67ce8 10624 127.0.0.1 10625 
+Jan 05 17:06:04.765 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW25 1 2 udp-8f2d8cbc-c2bd-421d-9bc7-28e9f5f67ce8 
+Jan 05 17:06:04.766 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 17:07:20.267 HYPERVISOR: exec_cmd: vm set_ios ESW25 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 05 17:07:22.154 HYPERVISOR: exec_cmd: vm set_ios ESW25 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 05 18:10:38.002 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 18:10:38.002 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding ESW25 1 2 
+Jan 05 18:10:38.003 HYPERVISOR: exec_cmd: nio delete udp-8f2d8cbc-c2bd-421d-9bc7-28e9f5f67ce8 
+Jan 05 18:14:32.506 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 05 18:14:32.506 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding ESW25 1 1 
+Jan 05 18:14:32.508 HYPERVISOR: exec_cmd: nio delete udp-3937573d-eb8a-4d56-832c-d62be4c0f49f 
+Jan 05 18:14:57.047 HYPERVISOR: exec_cmd: nio create_udp udp-da042b5f-1eed-48db-92eb-0f89363fe788 10606 127.0.0.1 10607 
+Jan 05 18:14:57.049 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW25 1 1 udp-da042b5f-1eed-48db-92eb-0f89363fe788 
+Jan 05 18:14:57.050 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 06 10:16:08.985 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 06 10:16:08.986 HYPERVISOR: exec_cmd: vm extract_config ESW25 
+Jan 06 10:16:09.284 HYPERVISOR: exec_cmd: vm get_status ESW25 
+Jan 06 10:16:09.286 HYPERVISOR: exec_cmd: vm extract_config ESW25 
+Jan 06 10:16:09.286 HYPERVISOR: exec_cmd: vm delete ESW25 
+Jan 06 10:16:09.286 VM: VM ESW25 destroyed.
+Jan 06 10:16:09.290 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 06 10:16:09.518 HYPERVISOR: Stopped.
+Jan 06 10:16:09.518 GENERAL: reset done.

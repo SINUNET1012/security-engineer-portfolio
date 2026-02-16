@@ -1,0 +1,10 @@
+0.2 기준 틀린거
+표6.4.2-1
+	arp 스'푸'핑 이 맞는듯
+	시나리오 1 whatweb이 추가 필요
+	시나리오 1 리버스쉘 추가 필요
+표6.4.2-2
+	시나리오 2 버전 스캐닝은 dnsenum이랑  dig, nmap임(whatweb x)
+            시나리오 2 "UNION SQLi" <- 이부분 blind injection을 의미하신거같음. 그래서 탐지 키워드도 UNION이나 SUBSTRING 추가로 넣어야할듯(기존거는 유지해도될듯?)
+	
+tail -f /var/log/apache2/access.log | grep -Ei "sleep|substr|ascii"

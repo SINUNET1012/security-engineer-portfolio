@@ -1,0 +1,205 @@
+
+vim /etc/named.rfc1912.zones
+
+zone "bs.com" IN {
+        type master;
+        file "bs.com.zone";
+        allow-update { none; };
+};
+
+zone "bn.com" IN {
+        type master;
+        file "bn.com.zone";
+        allow-update { none; };
+};
+
+zone "kwz.com" IN {
+        type master;
+        file "kwz.com.zone";
+        allow-update { none; };
+};
+
+zone "rd.com" IN {
+        type master;
+        file "rd.com.zone";
+        allow-update { none; };
+};
+
+zone "pp.com" IN {
+        type master;
+        file "pp.com.zone";
+        allow-update { none; };
+};
+
+zone "tj.com" IN {
+        type master;
+        file "tj.com.zone";
+        allow-update { none; };
+};
+
+======================================
+bs.com.zone
+
+$TTL 1D
+@       IN SOA   ns.bs.com. dns.bs.com. (
+                                        25123001        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+       	NS      ns.bs.com.
+        	A       172.16.*.**
+	AAAA    ::1
+	IN  	MX 10 	mails.bs.com.
+
+ns      	IN      	A      	172.16.*.**
+dns	IN	A	172.16.*.**
+dbms	IN	A	172.16.*.**
+cms	IN	A	172.16.*.**
+dms	IN	A	172.16.*.**
+mails 	IN	A	172.16.*.**
+back	IN	A	172.16.*.**
+snmp	IN	A	172.16.*.**		
+web	IN	A	172.16.*.**
+cnc	IN	A	172.16.*.**
+cl	IN	A	172.16.*.**		
+wp	IN	A	172.16.*.**
+jl	IN	A	172.16.*.**
+pydio	IN	A	172.16.*.**
+own	IN	A	172.16.*.**
+cube	IN	A	172.16.*.**
+
+======================================
+bn.com.zone
+
+$TTL 1D
+@       IN SOA   ns.bn.com. dns.bn.com. (
+                                        25122901        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+       	NS      ns.bn.com.
+        	A       172.16.*.**
+	AAAA    ::1
+
+ns      	IN      	A      	172.16.5.71
+dns	IN	A	172.16.5.71
+snmp	IN	A	172.16.5.71
+cnc	IN	A	172.16.5.71
+
+======================================
+kwz.com.zone
+
+$TTL 1D
+@       IN SOA   ns.kwz.com. dns.kwz.com. (
+                                        25122901        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+       	NS      ns.kwz.com.
+        	A       172.16.5.71
+	AAAA    ::1
+
+ns      	IN      	A      	172.16.5.71
+dns	IN	A	172.16.5.71
+R1      	IN      	A      	10.1.0.1
+R2      	IN      	A      	10.1.32.1
+R3      	IN      	A      	10.1.64.1
+R4      	IN      	A      	10.1.96.2
+R5      	IN      	A      	10.1.128.1
+R6      	IN      	A      	10.1.160.2
+R7      	IN      	A      	20.0.0.2
+L3SW1   	IN      	A      	192.168.10.1
+L3SW2   	IN      	A      	192.168.10.2
+L3SW3   	IN      	A      	192.168.20.1
+L3SW4   	IN      	A      	30.0.0.2
+L3SW5   	IN      	A      	192.168.30.1
+L3SW6   	IN      	A      	192.168.30.2
+L3SW7   	IN      	A      	30.1.0.2
+L3SW8   	IN      	A      	192.168.40.1
+L3SW9   	IN      	A      	192.168.40.2
+L3SW10  	IN      	A      	192.168.50.1
+L3SW13  	IN      	A      	192.168.60.1
+L3SW14	IN	A	192.168.60.2
+L3SW15	IN	A	192.168.70.1
+SPSW1   	IN      	A      	192.168.30.3
+SPSW2   	IN      	A      	192.168.40.3
+SPSW3   	IN      	A      	192.168.80.2
+PSW   	IN      	A      	192.168.10.3
+
+
+======================================
+rd.com.zone
+
+$TTL 1D
+@       IN SOA   ns.rd.com. dns.rd.com. (
+                                        25123001        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+       	NS      ns.rd.com.
+        	A       172.16.5.71
+	AAAA    ::1
+
+ns      	IN      	A      	172.16.5.71
+dns	IN	A	172.16.5.71
+k1      	IN      	A      	172.16.5.71
+k2      	IN      	A      	172.16.5.71
+k3      	IN      	A      	172.16.5.71
+vn      	IN      	A      	172.16.5.71
+
+======================================
+pp.com.zone
+
+$TTL 1D
+@       IN SOA   ns.pp.com. dns.pp.com. (
+                                        25122901        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+       	NS      ns.pp.com.
+        	A       172.16.5.71
+	AAAA    ::1
+
+ns      	IN      	A      	172.16.5.71
+dns	IN	A	172.16.5.71
+ono1     	IN      	A      	172.16.5.71
+ono2     	IN      	A      	172.16.5.71
+ono3     	IN      	A      	172.16.5.71
+cnc      	IN      	A      	172.16.5.71
+
+======================================
+tj.com.zone
+
+$TTL 1D
+@       IN SOA   ns.tj.com. dns.tj.com. (
+                                        25122901        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+       	NS      ns.tj.com.
+        	A       172.16.5.71
+	AAAA    ::1
+
+ns      	IN      	A      	172.16.5.71
+dns	IN	A	172.16.5.71
+wp	IN	A	172.16.5.71
+jl	IN	A	172.16.5.71
+pydio	IN	A	172.16.5.71
+own	IN	A	172.16.5.71
+cube	IN	A	172.16.5.71
+
+
+cp -ap named.localhost bs.com.zone
+cp -ap named.localhost bn.com.zone
+cp -ap named.localhost kwz.com.zone
+cp -ap named.localhost rd.com.zone
+cp -ap named.localhost pp.com.zone
+cp -ap named.localhost tj.com.zone
+
+named-checkzone bs.com /var/named/bs.com.zone

@@ -1,0 +1,41 @@
+Oct 28 10:23:06.309 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 10:23:06.309 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 49347.
+Oct 28 10:23:06.820 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 10:23:06.820 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips 
+Oct 28 10:23:06.820 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips
+Oct 28 10:23:06.821 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips\9a78b380-978e-48c8-9a7a-e1d289ec38e4 
+Oct 28 10:23:06.821 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips\9a78b380-978e-48c8-9a7a-e1d289ec38e4
+Oct 28 10:23:06.822 HYPERVISOR: exec_cmd: vm create ESW7 11 c3745 
+Oct 28 10:23:06.823 VM: VM ESW7 created.
+Oct 28 10:23:06.824 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW7 5011 
+Oct 28 10:23:06.824 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW7 
+Oct 28 10:23:06.825 HYPERVISOR: exec_cmd: vm set_disk0 ESW7 1 
+Oct 28 10:23:06.825 HYPERVISOR: exec_cmd: vm set_exec_area ESW7 64 
+Oct 28 10:23:06.826 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 10:23:06.826 HYPERVISOR: exec_cmd: vm set_idle_pc ESW7 0x6023f558 
+Oct 28 10:23:06.827 HYPERVISOR: exec_cmd: vm set_ios ESW7 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 10:23:06.828 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW7 c40b.1fd8.0000 
+Oct 28 10:23:06.829 HYPERVISOR: exec_cmd: vm set_nvram ESW7 256 
+Oct 28 10:23:06.829 HYPERVISOR: exec_cmd: vm set_ram ESW7 256 
+Oct 28 10:23:06.830 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 10:23:06.830 HYPERVISOR: exec_cmd: vm slot_add_binding ESW7 1 0 NM-16ESW 
+Oct 28 10:23:13.258 HYPERVISOR: exec_cmd: nio create_udp udp-c70f4549-40ed-46e6-8e37-a492962a7ee6 10050 127.0.0.1 10051 
+Oct 28 10:23:13.563 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW7 1 2 udp-c70f4549-40ed-46e6-8e37-a492962a7ee6 
+Oct 28 10:23:13.564 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 10:23:13.704 HYPERVISOR: exec_cmd: nio create_udp udp-8d6f851f-dd35-4056-8a47-21cfdf305472 10062 127.0.0.1 10063 
+Oct 28 10:23:13.707 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW7 1 4 udp-8d6f851f-dd35-4056-8a47-21cfdf305472 
+Oct 28 10:23:13.707 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 14:12:48.042 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 14:12:48.042 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding ESW7 1 2 
+Oct 28 14:12:48.043 HYPERVISOR: exec_cmd: nio delete udp-c70f4549-40ed-46e6-8e37-a492962a7ee6 
+Oct 28 14:12:52.311 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 14:12:52.312 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding ESW7 1 4 
+Oct 28 14:12:52.313 HYPERVISOR: exec_cmd: nio delete udp-8d6f851f-dd35-4056-8a47-21cfdf305472 
+Oct 28 14:12:58.255 HYPERVISOR: exec_cmd: nio create_udp udp-c796f303-61b1-472d-b5c3-99ad1572c139 10020 127.0.0.1 10021 
+Oct 28 14:12:58.257 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW7 1 2 udp-c796f303-61b1-472d-b5c3-99ad1572c139 
+Oct 28 14:12:58.258 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 14:49:55.979 HYPERVISOR: exec_cmd: vm set_ghost_status ESW7 2 
+Oct 28 14:49:55.989 HYPERVISOR: exec_cmd: vm set_ghost_file ESW7 C:\Users\TJ\Desktop\project-files\dynamips\c3745-adventerprisek9-mz.124-25d.image-256.ghost 
+Oct 28 14:49:55.989 HYPERVISOR: exec_cmd: vm get_status ESW7 
+Oct 28 14:49:55.998 HYPERVISOR: exec_cmd: vm set_config ESW7 configs\i11_startup-config.cfg 
+Oct 28 14:49:55.998 HYPERVISOR: exec_cmd: vm start ESW7 

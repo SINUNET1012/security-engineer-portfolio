@@ -1,0 +1,16 @@
+# systemd-resolved 중지 및 비활성화
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved
+
+# 심볼릭 링크 제거
+sudo unlink /etc/resolv.conf
+
+# 새 resolv.conf 파일 생성
+sudo bash -c 'cat > /etc/resolv.conf << EOF
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 1.1.1.1
+EOF'
+
+# 확인
+cat /etc/resolv.conf

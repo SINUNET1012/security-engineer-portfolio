@@ -1,0 +1,47 @@
+cafe_span_sw
+
+en
+conf t
+int vlan 1
+ip add 10.1.152.253 255.255.248.0
+no sh
+end
+
+conf t
+int g1/0
+no sh
+ex
+int g3/1
+no sh
+ex
+int g3/2
+no sh
+ex
+int g3/3
+no sh
+end
+
+conf t
+monitor session 1 source interface g3/1
+monitor session 1 destination interface g3/2
+end
+
+conf t
+snmp-server community switch RO
+
+conf t
+ip ssh version
+username bn
+password cisco
+username bn privilege 15 password cisco
+end
+
+conf t
+line vty 0 4
+transport input ssh
+login local
+end
+
+conf t
+ip ssh time-out 60
+ip ssh authentication-retries 3

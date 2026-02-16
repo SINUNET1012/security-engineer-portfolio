@@ -1,0 +1,6 @@
+window 10 설치 메뉴얼
+window 10 DHCP 메뉴얼
+X-RDP / vnc 메뉴얼 (설정 및 실행)
+php (로키)
+FTP?
+ubuntu VirtualHost

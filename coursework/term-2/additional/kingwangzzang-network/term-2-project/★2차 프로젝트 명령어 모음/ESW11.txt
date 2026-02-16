@@ -1,0 +1,61 @@
+vlan database
+vlan 50
+vlan 60
+exit
+
+conf t
+ip routing
+track 50 interface f0/0 line-protocol
+track 60 interface f0/0 line-protocol
+
+router rip
+version 2
+network 40.0.0.0
+no auto-summary
+exit
+
+int f0/0
+ip add 40.1.0.2 255.255.192.0
+no sh
+
+int f1/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+no sh
+
+int vlan 50
+ip add 40.1.128.1 255.255.192.0
+glbp 50 ip 40.1.128.254
+glbp 50 priority 150
+glbp 50 preempt
+glbp 50 weighting 100 lower 85 upper 95
+glbp 50 weighting track 50 decrement 20
+no shutdown
+
+interface vlan 60
+ip address 40.1.192.1 255.255.192.0
+glbp 60 ip 40.1.192.254
+glbp 60 priority 120
+glbp 60 preempt
+glbp 60 weighting 100 lower 85 upper 95
+glbp 60 weighting track 60 decrement 20
+no sh
+end
+
+conf t
+snmp-server community switch RO
+end
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

@@ -1,0 +1,40 @@
+                  dns서버관리자        web서버 담당자        ftp 담당자
+록키                김성아                    김성아(록키)           요한(록키)
+우분투              김지원                    김지원(우분투)        지원
+윈도우              유기원	              한요한                  기원
+
+dns사람들은 dns서버 만들고 
+8team.com 통일해야함
+
+
+NS 본인 IP
+
+ns IN A  본인 ip
+
+
+ww2     10.10.112.3
+ww3     10.10.96.3
+ftp1      10.10.240.3
+ftp2      10.10.96.3
+
+$TTL 1D
+@       IN SOA  ns.8team.com. 8team.8team.com. (
+                                        25091801        ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+        NS      ns.8team.com.
+        A       본인 아이피
+        AAAA    ::1
+
+
+
+
+ns      IN      A       본인 아이피
+ww2     IN      A       10.10.112.3
+WW3     IN      A        10.10.96.3
+ftp1     IN      A       10.10.240.3
+ftp2     IN      A       10.10.96.3
+~
+~

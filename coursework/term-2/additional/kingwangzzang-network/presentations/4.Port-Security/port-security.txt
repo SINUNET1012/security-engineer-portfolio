@@ -1,0 +1,12 @@
+port security 설정 방법
+1. port security 적용할 인터페이스 모드로 들어간다.
+2. switchport mode access
+3. switchport port-security maximum [허용할 MAC주소 갯수]
+4. switchport port-security mac-address [허용할 MAC주소] - 0050.7966.6800 이 형태로 바꿔서 넣어줘야 함
+5. switchport port-security violation [port-security mode]
+6. switchport port-security (port-security 적용 명령어)
+
+port-security mode 종류 : restrict | shutdown | protect
+
+적용된 설정 확인 명령어 : sh port-security
+특정 포트에 적용된 port-security 상세 설정 확인 : sh port-security int [인터페이스 번호]

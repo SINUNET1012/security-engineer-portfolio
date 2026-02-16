@@ -1,0 +1,8 @@
+R5
+conf t
+access-list 10 deny 50.1.0.0 0.0.255.255
+access-list 10 permit any
+int f0/0
+ip access-group 10 out
+int e2/0
+ip access-group 10 out

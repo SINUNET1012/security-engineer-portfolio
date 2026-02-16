@@ -1,0 +1,28 @@
+백준 문제
+자료형/단순 연산
+	- 문자열(인덱싱)
+		https://www.acmicpc.net/problem/27866
+	- 단순 연산
+		https://www.acmicpc.net/problem/3003
+		https://www.acmicpc.net/problem/11720
+		https://www.acmicpc.net/problem/25304
+		https://www.acmicpc.net/problem/2752
+		https://www.acmicpc.net/problem/31403
+		https://www.acmicpc.net/problem/2530
+		https://www.acmicpc.net/problem/10869
+		https://www.acmicpc.net/problem/10430
+
+조건문
+	https://www.acmicpc.net/problem/1330
+	https://www.acmicpc.net/problem/2480
+	https://www.acmicpc.net/problem/5543
+	https://www.acmicpc.net/problem/5596
+	https://www.acmicpc.net/problem/30868
+	https://www.acmicpc.net/problem/14681
+	https://www.acmicpc.net/problem/2753
+		
+반복문
+	- 별찍기 시리즈 : https://www.acmicpc.net/workbook/view/20
+	https://www.acmicpc.net/problem/8393
+	https://www.acmicpc.net/problem/2739
+	

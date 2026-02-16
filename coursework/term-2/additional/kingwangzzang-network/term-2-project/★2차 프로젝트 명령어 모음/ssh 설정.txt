@@ -1,0 +1,16 @@
+conf t
+ip ssh version
+username bn
+password cisco
+username bn privilege 15 password cisco
+end
+
+conf t
+line vty 0 4
+transport input ssh
+login local
+end
+
+conf t
+ip ssh time-out 60
+ip ssh authentication-retries 3

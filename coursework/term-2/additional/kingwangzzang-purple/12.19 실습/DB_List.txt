@@ -1,0 +1,9 @@
+각각 user id = table이름
+
+cacti
+dvwa
+jl
+mrtg
+wp
+
+비밀번호는 <REDACTED> 입니다.

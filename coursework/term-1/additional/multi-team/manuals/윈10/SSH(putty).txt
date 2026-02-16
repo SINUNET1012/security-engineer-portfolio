@@ -1,0 +1,143 @@
+win10 - Putty
+ SSH, 텔넷(Telnet), Rlogin, Raw TCP와 같은 프로토콜을 위한
+자유 및 오픈 소스 터미널 에뮬레이터 응용 프로그램
+
+R(1.1.1.1)	- SW(1.1.1.2)	- VPCS(1.1.1.3)
+			- win 10(1.1.1.4)
+
+putty로 해당 ip를 접속하면 비밀번호 설정이 없어 닫힘
+
+ESW1(config)#line ? // 외부에서 접근하기 위한 방법 모음
+# ? 사용가이드(다음 명령어)
+
+  <0-166>  First Line number
+  aux      Auxiliary line		/
+  console  Primary terminal line	/ 실제 포트 접속
+  tty      Terminal controller		/ 원격 접속 프로토콜
+  vty      Virtual terminal		/ 원격 접속 프로토콜
+  x/y      Slot/Port for Modems
+
+--------------------------------------
+ESW1(config)#line vty 0 4 (0~4 동시 접속 5개 제한)
+ESW1(config-line)#password cisco (비밀번호 설정 : cisco)
+--------------------------------------
+
+putty
+
+other / telnet 접속가능
+
+ESW > (usermode)
+privilege mode 변경
+
+ESW1(config)#enable password cisco
+
+이후 putty에서 enable로 관리자모드 전환 가능
+ESW > enable
+Password :
+ESW1 #
+
+WireShark에서 보면 표시 필터 "telnet"으로 패킷 확인 가능
+
+======================================================
+RSA 암호화
+
+ESW1(config)# ip domain name [이름].com
+
+ESW1(config)#crypto key generate rsa
+보안 통신에 필수적인 RSA 암호화 키를 생성
+
+ESW1(config)# crypto key generate rsa
+Choose the size of the key modulus in the range of 360 to 2048 for your
+  General Purpose Keys. Choosing a key modulus greater than 512 may take
+  a few minutes.
+
+How many bits in the modulus [512]: 2048(ssh2.0 기준)
+
+% Generating 2048 bit RSA keys, keys will be non-exportable...
+
+*Mar  1 01:07:38.487: %SSH-5-ENABLED: SSH 1.99 has been enabled
+(SSH....1.99?? : 2.0을 지키지 않는다면 해킹(downgrade attack)에 취약)
+
+--------------------------------------
+ESW1(config)#ip ssh version ?
+  <1-2>  Protocol version
+
+ESW1(config)#ip ssh version 2
+(SSH 2.0 전환)
+--------------------------------------
+
+======================================================
+사용자 계정 설정
+ex) ID와 Password 방식 (향후 인증키도 사용해보자)
+
+ESW1(config)# username [이름] privilege 15(관리자)
+
+ESW1(config)# username lemon privilege ?
+  <0-15>  User privilege level	(권한의 등급 단계)
+				(보통 서버 관리자의 경우 7~8 부여)
+ESW1(config)# username lemon privilege 15 password cisco
+
+======================================================
+VTY 설정
+
+ESW1(config)# line vty 0 4
+
+ESW1(config-line)#transport input ?
+  all      All protocols
+  lapb-ta  LAPB Terminal Adapter
+  mop      DEC MOP Remote Console Protocol
+  none     No protocols
+  pad      X.3 PAD
+  rlogin   Unix rlogin protocol
+  ssh      TCP/IP SSH protocol (유일하게 보안성 검증됨)
+  telnet   TCP/IP Telnet protocol
+  udptn    UDPTN async via UDP protocol
+  v120     Async over ISDN
+
+ESW1(config-line)#transport input ssh (ssh만 사용함)
+
+------------------------------------------------
+
+ESW1(config)#ip ssh time-out ?
+  <1-120>  SSH time-out interval (secs) (세션 종료 시간)
+
+ESW1(config)#ip ssh time-out 60
+
+------------------------------------------------
+
+ESW1(config)#ip ssh authentication-retries ?
+  <0-5>  Number of authentication retries
+
+ESW1(config)#ip ssh authentication-retries 3
+
+------------------------------------------------
+
+ESW1(config)#line vty 0 4
+ESW1(config-line)#transport input ssh (ssh로 연결 전환)
+ESW1(config-line)#login local (로컬 계정으로 로그인)
+
+------------------------------------------------
+
+이번엔 윈도우 putty에서 ssh로 연결
+
+======================================================
+
+accept 이후 사용자 계정으로 로그인하면 성공
+WireShark로 확인하면 암호화로 되어있는 걸 확인
+Server(or Client) : Encrypted packet
+
+
+* R1(라우터)에 telnet접속 해보고 같은 과정 해보기
+
+
+
+
+
+
+
+
+
+
+
+
+

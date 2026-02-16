@@ -1,0 +1,7 @@
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Stealth Scan"; flags:S; window:1024; content:!"Window scale"; threshold: type both, track by_src, count 5, seconds 5; sid: 1000000; rev:1;)
+
+alert tcp any any -> any any (msg:"Nmap SYN Scan Test"; flags:S; window:1024; dsize:0; sid:1000000; rev:5;)
+
+alert icmp any any -> 172.16.18.51 any (msg:"ICMP Detected"; sid:1000001; rev:1;)
+
+alert udp any any -> any 161 (msg:"SNMP"; sid:1000002; rev:1;)

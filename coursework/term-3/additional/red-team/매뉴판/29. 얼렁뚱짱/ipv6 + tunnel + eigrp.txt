@@ -1,0 +1,26 @@
+R1
+conf t
+ipv6 unicast-routing
+ipv6 router eigrp 100
+ eigrp router-id 3.3.3.3
+ no shut
+int s1/0
+ ipv6 enable
+ ipv6 add 2002::1:1:1:1/64
+ ipv6 eigrp 100
+ no sh
+int s1/
+ ipv6 enable
+ ipv6 add 
+
+R2
+conf t
+ipv6 unicast-routing
+ipv6 router eigrp 100
+ eigrp router-id 11.11.11.11
+ no shut
+int s1/0
+ ipv6 enable
+ ipv6 add 2002::1:1:1:1/64
+ ipv6 eigrp 100
+ no sh

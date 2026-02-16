@@ -1,0 +1,57 @@
+#1. 과도한 트래픽(DoS) 탐지
+#라우터 필터링 전, 짧은 시간 내에 발생하는 대량의 연결 시도를 탐지합니다.
+#룰: 
+alert tcp any any -> any any (msg:"DoS Attempt - Potential SYN Flood"; flags:S; threshold:type threshold, track by_src, count 100, seconds 10; sid:1000101; rev:1;)
+
+#설명: 10초 동안 동일 IP에서 100개 이상의 SYN 패킷이 들어오면 경고를 띄웁니다.
+
+#2. 비정상적인 로그 삭제 및 접근 시도
+#권한 관리(750) 및 로그 복사 대책과 관련하여, 네트워크를 통해 로그 파일을 조작하려는 시도를 탐지합니다.
+#룰: 
+alert tcp any any -> any 80 (msg:"Suspicious Log Deletion Attempt"; content:"rm "; nocase; content:"/var/log"; distance:0; sid:1000102; rev:1;)
+
+#설명: 웹 서비스를 통해 /var/log 경로의 파일을 삭제(rm)하려는 명령어를 탐지합니다.
+
+#3. Netcat을 이용한 리버스 쉘 탐지
+#불필요한 패키지(netcat-traditional)를 이용해 공격자가 외부와 연결을 맺으려는 행위를 탐지합니다.
+#룰: 
+alert tcp any any -> any any (msg:"Exploit - Reverse Shell (nc)"; content:"nc "; nocase; content:"-e "; content:"/bin/sh"; distance:0; sid:1000104; rev:1;)
+
+#설명: 매뉴얼 7번에 명시된 nc -e /bin/sh 실행 패턴을 탐지합니다.
+
+#4. SQL & Command Injection 기호 필터링
+#입력값 필터링 대책이 적용되지 않은 상태에서 들어오는 특수 기호들을 탐지합니다.
+#SQLi 탐지: 
+alert tcp any any -> any 80 (msg:"SQLi Attempt - Special Chars"; pcre:"/(\%27|'|\%23|#)/i"; sid:1000105; rev:1;)
+
+#명령어 삽입 탐지: alert tcp any any -> any 80 (msg:"Command Injection - Shell Chars"; pcre:"/(|3b|;|&&|\||)/"; sid:1000106; rev:1;)`
+
+#5. URL 경로 조작(Path Traversal) 탐지
+#URL을 통한 직접 참조 및 파일 실행 시도를 탐지합니다.
+
+#룰: 
+alert tcp any any -> any 80 (msg:"Path Traversal - Directory Climbing"; content:"../"; http_uri; sid:1000107; rev:1;)
+
+#6. Whatweb 스캐너 탐지
+#특수한 요청을 보내는 자동화 스캔 도구의 정체를 식별합니다.
+
+#룰: 
+alert tcp any any -> any 80 (msg:"Scanner Detection - WhatWeb"; content:"WhatWeb"; http_header; nocase; sid:1000108; rev:1;)
+
+#7. DNS Zone Transfer (AXFR) 탐지
+#아무에게나 응답하지 않도록 설정하기 전, Zone 파일 탈취 시도를 탐지합니다.
+
+#룰: 
+alert tcp any any -> any 53 (msg:"DNS AXFR Attempt"; content:"|00 00 fc|"; offset:12; sid:1000110; rev:1;)
+
+#8. SSH 무차별 대입 공격 (Hydra 등)
+#root 로그인 허용 금지 대책 전, 계정 탈취 시도를 탐지합니다.
+
+#룰: 
+alert tcp any any -> any 22 (msg:"SSH Brute Force Attempt"; flags:S; threshold:type threshold, track by_src, count 5, seconds 60; sid:1000111; rev:1;)
+
+#9. 평문 FTP 통신 (스니핑 위험)
+#SFTP 전환 전, 암호화되지 않은 FTP 인증 시도를 탐지합니다.
+
+#룰: 
+alert tcp any any -> any 21 (msg:"Insecure FTP Login Attempt"; content:"USER "; nocase; sid:1000112; rev:1;)

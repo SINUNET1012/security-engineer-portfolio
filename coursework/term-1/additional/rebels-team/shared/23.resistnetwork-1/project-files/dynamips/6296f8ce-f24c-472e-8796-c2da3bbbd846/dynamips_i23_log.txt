@@ -1,0 +1,28 @@
+Oct 30 17:28:24.944 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 30 17:28:24.945 HYPERVISOR: Started on IP = 172.16.24.1, TCP port = 49265.
+Oct 30 17:28:25.436 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 30 17:28:25.436 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2. 반역자들\공용\23.resistnetwork-1\project-files\dynamips 
+Oct 30 17:28:25.437 GENERAL: working_dir=Y:\2. 반역자들\공용\23.resistnetwork-1\project-files\dynamips
+Oct 30 17:28:25.437 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2. 반역자들\공용\23.resistnetwork-1\project-files\dynamips\7c0e2660-82f4-4742-865c-2f731c65494f 
+Oct 30 17:28:25.437 GENERAL: working_dir=Y:\2. 반역자들\공용\23.resistnetwork-1\project-files\dynamips\7c0e2660-82f4-4742-865c-2f731c65494f
+Oct 30 17:28:25.437 HYPERVISOR: exec_cmd: vm create ESW9 17 c3745 
+Oct 30 17:28:25.441 VM: VM ESW9 created.
+Oct 30 17:28:25.441 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW9 5060 
+Oct 30 17:28:25.441 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW9 
+Oct 30 17:28:25.442 HYPERVISOR: exec_cmd: vm set_disk0 ESW9 1 
+Oct 30 17:28:25.442 HYPERVISOR: exec_cmd: vm set_exec_area ESW9 64 
+Oct 30 17:28:25.442 HYPERVISOR: exec_cmd: vm get_status ESW9 
+Oct 30 17:28:25.442 HYPERVISOR: exec_cmd: vm set_idle_pc ESW9 0x60a80f7c 
+Oct 30 17:28:25.443 HYPERVISOR: exec_cmd: vm set_ios ESW9 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 30 17:28:25.443 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW9 c411.33b4.0000 
+Oct 30 17:28:25.444 HYPERVISOR: exec_cmd: vm set_nvram ESW9 256 
+Oct 30 17:28:25.444 HYPERVISOR: exec_cmd: vm set_ram ESW9 256 
+Oct 30 17:28:25.445 HYPERVISOR: exec_cmd: vm get_status ESW9 
+Oct 30 17:28:25.445 HYPERVISOR: exec_cmd: vm slot_add_binding ESW9 1 0 NM-16ESW 
+Oct 30 17:29:18.237 HYPERVISOR: exec_cmd: vm get_status ESW9 
+Oct 30 17:29:18.244 HYPERVISOR: exec_cmd: vm extract_config ESW9 
+Oct 30 17:29:18.250 HYPERVISOR: exec_cmd: vm delete ESW9 
+Oct 30 17:29:18.250 VM: VM ESW9 destroyed.
+Oct 30 17:29:23.588 HYPERVISOR: exec_cmd: hypervisor stop 
+Oct 30 17:29:23.947 HYPERVISOR: Stopped.
+Oct 30 17:29:23.947 GENERAL: reset done.

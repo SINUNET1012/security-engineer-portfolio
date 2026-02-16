@@ -1,0 +1,21 @@
+Oct 28 17:00:28.735 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 17:00:28.737 HYPERVISOR: Started on IP = 172.16.3.1, TCP port = 51442.
+Oct 28 17:00:29.197 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 17:00:29.200 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\project-files\dynamips 
+Oct 28 17:00:29.201 GENERAL: working_dir=Y:\4.여러명\project-files\dynamips
+Oct 28 17:00:29.201 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\project-files\dynamips\eca36573-866c-4b9c-ae79-c4ee3bf1d99c 
+Oct 28 17:00:29.203 GENERAL: working_dir=Y:\4.여러명\project-files\dynamips\eca36573-866c-4b9c-ae79-c4ee3bf1d99c
+Oct 28 17:00:29.203 HYPERVISOR: exec_cmd: vm create ESW5 9 c3745 
+Oct 28 17:00:29.217 VM: VM ESW5 created.
+Oct 28 17:00:29.219 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW5 5009 
+Oct 28 17:00:29.220 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW5 
+Oct 28 17:00:29.220 HYPERVISOR: exec_cmd: vm set_disk0 ESW5 1 
+Oct 28 17:00:29.221 HYPERVISOR: exec_cmd: vm set_exec_area ESW5 64 
+Oct 28 17:00:29.223 HYPERVISOR: exec_cmd: vm get_status ESW5 
+Oct 28 17:00:29.223 HYPERVISOR: exec_cmd: vm set_idle_pc ESW5 0x6023f558 
+Oct 28 17:00:29.225 HYPERVISOR: exec_cmd: vm set_ios ESW5 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 17:00:29.226 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW5 c409.2e38.0000 
+Oct 28 17:00:29.228 HYPERVISOR: exec_cmd: vm set_nvram ESW5 256 
+Oct 28 17:00:29.229 HYPERVISOR: exec_cmd: vm set_ram ESW5 256 
+Oct 28 17:00:29.230 HYPERVISOR: exec_cmd: vm get_status ESW5 
+Oct 28 17:00:29.230 HYPERVISOR: exec_cmd: vm slot_add_binding ESW5 1 0 NM-16ESW 

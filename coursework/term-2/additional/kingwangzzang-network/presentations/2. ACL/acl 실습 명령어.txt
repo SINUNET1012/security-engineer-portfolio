@@ -1,0 +1,85 @@
+<ACL 실습시 필요한 명령어>
+1. 인터페이스 및 pc ip 설정
+[pc]
+ip [pc ip] [subnet] [gateway(연결된 라우터 인터페이스 ip)]
+
+확인: sh ip
+
+[라우터]
+conf t
+int [해당 인터페이스]
+ip add [IP] [subnet]
+no sh
+라우터의 인터페이스에 모두 동일하게 적용
+
+
+2. 라우팅 
+conf t
+router rip
+version 2 (버전 2로 해주세용^^)
+network [연결된 모든 네트워크 대역]
+no auto-summary
+end
+sh ip route
+-----------------------------------------------------------
+3. 표준 ACL 만들기~
+
+설정이 완료되면 sh ip access-lists 로 잘 생성이 됐는지 확인하세용
+acl 하나만 확인할 시 sh ip access-list [번호/이름(named)]
+
+1)표준 acl시나리오 1
+
+conf t
+access-list 1 deny host 192.168.0.10
+access-list 1 permit any
+ㄴ허용을 안하면 ACL의 암묵적 거부 정책(Implicit Deny) 때문에 PC2까지 차단
+int f0/0 
+ip access-group 1 out
+exit
+
+2)표준 acl 시나리오 2(named acl)
+conf t
+ip access-list standard block
+deny 192.168.0.0 0.0.0.255
+permit any
+exit
+int e2/0
+ip access-group block out
+exit
+
+
+4. 확장 ACL 
+0)표준 ACL은 삭제하기
+sh ip access-list <-- 설정된 모든 acl 확인 명령어/ 한 acl만 확인 하고 싶으면 번호 또는 이름까지 작성
+conf t
+no access-list 1
+no access-list standard block	<--named ACL은 standard/extended까지 적어주기!
+end
+
+1)확장 acl 실습 1
+<R1>
+conf t
+access-list 101 deny icmp host 192.168.0.20 192.168.1.0 0.0.0.255 echo
+access-list 101 permit ip any any
+int e2/1
+ip access-group 101 in
+exit
+
+2)확장 acl 시나리오 2(named acl)
+<R2>
+conf t
+ip access-list extended ping 
+deny icmp 192.168.3.0 0.0.0.255 host 192.168.4.20 echo
+permit ip any any 
+exit
+int f0/0
+ip access-group ping in
+end
+
+
+
+
+
+
+
+

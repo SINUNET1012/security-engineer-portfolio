@@ -1,0 +1,245 @@
+#!/bin/bash
+set -e # 에러 발생 시 스크립트 즉시 중단
+
+echo "====================================================="
+echo "LAMP (Apache + PHP 8.4 FPM + MariaDB + phpMyAdmin) 설치 스크립트 시작"
+echo "====================================================="
+
+# --- root 권한 확인 ---
+if [[ $EUID -ne 0 ]]; then
+    echo "이 스크립트는 root 권한으로 실행해야 합니다."
+    exit 1
+fi
+
+# --- 사용자 입력 (세 가지 비밀번호 및 사용자 계정 이름) ---
+echo "필요한 3가지 비밀번호와 대상 사용자 계정 이름을 차례대로 입력해 주세요."
+read -sp "1. MariaDB root 비밀번호: " DB_ROOT_PASSWORD
+echo
+read -sp "2. MariaDB 원격 접속용 사용자 비밀번호: " DB_REMOTE_PASSWORD
+echo
+read -sp "3. phpMyAdmin 애플리케이션용 비밀번호: " PHPMYADMIN_PASSWORD
+echo
+read -p "4. DocumentRoot로 지정할 사용자 계정 이름 (예: lemon, kong): " TARGET_USER
+echo
+
+# 변수 정의 (★ DocumentRoot 변경)
+DB_REMOTE_USER="remoteuser"
+APACHE_PORT=80
+TARGET_USER=$(echo "$TARGET_USER" | tr -d '\r') 
+HOME_DIR="/home/${TARGET_USER}"       # 베이스 홈 디렉터리
+NEW_DOCROOT="${HOME_DIR}"             # ★ DocumentRoot를 /home/[사용자]로 설정
+NEW_TEST_PAGE="${NEW_DOCROOT}/info.php"
+
+# --- 시스템 업데이트 및 필수 패키지 설치 ---
+echo "OS 업데이트 및 필수 패키지 설치 및 PPA 추가..."
+DEBIAN_FRONTEND=noninteractive apt update -y && apt upgrade -y
+DEBIAN_FRONTEND=noninteractive apt install -y software-properties-common wget curl vim net-tools unzip
+
+# --- PHP 8.4 저장소 (PPA) 추가 (중복 방지) ---
+echo "PHP 8.4를 위한 ondrej/php PPA 저장소 추가..."
+if ! grep -q "ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+    add-apt-repository ppa:ondrej/php -y
+    apt update -y
+else
+    echo "ondrej/php PPA가 이미 존재합니다. 업데이트만 진행합니다."
+    apt update -y
+fi
+
+# --- PHPMyAdmin 설치 자동화 사전 설정 ---
+echo "PHPMyAdmin 설치를 위한 debconf 사전 설정..."
+echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/dbconfig-install boolean true" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/mysql/admin-user string root" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/mysql/admin-pass password ${DB_ROOT_PASSWORD}" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/mysql/app-pass password ${PHPMYADMIN_PASSWORD}" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/app-password-confirm password ${PHPMYADMIN_PASSWORD}" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/internal/skip-preseed boolean false" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/internal/reconfiguring boolean false" | debconf-set-selections
+
+# --- LAMP 핵심 패키지 및 PHP 8.4 FPM 모듈 설치 (PHP-FPM 방식) ---
+echo "Apache, MariaDB, PHP 8.4 FPM 및 필수 모듈 설치..."
+DEBIAN_FRONTEND=noninteractive apt install -y \
+    apache2 mariadb-server \
+    php8.4 php8.4-fpm php8.4-mysql \
+    php8.4-cli php8.4-gd php8.4-mbstring php8.4-xml php8.4-zip php8.4-curl php8.4-intl php8.4-opcache \
+    phpmyadmin 
+
+# --- 서비스 활성화 ---
+echo "Apache, MariaDB, PHP-FPM 서비스 활성화..."
+systemctl enable --now apache2
+systemctl enable --now mariadb
+systemctl enable --now php8.4-fpm
+
+# --- Apache와 PHP-FPM 연동 설정 ---
+echo "Apache와 PHP 8.4 FPM 연동 설정..."
+a2enmod proxy_fcgi setenvif
+a2enconf php8.4-fpm
+a2dismod php8.4 2>/dev/null || true 
+systemctl restart apache2
+systemctl restart php8.4-fpm
+
+
+# --- MariaDB 초기 보안 및 계정 생성 (통합 블록 사용) ---
+echo "MariaDB root 비밀번호 설정 및 원격 계정 생성..."
+mysql <<EOF
+-- root 계정에 비밀번호 설정
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASSWORD}';
+
+-- 원격 접속용 계정 생성 및 권한 부여
+CREATE USER IF NOT EXISTS '${DB_REMOTE_USER}'@'%' IDENTIFIED BY '${DB_REMOTE_PASSWORD}';
+GRANT ALL PRIVILEGES ON *.* TO '${DB_REMOTE_USER}'@'%' WITH GRANT OPTION;
+
+-- 불필요한 계정 및 test DB 제거
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost');
+DROP DATABASE IF EXISTS test;
+
+FLUSH PRIVILEGES;
+EOF
+
+# --- MariaDB 원격 접속 허용(bind-address) ---
+echo "MariaDB 원격 접속 허용 설정 (bind-address = 0.0.0.0)..."
+if grep -q "^bind-address" /etc/mysql/mariadb.conf.d/50-server.cnf; then
+    sed -i "s/^bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
+else
+    echo "bind-address = 0.0.0.0" >> /etc/mysql/mariadb.conf.d/50-server.cnf
+fi
+systemctl restart mariadb
+
+# --- PHPMyAdmin Apache 연동 ---
+echo "PHPMyAdmin Apache 연동..."
+a2enconf phpmyadmin
+
+
+# =======================================================
+# DocumentRoot 변경 및 권한 설정
+# =======================================================
+echo "====================================================="
+echo "DocumentRoot 설정 변경: /var/www/html -> ${NEW_DOCROOT}"
+echo "====================================================="
+
+# 1. 대상 사용자 계정 존재 여부 확인
+if id "${TARGET_USER}" &>/dev/null; then
+    echo "대상 사용자 계정 (${TARGET_USER})이 확인되었습니다."
+else
+    echo "에러: 지정된 사용자 계정 (${TARGET_USER})이 시스템에 존재하지 않습니다."
+    echo "스크립트를 중단합니다. 계정을 생성하거나 이름을 확인해 주세요."
+    exit 1
+fi
+
+# 2. DocumentRoot 변경: /etc/apache2/sites-available/000-default.conf 수정
+sed -i "s|DocumentRoot /var/www/html|DocumentRoot ${NEW_DOCROOT}|" /etc/apache2/sites-available/000-default.conf
+
+# 3. DocumentRoot 생성 및 소유권/권한 설정 (NEW_DOCROOT == HOME_DIR)
+# A. 베이스 홈 디렉터리 생성 및 소유권 설정
+if [ ! -d "${HOME_DIR}" ]; then
+    echo "베이스 홈 디렉토리 ${HOME_DIR}이 존재하지 않아 root 권한으로 생성합니다."
+    mkdir -p "${HOME_DIR}"
+    chown ${TARGET_USER}:${TARGET_USER} "${HOME_DIR}"
+    echo "-> ${HOME_DIR} 소유권을 ${TARGET_USER}에게 위임했습니다."
+fi
+# B. DocumentRoot와 모든 콘텐츠의 소유권을 대상 사용자에게 위임
+chown -R ${TARGET_USER}:${TARGET_USER} "${NEW_DOCROOT}" 
+
+# C. Apache 접근 권한 설정 (755 권장)
+chmod 755 "${NEW_DOCROOT}" 
+echo "디렉터리 ${NEW_DOCROOT} 생성 및 소유권(${TARGET_USER}) 이전 완료."
+echo "권한을 755로 설정했습니다."
+
+# D. 홈 디렉토리 탐색 권한 명시적 확인 (www-data에게 X 권한 부여)
+chmod a+x "${HOME_DIR}"
+echo "홈 디렉토리 (${HOME_DIR})에 대해 모든 사용자(www-data 포함)에게 탐색 권한(x) 부여."
+
+
+# 4. Apache 설정 파일 (/etc/apache2/apache2.conf)에 접근 권한 블록 추가 (중복 방지)
+echo "Apache 전역 설정에 ${NEW_DOCROOT} 접근 권한 추가..."
+if ! grep -q "<Directory \"${NEW_DOCROOT}\">" /etc/apache2/apache2.conf; then
+    cat << EOF >> /etc/apache2/apache2.conf
+
+<Directory "${NEW_DOCROOT}">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+
+EOF
+    echo "-> ${NEW_DOCROOT} 디렉토리 접근 권한 블록을 추가했습니다."
+else
+    echo "-> ${NEW_DOCROOT} 디렉토리 접근 권한 블록이 이미 존재하여 건너뜁니다."
+fi
+
+# 5. Apache Virtual Host 설정에 ServerName 추가 (경고 방지)
+if ! grep -q "ServerName" /etc/apache2/sites-available/000-default.conf; then
+    sed -i "/DocumentRoot ${NEW_DOCROOT}/a \\\tServerName localhost" /etc/apache2/sites-available/000-default.conf
+    echo "000-default.conf에 ServerName localhost를 추가했습니다."
+fi
+
+# 6. AppArmor 예외 처리 (★ 규칙 경로 변경)
+echo "====================================================="
+echo "AppArmor 예외 처리: /home/${TARGET_USER} 접근 허용"
+echo "====================================================="
+
+APPARMOR_CONF="/etc/apparmor.d/usr.sbin.apache2"
+# ★ DocumentRoot가 /home/[user] 전체이므로 규칙도 그에 맞게 변경
+APPARMOR_RULE_HOME="  /home/${TARGET_USER}/ r,"
+APPARMOR_RULE_HOME_SUB="  /home/${TARGET_USER}/** rwk,"
+
+if [ -f "${APPARMOR_CONF}" ] && ! grep -q "${APPARMOR_RULE_HOME}" "${APPARMOR_CONF}"; then
+    echo "AppArmor 설정 파일에 /home/${TARGET_USER} 접근 규칙을 추가합니다."
+    sed -i "/}/i${APPARMOR_RULE_HOME}" "${APPARMOR_CONF}"
+    sed -i "/}/i${APPARMOR_RULE_HOME_SUB}" "${APPARMOR_CONF}"
+    
+    systemctl reload apparmor
+    echo "AppArmor 프로파일을 재로드했습니다."
+else
+    echo "AppArmor 규칙이 이미 존재하거나 AppArmor가 설치되지 않아 건너뜁니다."
+fi
+
+# =======================================================
+# DocumentRoot 변경 및 권한 설정 끝
+# =======================================================
+
+
+# --- 테스트 페이지 생성 (새로운 위치) ---
+echo "PHP 테스트 페이지 (${NEW_TEST_PAGE}) 생성..."
+echo "<?php phpinfo(); ?>" > "${NEW_TEST_PAGE}"
+chown ${TARGET_USER}:${TARGET_USER} "${NEW_TEST_PAGE}"
+chmod 644 "${NEW_TEST_PAGE}"
+
+# --- 방화벽 설정 ---
+echo "방화벽 설정: 80, 443, 3306 포트 개방."
+ufw allow "${APACHE_PORT}/tcp"
+ufw allow 443/tcp
+ufw allow 3306/tcp
+ufw --force enable
+
+# --- 최종 서비스 재로드 ---
+echo "최종 Apache 서비스 재로드 (설정 적용)..."
+
+# Apache 설정 파일 문법 검사: reload 전에 반드시 실행하여 오류를 감지
+echo "Apache 설정 파일 문법을 검사합니다..."
+if ! apache2ctl configtest; then
+    echo "====================================================="
+    echo "!! 에러: Apache 설정 파일에 구문 오류가 발견되었습니다. !!"
+    echo "!! Apache 설정 파일을 수동으로 확인 후 다시 실행해주세요. !!"
+    echo "====================================================="
+    exit 1
+fi
+
+# 문법 검사 통과 시에만 서비스 재로드
+systemctl reload apache2
+
+
+SERVER_IP=$(hostname -I | awk '{print $1}')
+echo "====================================================="
+echo "설치 완료!"
+echo "====================================================="
+echo "  [Web] PHP 테스트 페이지: http://${SERVER_IP}/info.php"
+echo "        (경로: ${NEW_DOCROOT}/info.php)"
+echo "  [Web] phpMyAdmin 접속: http://${SERVER_IP}/phpmyadmin"
+echo "-----------------------------------------------------"
+echo "  [DB] MariaDB root 비밀번호: 입력하신 '1번 비밀번호'"
+echo "  [DB] 원격 계정 (${DB_REMOTE_USER}): 입력하신 '2번 비밀번호'"
+echo "  [DB] phpMyAdmin 앱 비밀번호: 입력하신 '3번 비밀번호'"
+echo "  [권한] 웹 콘텐츠 관리: ${TARGET_USER} 사용자로 ${NEW_DOCROOT}에 파일 업로드/수정 가능"
+echo "====================================================="

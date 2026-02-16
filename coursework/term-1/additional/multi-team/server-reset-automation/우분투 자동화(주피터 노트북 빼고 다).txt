@@ -1,0 +1,162 @@
+#echo "====================================================="
+#echo "selinux 설치 및 확인"
+#sudo apt update
+#sudo apt install selinux-utils -y
+#selinux_status=$(sestatus 2>/dev/null | grep "SELinux status" | awk '{print $3}')
+#if [ "$selinux_status" = "enabled" ]; then
+#    setenforce 0
+#else
+#    echo "SELinux가 시스템에서 완전히 비활성화되어 있습니다."
+#fi
+
+echo "====================================================="
+echo "방화벽 상태 확인"
+if sudo ufw status | grep -q "Status: active"; then
+	echo "방화벽이 실행 중입니다."
+	sudo ufw disable
+	echo "방화벽을 껐습니다."
+else
+	echo "방화벽이 꺼져있습니다."
+        sudo ufw disable
+fi
+echo "====================================================="
+echo "expect 설치"
+if dpkg -s expect 2>/dev/null | grep -q "Status: install ok installed"; then
+    echo " expect가 이미 설치되어 있습니다."
+else
+    echo " expect가 설치되어 있지 않습니다. 설치를 시작합니다..."
+    sudo apt update
+    sudo apt install -y expect
+fi
+echo "리포지터리 확인 및 패키지 설치"
+expect -c "
+set timeout 10
+spawn sudo add-apt-repository universe
+expect \"Press [ENTER] to continue or Ctrl-c to cancel.\"
+send \"\r\"
+expect eof
+spawn sudo add-apt-repository multiverse
+expect \"Press [ENTER] to continue or Ctrl-c to cancel.\"
+send \"\r\"
+expect eof
+"
+packages=("net-tools" "vim" "git" "inxi" "software-properties-common" "lsb-release" "ca-certificates" "apt-transport-https")
+
+for pkg in "${packages[@]}"; do
+    if ! dpkg -s $pkg >/dev/null 2>&1; then
+        echo "[INFO] $pkg 설치 안 되어 있음 → 설치 진행"
+        sudo apt -y install $pkg
+    else
+        echo "[INFO] $pkg 이미 설치됨 → 건너뜀"
+    fi
+done
+expect -c "
+set timeout 10
+spawn sudo add-apt-repository ppa:ondrej/php
+expect \"Press [ENTER] to continue or Ctrl-c to cancel.\"
+send \"\r\"
+expect eof
+"
+sudo apt update && sudo apt upgrade
+echo "Ondrej PHP PPA 저장소 추가 완료"
+echo "리포지터리가 모두 설치되었습니다."
+echo "====================================================="
+echo "====================================================="
+echo "아파치 서버 설치"
+if ! dpkg -s apache2 >/dev/null 2>&1; then
+    echo "apache2 설치 안 되어 있음 → 설치 진행"
+    sudo apt -y install apache2
+else
+    echo "apache2 이미 설치됨"
+fi 
+systemctl restart apache2
+systemctl reload apache2
+echo "아파치 서버가 활성화 되었습니다."
+echo "FTP 설치"
+if dpkg -s vsftpd >/dev/null 2>&1; then
+    echo "vsftpd가 설치되어 있습니다."
+else
+    sudo apt -y install vsftpd
+fi
+systemctl start vsftpd
+echo "FTP 설치완료 및 실행 완료"
+echo "DNS 서버 설치"
+if dpkg -s bind9 2>/dev/null | grep -q "Status: install ok installed"; then
+    echo " BIND9 DNS 서버가 이미 설치되어 있습니다."
+else
+    echo " BIND9가 설치되어 있지 않습니다. 설치를 시작합니다..."
+    sudo apt update
+    sudo apt install bind9 bind9utils -y
+fi
+echo "PHP 8.4 설치"
+packages=("php8.4" "php8.4-cli" "php8.4-common" "php8.4-mysql" "php8.4-xml" "php8.4-mbstring" "php8.4-curl" "php8.4-zip" "php8.4-gd" "php8.4-dev" "php8.4-bcmath" "php8.4-intl" "php8.4-xmlrpc")
+for pkg in "${packages[@]}"; do
+    if dpkg -l | grep $pkg >/dev/null 2>&1; then
+        echo "$pkg이 설치되어있습니다."
+    else
+        sudo apt install -y $pkg
+        sudo apt update
+    fi
+done
+echo "PHP 8.4-fpm 설치"
+packages=("php8.4-fpm" "libapache2-mod-fcgid")
+for pkg in "${packages[@]}"; do
+    if dpkg -l | grep $pkg >/dev/null 2>&1; then
+        echo "$pkg이 설치되어있습니다."
+    else
+        sudo apt install -y $pkg
+        sudo apt update
+    fi
+done
+echo "WAS(apache)와 PHP(php-fpm)의 연동 및 확인"
+systemctl restart apache2
+systemctl restart php8.4-fpm
+echo "====================================================="
+echo "마리아 DB 설치"
+echo "필수 패키지 설치"
+packages=("build-essential" "libjpeg-dev" "libpng-dev" "libfreetype6-dev" "libgd-dev" "libgdbm-dev" "libgif-dev" "zlib1g-dev" "libzip-dev" "php8.4-odbc" "php8.4-pgsql" "php8.4-sqlite3" "php8.4-opcache" "php8.4-readline" "php-pear")
+for pkg in "${packages[@]}"; do
+    if dpkg -l | grep $pkg >/dev/null 2>&1; then
+        echo "$pkg이 설치되어있습니다."
+    else
+        sudo apt install -y $pkg
+        sudo apt update
+    fi
+done
+echo "필수 패키지 설치완료"
+if dpkg -l | grep -q mariadb-server; then
+    echo " MariaDB is already installed."
+else
+    echo " MariaDB is not installed. Installing now..."
+    sudo apt update
+    sudo apt install mariadb-server -y
+    sudo apt install mariadb-client-compat -y
+    mysql_secure_installation
+fi
+echo "phpMyAdmin 설치"
+if dpkg -l | grep -q phpmyadmin; then
+    echo " phpmyadmin is already installed."
+else
+    sudo apt update
+    sudo apt install -y phpmyadmin
+fi
+
+
+#/etc/apache2/sites-available/000-default.conf 접근하여
+#DocumentRoot "/var/www/html" 사용자 계정의 홈디렉터리로 변경
+
+#/etc/apache2/apache2.conf 접근하여
+#<Directory "/var/www/html"> 사용자 계정의 홈디렉터리로 변경 >> <Directory "/home/dk">
+
+#우분투는 기본적으로 업로드 권한이 막혀있다.
+#/etc/vsftpd.conf 접근하여
+# 로컬 사용자 로그인 허용 : local_enable=YES
+
+# 파일 업로드(쓰기) 허용 : write_enable=YES  >>> 이것만 수정해도 업로드 가능 <<<
+
+# 홈 디렉터리에서 업로드 가능하게 허용 :chroot_local_user=YES
+
+# 업로드 시 디렉터리 생성 허용 (선택 사항) : allow_writeable_chroot=YES
+
+# 만약 mariadb-server 설치만 되고 서비스 실행이 안된다면
+# sudo apt autoremove -y 깨끗이 제거 명령어 실행 후 다시 설치 시도

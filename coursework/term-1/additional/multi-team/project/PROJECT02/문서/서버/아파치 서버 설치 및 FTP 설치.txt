@@ -1,0 +1,51 @@
+사전 작업 확인
+
+1. selinux가 꺼져있는지 확인
+-> getenforce(상태확인)
+[root@localhost ~]# getenforce
+Disabled
+
+[root@localhost ~]# setenforce 1 : on  ---> setenforce0 : off
+setenforce: SELinux is disabled
+설정 파일을 수정하지 않고 상태값을 바꾼다.(리부팅 후 초기화 됨/임시로 초기화)
+
+2. 방화벽 확인
+systemctl status firewalld
+
+[root@localhost ~]# systemctl status firewalld
+○ firewalld.service - firewalld - dynamic firewall daemon
+     Loaded: loaded (/usr/lib/systemd/system/firewalld.service; disabled; preset: enabled)
+     Active: inactive (dead)
+       Docs: man:firewalld(1)
+
+3. 리포지터리 확인
+epel-release /remi-release 설치
+crb :  dnf config-manager --set-enabled crb 설치
+        dnf install epel-next-release -y
+
+에러방지용 패키지 설치
+dnf -y install inxi
+
+=============================================================
+진짜 설치
+1. 아파치 서버 설치 --->RHEL(redhat/fedora/centos/rocky) : httpd    서비스명
+                              Debian(Ubuntu)                        : apache2
+dnf -y install httpd
+
+2. 설치 후 서비스 동작 확인
+systemctl restart httpd
+
+http://자신의 IP주소(:80이 생략된거임, 자동으로 붙여줌)
+
+홈페이지 내용을 수정
+홈페이지 홈디렉터리 : /var/www/html
+디렉토리 확인 : cd /var/www/html  후에---> ls
+echo “날씨 좋다” > index.html
+cat index.html
+
+vim index.html로 들어가서 html 설정
+
+현재 홈페이지의 홈디렉터리 : /var/www/html
+vim 편집기 사용법 :  set nu
+
+systemctl reload httpd : 시스템은 그대로 두고 파일만 리로드

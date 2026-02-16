@@ -1,0 +1,25 @@
+# -------------------------------------------------------
+# LOCAL POLICY: DETECT MAIN PROTOCOL TRAFFIC
+# -------------------------------------------------------
+
+# 1. ICMP (Ping)
+alert icmp any any -> $HOME_NET any (msg:"[Detect] ICMP Packet Received"; sid:1000001; rev:1;)
+
+# 2. FTP (Port 21)
+alert tcp any any -> $HOME_NET 21 (msg:"[Detect] FTP Connection Attempt"; sid:1000002; rev:1;)
+
+# 3. SSH (Port 22)
+alert tcp any any -> $HOME_NET 22 (msg:"[Detect] SSH Connection Attempt"; sid:1000003; rev:1;)
+
+# 4. Telnet (Port 23)
+alert tcp any any -> $HOME_NET 23 (msg:"[Detect] Telnet Connection Attempt"; sid:1000004; rev:1;)
+
+# 5. DNS (Port 53 - UDP/TCP)
+alert udp any any -> $HOME_NET 53 (msg:"[Detect] DNS Query Received (UDP)"; sid:1000005; rev:1;)
+alert tcp any any -> $HOME_NET 53 (msg:"[Detect] DNS Query Received (TCP)"; sid:1000006; rev:1;)
+
+# 6. HTTP (Port 80)
+alert tcp any any -> $HOME_NET 80 (msg:"[Detect] HTTP Traffic Received"; sid:1000007; rev:1;)
+
+# 7. HTTPS (Port 443)
+alert tcp any any -> $HOME_NET 443 (msg:"[Detect] HTTPS Traffic Received"; sid:1000008; rev:1;)

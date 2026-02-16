@@ -1,0 +1,42 @@
+Oct 28 15:05:24.800 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 15:05:24.800 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 51921.
+Oct 28 15:05:25.284 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 15:05:25.284 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips 
+Oct 28 15:05:25.284 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips
+Oct 28 15:05:25.285 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips\60904da9-b2c8-4715-a53f-300df267b3b9 
+Oct 28 15:05:25.285 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips\60904da9-b2c8-4715-a53f-300df267b3b9
+Oct 28 15:05:25.285 HYPERVISOR: exec_cmd: vm create ESW6 14 c3745 
+Oct 28 15:05:25.286 VM: VM ESW6 created.
+Oct 28 15:05:25.287 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW6 5045 
+Oct 28 15:05:25.287 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW6 
+Oct 28 15:05:25.288 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:05:25.288 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 28 15:05:25.289 HYPERVISOR: exec_cmd: vm set_idle_pc ESW6 0x60a7fc00 
+Oct 28 15:05:25.289 HYPERVISOR: exec_cmd: vm set_exec_area ESW6 64 
+Oct 28 15:05:25.290 HYPERVISOR: exec_cmd: vm set_ram ESW6 256 
+Oct 28 15:05:25.290 HYPERVISOR: exec_cmd: vm set_nvram ESW6 256 
+Oct 28 15:05:25.290 HYPERVISOR: exec_cmd: vm set_disk0 ESW6 1 
+Oct 28 15:05:25.291 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 28 15:05:25.291 HYPERVISOR: exec_cmd: vm slot_add_binding ESW6 1 0 NM-16ESW 
+Oct 28 15:05:25.385 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:05:29.666 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:05:33.151 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:05:39.500 HYPERVISOR: exec_cmd: nio create_udp udp-bb47de0d-1070-4e4e-a02b-2d51b6f7df52 10030 127.0.0.1 10031 
+Oct 28 15:05:39.795 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 0 udp-bb47de0d-1070-4e4e-a02b-2d51b6f7df52 
+Oct 28 15:05:39.797 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 28 15:05:45.327 HYPERVISOR: exec_cmd: nio create_udp udp-8b03c7c4-9345-4106-a47e-cce4068f92b7 10038 127.0.0.1 10039 
+Oct 28 15:05:45.330 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 1 udp-8b03c7c4-9345-4106-a47e-cce4068f92b7 
+Oct 28 15:05:45.330 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 28 15:05:57.485 HYPERVISOR: exec_cmd: nio create_udp udp-856f3d8b-29cf-4aaa-b865-3da4e1adba70 10056 127.0.0.1 10057 
+Oct 28 15:05:57.493 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 4 udp-856f3d8b-29cf-4aaa-b865-3da4e1adba70 
+Oct 28 15:05:57.493 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 28 15:06:02.575 HYPERVISOR: exec_cmd: nio create_udp udp-0cb3c0bf-971e-44d0-bdcb-22014bf285a9 10062 127.0.0.1 10063 
+Oct 28 15:06:02.578 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 5 udp-0cb3c0bf-971e-44d0-bdcb-22014bf285a9 
+Oct 28 15:06:02.579 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 28 15:08:52.667 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:08:57.933 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:09:03.001 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:13:22.087 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:13:33.440 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:13:37.507 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 15:13:55.368 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 

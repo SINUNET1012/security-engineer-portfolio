@@ -1,0 +1,55 @@
+# icmp test
+alert icmp any any -> any any (msg:"ICMP Ping Scan Detected"; itype:8; icode:0; sid:1000001; rev:1;)
+
+# ==========================================
+# [01] 정보 수집 (Network Scan)
+# ==========================================
+# 01-01: 스텔스 및 특수 스캔
+alert tcp any any -> any any (msg:"Nmap Null Scan Detected"; flags:0; sid:9010101;)
+alert tcp any any -> any any (msg:"Nmap Xmas Scan Detected"; flags:FPU; sid:9010102;)
+alert udp any any -> any 53 (msg:"DNS Zone Transfer - AXFR Attempt"; content:"|00 00 FC|"; offset:13; sid:9010103;)
+alert tcp any any -> any 53 (msg:"DNS Zone Transfer Attempt (AXFR) Detected"; flow:to_server,established; content:"|00 00 fc 00 01|"; offset:12; sid:9010104; rev:1;)
+
+# 01-02: 일반 및 스크립트 기반 스캔
+alert tcp any any -> any any (msg:"Nmap -Pn Scan (No Ping)"; flags:S; threshold:type both, track by_src, count 20, seconds 10; sid:9010201;)
+alert tcp any any -> any 80 (msg:"Nmap NSE Scripting Engine Detected"; content:"Nmap Scripting Engine"; http_header; sid:9010202;)
+alert tcp any any -> any any (msg:"Nmap High Speed Scan Detected"; flags:S; detection_filter:track by_src, count 100, seconds 1; sid:9010203;)
+alert tcp any any -> any any (msg:"WhatWeb Scan Detected"; flow:to_server,established; content:"WhatWeb"; sid:9010204; rev:1;)
+alert tcp any any -> any any (msg:"Nmap Scripting Engine User-Agent Detected"; flow:to_server,established; content:"Nmap Scripting Engine"; sid:9010205; rev:1;)
+alert tcp any any -> any any (msg:"Nmap SYN Scan Detected"; flags:S; threshold:type both, track by_src, count 20, seconds 5; sid:9010206; rev:1;)
+
+# ==========================================
+# [02] 서비스 마비 (DoS Attack)
+# ==========================================
+# 02-01: ICMP 기반 공격
+alert icmp any any -> any any (msg:"ICMP Large Packet DDoS (-s)"; dsize:>1000; itype:8; sid:9020101;)
+alert icmp any any -> any any (msg:"ICMP Flood Attack (-c)"; itype:8; detection_filter:track by_src, count 50, seconds 1; sid:9020102;)
+
+# ==========================================
+# [03] 웹 해킹 (Web Attack)
+# ==========================================
+# 03-01: 입력값 변조 (SQLi, XSS)
+alert tcp any any -> any 80 (msg:"SQL Injection - Union Select"; content:"union"; nocase; http_uri; content:"select"; nocase; http_uri; sid:9030101;)
+alert tcp any any -> any 80 (msg:"XSS Attack Detected"; content:"<script>"; nocase; http_uri; sid:9030102;)
+alert tcp any any -> any 80 (msg:"SQL Injection - Boolean or 1=1"; content:"or"; nocase; http_uri; content:"1=1"; http_uri; sid:9030103;)
+
+# 03-02: 명령어 주입 (Command Injection)
+#alert tcp any any -> any 80 (msg:"Command Injection Detected"; uricontent:"|3b|"; nocase; sid:9030201;)
+alert tcp any any -> any 80 (msg:"Command Injection-invalid parameter : semi-colon"; content:"GET"; http_method; uricontent:"|3B|"; sid:2000001; rev:1; )
+
+
+# 03-03: 경로 탐색 (Directory Traversal)
+alert tcp any any -> any 80 (msg:"Directory Traversal Attack"; content:"../"; http_uri; depth:20; sid:9030301;)
+
+# 03-04: 리버스 쉘 (Reverse Shell)
+alert tcp any any -> any any (msg:"Reverse Shell Traffic Detected"; content:"/bin/sh"; nocase; flow:to_server,established; sid:9030401;)
+
+# 03-05: 웹쉘 업로드 (Webshell Upload)
+alert tcp any any -> any 80 (msg:"Malicious File Upload (.php)"; content:"Content-Disposition"; content:"filename="; content:".php"; distance:0; sid:9030501;)
+
+# ==========================================
+# [04] 패스워드 공격 (Password Attack)
+# ==========================================
+# 04-01: SSH 무차별 대입 (Hydra)
+alert tcp any any -> any 22 (msg:"Hydra SSH Brute Force Detected"; flow:to_server,established; detection_filter:track by_src, count 5, seconds 60; sid:9040101;)
+~   

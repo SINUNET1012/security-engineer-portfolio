@@ -1,0 +1,23 @@
+문자는 ' ', 문자열은 " "
+\(역슬래시)n = 다음줄로
+\(역슬래시)t = 공백4칸(Tab)
+[ ]=인덱스 번호
+find() : 문자열에서 찾아냄
+strip() : 벗겨낸다.
+int : 정수형
+str : 문자열
+replace(a,b) : a를 찾아서 b로 바꿔줌
+[] : 인덱싱
+'' : 슬라이싱
+, : 리스트
+b= a.split(" ")  ---> 공백을 기준으로 나누어주는 것
+
+ex:      a= "systemctl status sshd"
+         b= a.split(" ")
+         print(b)
+결과 : ['systemctl', 'status', 'sshd']
+랜덤함수 공식 --->>>   a= int(random.random()*2)+1
+                                                            -- 
+                                                        경우의 수
+                                                                ---
+                                                              시작 수

@@ -1,0 +1,16 @@
+conf t
+access-list 1 permit 192.168.0.0 0.0.0.255(wild maske(subnet 반전))
+사설 범위
+
+ip nat pool KONG 12.1.1.2 12.1.1.3 netmask 255.255.255.0
+<-- 공인 범위
+
+NAT설정
+ip nat inside source list 1 pool KONG
+    static x dynamic------ ------------
+                       사설범위  공인범위
+
+nat pool이 full이면 PAT로 포트번호까지 사용
+ip nat inside source list 1 pool KONG overload
+                                               -----------
+                                  nat dynamic 설정에 붙여주기

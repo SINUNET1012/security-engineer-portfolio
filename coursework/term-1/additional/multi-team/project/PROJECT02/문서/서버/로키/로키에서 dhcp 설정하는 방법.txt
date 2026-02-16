@@ -1,0 +1,33 @@
+로키에서 dhcp 설치하는 방법
+
+epel 수동 설치
+rpm -ivh
+https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+
+1. dnf -y install dhcp-server   <---dhcp 서버 설치
+
+2. systemctl status dhcpd <---- dhcp 설치 확인
+   (절대 enable 하지 말것!!!)
+
+3. 설정파일 : cd /etc/dhcp/  ---> ls
+
+4. cat dhcpd.conf
+
+5. mv dhcpd.conf dhcpd.conf.bak <---- 설정 백업 후 ls
+
+6. cp /usr/share/doc/dhcp-server/dhcpd.conf.example dhcpd.conf 하고 난 후 ls
+
+7.vim dhcpd.conf 들어가서
+설정파일샘플 주석 떼기
+default-lease-time 600;
+
+max-lease-time 7200;
+
+authoritative;
+
+맨 마지막에 추가
+subnet 10.1.1.0 netmask 255.255.255.0 {
+        range 10.1.1.10 10.1.1.254;
+        option routers 10.1.1.1;
+        option domain-name-servers 8.8.8.8;
+

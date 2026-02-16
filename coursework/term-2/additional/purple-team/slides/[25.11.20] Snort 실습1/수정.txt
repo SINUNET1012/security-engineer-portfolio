@@ -1,0 +1,98 @@
+2단계
+
+apt-get install -y gcc libpcre3-dev zlib1g-dev libluajit-5.1-dev libpcap-dev openssl libssl-dev libnghttp2-dev libdumbnet-dev bison flex autoconf libtool
+
+
+dpkg -l | grep dumbnet
+dpkg -l | grep libpcap
+dpkg -l | grep libpcre3
+dpkg -l | grep libluajit
+dpkg -l | grep bison
+dpkg -l | grep flex
+
+1.
+sudo apt update
+sudo apt install -y build-essential git wget curl \
+    bison flex libpcap-dev libpcre3-dev zlib1g-dev \
+    libssl-dev
+2.
+cd /usr/local/src
+sudo git clone https://github.com/ofalk/libdnet.git
+cd libdnet
+
+3.
+sudo ./configure
+sudo make
+sudo make install
+sudo ldconfig
+
+4.
+cd /usr/local/src
+sudo git clone https://github.com/LuaJIT/LuaJIT.git
+cd LuaJIT
+sudo make
+sudo make install
+sudo ldconfig
+
+5.
+cd /usr/local/src
+sudo git clone https://github.com/LuaJIT/LuaJIT.git
+cd LuaJIT
+sudo make
+sudo make install
+sudo ldconfig
+
+
+6.
+cd /usr/local/src
+sudo wget https://www.snort.org/downloads/snort/daq-2.0.7.tar.gz
+sudo tar -xvzf daq-2.0.7.tar.gz
+cd daq-2.0.7
+
+
+7.
+sudo ./configure
+sudo make
+sudo make install
+sudo ldconfig
+
+
+
+
+8.
+cd /usr/local/src
+sudo wget https://www.snort.org/downloads/snort/snort-2.9.20.tar.gz
+sudo tar -xvzf snort-2.9.20.tar.gz
+cd snort-2.9.20
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

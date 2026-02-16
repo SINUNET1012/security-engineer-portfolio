@@ -1,0 +1,48 @@
+클라이언트
+1. dnf install targetcli -y 설치
+2. mkdir -p /iscsi_disks 디렉토리 만들기
+3. targetcli 들어가기
+/>표시 나옴
+4. backstores/fileio create disk01 /iscsi_disks/disk01.img 100M
+/> iscsi/ create iqn.2025-10.local.server:disk01
+/> iscsi/iqn.2025-10.local.server:disk01/tpg1/luns/ create /backstores/fileio/disk01
+/> iscsi/iqn.2025-10.local.server:disk01/tpg1/acls/ create iqn.2025-10.client:initiator01
+/> iscsi/iqn.2025-10.local.server:disk01/tpg1/portals/ create 0.0.0.0
+/> saveconfig
+/> exit
+5. firewall-cmd --add-port=3260/tcp --permanent 방화벽 해제
+   firewall-cmd --reload
+6. dnf install iscsi-initiator-utils -y
+7. iscsiadm -m discovery -t sendtargets -p 172.16.26.30
+8. iscsiadm -m node --login 접속
+9. fdisk -l 확인
+
+----------------------------------------------------------------------------------------------------
+서버
+1. apt install targetcli-fb -y 설치
+2. mkdir -p /iscsi_disks 디렉토리 만들기
+3. targetcli 접속
+/> 표시 나옴
+4. /> iscsi/ create iqn.2025-10.local.server:disk01
+/> iscsi/iqn.2025-10.local.server:disk01/tpg1/luns/ create /backstores/fileio/disk01
+/> iscsi/iqn.2025-10.local.server:disk01/tpg1/acls/ create iqn.2025-10.client:initiator01
+/> iscsi/iqn.2025-10.local.server:disk01/tpg1/portals/ create 0.0.0.0
+/> saveconfig
+/> exit
+5. apt install open-iscsi -y 설치
+6. systemctl status target 상태확인
+6-1. inactive일 때 systemctl enable --now target 후 상태 다시 확인
+7. ufw allow 3260/tcp 방화벽 열기
+8. apt install targetcli -y 설치
+9. apt install tgt -y 설치
+10.  tgtadm --mode target --op show 확인
+11. targetcli 접속 후 ls로 확인
+12. create iqn.2025-10.local.server:disk01 생성
+13.  /iscsi/iqn.2025-10.local.server:disk01/tpg1/luns> create /backstores/fileio/disk01
+/iscsi/iqn.20...k01/tpg1/luns>
+/iscsi/iqn.20...k01/tpg1/luns>
+/iscsi/iqn.20...k01/tpg1/luns> /iscsi/iqn.2025-10.local.server:disk01/tpg1/acls> create iqn.2025-10.client:initiator01
+/iscsi/iqn.20...k01/tpg1/acls>
+/iscsi/iqn.20...k01/tpg1/acls> /iscsi/iqn.2025-10.local.server:disk01/tpg1/portals> create 0.0.0.0
+/iscsi/iqn.20.../tpg1/portals>
+/iscsi/iqn.20.../tpg1/portals> /> saveconfig 붙여 넣기

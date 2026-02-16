@@ -1,0 +1,29 @@
+Jan 13 12:00:43.797 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 13 12:00:43.798 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 65098.
+Jan 13 12:00:44.247 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 13 12:00:44.248 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 13 12:00:44.248 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 13 12:00:44.248 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\53f465e2-e760-44d9-936b-b443d85850f1 
+Jan 13 12:00:44.249 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\53f465e2-e760-44d9-936b-b443d85850f1
+Jan 13 12:00:44.249 HYPERVISOR: exec_cmd: vm create R7 19 c7200 
+Jan 13 12:00:44.255 VM: VM R7 created.
+Jan 13 12:00:44.256 HYPERVISOR: exec_cmd: vm set_con_tcp_port R7 5036 
+Jan 13 12:00:44.256 HYPERVISOR: exec_cmd: c7200 get_mac_addr R7 
+Jan 13 12:00:44.257 HYPERVISOR: exec_cmd: vm get_status R7 
+Jan 13 12:00:44.257 HYPERVISOR: exec_cmd: vm slot_add_binding R7 0 0 C7200-IO-FE 
+Jan 13 12:00:44.257 HYPERVISOR: exec_cmd: vm set_disk0 R7 0 
+Jan 13 12:00:44.258 HYPERVISOR: exec_cmd: vm set_exec_area R7 64 
+Jan 13 12:00:44.258 HYPERVISOR: exec_cmd: vm get_status R7 
+Jan 13 12:00:44.259 HYPERVISOR: exec_cmd: vm set_idle_pc R7 0x60645960 
+Jan 13 12:00:44.260 HYPERVISOR: exec_cmd: vm set_ios R7 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 13 12:00:44.260 HYPERVISOR: exec_cmd: c7200 set_mac_addr R7 ca13.d5c0.0000 
+Jan 13 12:00:44.260 HYPERVISOR: exec_cmd: vm set_nvram R7 512 
+Jan 13 12:00:44.261 HYPERVISOR: exec_cmd: vm get_status R7 
+Jan 13 12:00:44.261 HYPERVISOR: exec_cmd: vm slot_add_binding R7 1 0 PA-4T+ 
+Jan 13 12:00:44.261 HYPERVISOR: exec_cmd: vm get_status R7 
+Jan 13 12:00:44.262 HYPERVISOR: exec_cmd: vm slot_add_binding R7 2 0 PA-8T 
+Jan 13 12:00:44.262 HYPERVISOR: exec_cmd: vm get_status R7 
+Jan 13 12:00:44.262 HYPERVISOR: exec_cmd: vm slot_add_binding R7 3 0 PA-4E 
+Jan 13 12:00:49.831 HYPERVISOR: Stopped.
+Jan 13 12:00:49.834 VM: VM R7 destroyed.
+Jan 13 12:00:54.759 GENERAL: reset done.

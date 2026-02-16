@@ -1,0 +1,12 @@
+set_ftp_config 함수에서
+
+dirmessage_enable=YES  없앰
+listen=YES를 NO로 바꿈...
+tcp_wrappers=YES 없앰
+userlist_enable=NO YES에서 NO로 바꿈
+
+chroot_local_user={self.chroot_enable}
+이 부분 없앰 왜냐하면 이거를 하면은 home 밑에 있는 디렉토리에 ftp 홈 설정할수 잇는데
+
+set_sftp_config 부분에서는chmod 755 /home/sftpuser/upload 이부분이엿슨..
+그래서 아마 /home을 쓰려고 하셧던거같음

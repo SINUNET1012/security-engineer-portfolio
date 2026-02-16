@@ -1,0 +1,62 @@
+
+
+***실행 전***
+1. mobaxterm에 연결(복붙 가능)
+2. sudo(관리자 권한) dnf install vim (vim 편집기)
+3. vim a.sh (a.sh생성)
+4. 스크립트
+5. chmod +x a.sh(관리자 권한 부여)
+
+
+
+
+
+
+#!/bin/bash
+
+echo "초기화 스크립트 시작..."
+
+echo "1. 현재 IP를 확인합니다."
+ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+
+echo "2. 게이트웨이(172.16.0.1)와 ping 테스트를 실행합니다."
+ping -c 5 172.16.0.1
+
+echo "3. DNS Server 주소 확인."
+cat /etc/resolv.conf
+
+# 4. 방화벽 및 SELinux 비활성화
+echo "방화벽 비활성화 시작..."
+# SELinux 즉시 비활성화
+sudo setenforce 0
+# 재부팅 후에도 비활성화 상태 유지
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+echo "SELinux 설정 완료."
+
+# firewalld 서비스 즉시 중지 및 자동 시작 방지
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+echo "firewalld 서비스 비활성화 완료."
+
+echo "5. Repository 및 패키지 설치"
+sudo dnf install epel-release -y
+sudo dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+sudo dnf -y update && sudo dnf -y upgrade
+sudo dnf -y install vim wget net-tools
+
+echo "6. Miniconda3 설치"
+cd ~
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh -b -p /root/miniconda3
+# 자동 활성화 비활성화 설정
+/root/miniconda3/bin/conda config --set auto_activate_base false
+# PATH 환경 변수 설정
+echo "export PATH=\$PATH:/root/miniconda3/bin/" >> /etc/bashrc
+source /etc/bashrc
+
+echo "7. Jupyter Notebook 설치"
+/root/miniconda3/bin/conda install jupyter -y
+
+echo "8. Jupyter Notebook 실행 테스트"
+jupyter notebook --allow-root --ip=172.16.0.21 --port=8000

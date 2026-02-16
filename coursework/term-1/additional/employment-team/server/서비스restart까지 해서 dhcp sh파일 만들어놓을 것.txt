@@ -1,0 +1,10 @@
+라우터 / 스위치 - 명령어 정리
+rocky9 / ubuntu <- shell script
+
+나중에는 그냥 sh만 돌리면 설치하고 restart까지 되도록 만들어 둘 것
+
+
++ network id나 excluded ip같은것도 입력만 하면 쫘라락 되도록
+
+arp -a : arp테이블 확인
+arp -d : arp테이블 삭제

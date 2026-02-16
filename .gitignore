@@ -25,6 +25,9 @@ ENV/
 # Tool outputs
 **/_results/
 
+# Remote terminal clients (may store credentials)
+**/MobaXterm*.ini
+
 # Large binaries / VM images / installers
 *.iso
 *.img

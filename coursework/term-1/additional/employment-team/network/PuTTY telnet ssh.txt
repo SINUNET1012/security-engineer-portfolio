@@ -1,0 +1,61 @@
+Switch
+[telnet 접속]
+conf t
+line vty 0 4 ( 0 ~ 4 : 동시 접속을 5개까지)
+password cisco  -> telnet 으로 연결하기 위한 pw1
+enable password cisco  -> 관리자 모드로 연결하기 위한 pw2
+
+<win 10에서 PuTTY>
+other telnet
+1.1.1.2(스위치) port: 23
+
+pw: cisco
+enable (default: > user mode)
+pw: cisco 
+#접속 (성공^^)
+
+wireshark 로 확인 하기 (패킷 분석)
+
+패킷 확인해보면 enable은 두번씩 나오고 cisco는 한 번씩
+-> en은 사용자가 입력한 것, 시스템에서 받은 것 두 개가 나옴 (입력, 사용자에게 보여주는 출력)
+
+telnet: 속도 빠르고 사용하기 편하다
+         중간에서 스니핑 하면 내용 모두 오픈(보안 취약)
+
+url encoding: url에 문자가 포함되어 있을 때 utf-8로 바꾸면 너무 길어서
+                 인터넷 전송 시 패킷을 효율적으로 만들 수 있게 변환
+                 ( 복구: url decoding)
+telnet(보안성 취약) -> ssh 사용
+
+[ssh 접속]
+<gns3>
+계정 생성
+(config)#
+username hyewonii privilege 15 password cisco
+ (원격으로 접속해서 시스템을 제어하기 위한 계정. 15: 관리자(root))
+line vty 0 4
+transport input ssh
+login local
+exit
+*로그인 방법/ 인증서 방법(자동 로그인)
+
+(config)#
+ip domain-name hyewonii.com
+crypto key generate rsa  -> key는 쌍을 생성한다.
+				ssh 1.5와 1.9는 다운그레이드의 대상이 될 위험이 있다.
+How many bits in the modulus [512]: 2048 (ssh 2) public -> private 불가/ private -> public 가능
+
+ip ssh version 2
+
+
+(config)# (보안 설정)
+ip ssh time-out 60
+ip ssh authentication-retries 3
+
+<win10>
+PuTTY를 ssh로 연결
+login as: hyewonii
+password: cisco
+
+ESW1# <- 관리자 권한을 줘서 바로 관리자 모드 (privilege 15)
+

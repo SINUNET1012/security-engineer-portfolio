@@ -1,0 +1,29 @@
+
+<VirtualHost *:80>
+        ServerName [도메인 주소]
+        ProxyRequests off
+        ProxyPass / http://localhost:8080/
+        ProxyPassReverse / http://localhost:8080/
+        ErrorLog "/var/log/httpd/tom_error_log"
+        CustomLog "/var/log/httpd/tom_access_log" combined
+</VirtualHost>
+
+
+==============================================
+
+
+[Unit] 
+Description=Apache Tomcat Web Application Container 
+After=network.target
+
+[Service]
+Type=forking
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/jdk-25.0.1-oracle-x64"
+Environment="CATALINA_HOME=/home/tomcat"
+Environment="CATALINA_BASE=/home/tomcat"
+
+ExecStart=/home/tomcat/bin/startup.sh
+ExecStop=/home/tomcat/bin/shutdown.sh

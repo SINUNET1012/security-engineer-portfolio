@@ -1,0 +1,39 @@
+Feb 08 14:42:22.526 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Feb 08 14:42:22.526 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 62444.
+Feb 08 14:42:22.964 HYPERVISOR: exec_cmd: hypervisor version 
+Feb 08 14:42:22.966 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips 
+Feb 08 14:42:22.968 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips
+Feb 08 14:42:22.969 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips\6b60d562-3ea7-483d-8aca-3601348f4a4f 
+Feb 08 14:42:22.970 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips\6b60d562-3ea7-483d-8aca-3601348f4a4f
+Feb 08 14:42:22.971 HYPERVISOR: exec_cmd: vm create ESW20 31 c3745 
+Feb 08 14:42:22.986 VM: VM ESW20 created.
+Feb 08 14:42:22.988 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW20 5062 
+Feb 08 14:42:22.989 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW20 
+Feb 08 14:42:22.990 HYPERVISOR: exec_cmd: vm set_disk0 ESW20 1 
+Feb 08 14:42:22.993 HYPERVISOR: exec_cmd: vm set_exec_area ESW20 64 
+Feb 08 14:42:22.995 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 14:42:22.996 HYPERVISOR: exec_cmd: vm set_idle_pc ESW20 0x60a7fc00 
+Feb 08 14:42:23.000 HYPERVISOR: exec_cmd: vm set_ios ESW20 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Feb 08 14:42:23.002 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW20 c41f.35b0.0000 
+Feb 08 14:42:23.004 HYPERVISOR: exec_cmd: vm set_nvram ESW20 256 
+Feb 08 14:42:23.005 HYPERVISOR: exec_cmd: vm set_ram ESW20 256 
+Feb 08 14:42:23.007 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 14:42:23.007 HYPERVISOR: exec_cmd: vm slot_add_binding ESW20 1 0 NM-16ESW 
+Feb 08 14:43:29.948 HYPERVISOR: exec_cmd: nio create_udp udp-84091c38-4c5b-44d9-841c-d17424905df4 10228 127.0.0.1 10229 
+Feb 08 14:43:31.148 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW20 1 0 udp-84091c38-4c5b-44d9-841c-d17424905df4 
+Feb 08 14:43:31.150 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 14:43:31.769 HYPERVISOR: exec_cmd: nio create_udp udp-fa8de555-f820-4dc6-ad0c-720c7ae45ab6 10232 127.0.0.1 10233 
+Feb 08 14:43:31.772 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW20 1 1 udp-fa8de555-f820-4dc6-ad0c-720c7ae45ab6 
+Feb 08 14:43:31.773 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 14:43:36.032 HYPERVISOR: exec_cmd: nio create_udp udp-f27fbbce-a532-4fd7-9bbd-4ce9100c62fa 10248 127.0.0.1 10249 
+Feb 08 14:43:36.035 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW20 1 2 udp-f27fbbce-a532-4fd7-9bbd-4ce9100c62fa 
+Feb 08 14:43:36.035 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 20:35:22.363 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 20:35:22.366 HYPERVISOR: exec_cmd: vm extract_config ESW20 
+Feb 08 20:35:28.809 HYPERVISOR: exec_cmd: vm get_status ESW20 
+Feb 08 20:35:29.763 HYPERVISOR: exec_cmd: vm extract_config ESW20 
+Feb 08 20:35:30.125 HYPERVISOR: exec_cmd: vm delete ESW20 
+Feb 08 20:35:30.131 VM: VM ESW20 destroyed.
+Feb 08 20:35:32.720 HYPERVISOR: exec_cmd: hypervisor stop 
+Feb 08 20:35:33.004 HYPERVISOR: Stopped.
+Feb 08 20:35:33.004 GENERAL: reset done.

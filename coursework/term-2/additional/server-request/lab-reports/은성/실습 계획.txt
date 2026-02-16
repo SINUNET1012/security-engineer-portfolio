@@ -1,0 +1,79 @@
+SIA 실습
+SIA 발생 조건 찾기
+
+구성 계획
+
+라우터 한곳에 트래픽을 최대한 집중시켜
+과부하및 병목현상을 유도해본다.(프레임 릴레이를 이용해 s1/0포트에 집중)
+
+현상이 발견이 되지 않는다면 점차 대역폭값을 점차 줄이면서 시도해보기로 했다
+
+
+
+R1#sh ip route
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     1.0.0.0/24 is subnetted, 5 subnets
+D       1.0.1.0 [90/2681856] via 1.0.0.2, 00:24:06, Serial1/0.12
+C       1.0.0.0 is directly connected, Serial1/0.12
+D       1.0.3.0 [90/3705856] via 1.0.0.2, 00:22:57, Serial1/0.12
+D       1.0.2.0 [90/3193856] via 1.0.0.2, 00:23:24, Serial1/0.12
+D       1.0.4.0 [90/3833856] via 1.0.0.2, 00:09:36, Serial1/0.12
+     2.0.0.0/24 is subnetted, 5 subnets
+D       2.0.2.0 [90/3193856] via 2.0.0.2, 00:14:48, Serial1/0.16
+D       2.0.3.0 [90/3705856] via 2.0.0.2, 00:12:35, Serial1/0.16
+C       2.0.0.0 is directly connected, Serial1/0.16
+D       2.0.1.0 [90/2681856] via 2.0.0.2, 00:17:53, Serial1/0.16
+D       2.0.4.0 [90/3833856] via 2.0.0.2, 00:10:24, Serial1/0.16
+     3.0.0.0/24 is subnetted, 1 subnets
+
+R1#sh ip eigrp topology
+IP-EIGRP Topology Table for AS(100)/ID(4.0.0.1)
+
+Codes: P - Passive, A - Active, U - Update, Q - Query, R - Reply,
+       r - reply Status, s - sia Status
+
+P 2.0.2.0/24, 1 successors, FD is 3193856
+        via 2.0.0.2 (3193856/2681856), Serial1/0.16
+P 1.0.1.0/24, 1 successors, FD is 2681856
+        via 1.0.0.2 (2681856/2169856), Serial1/0.12
+P 2.0.3.0/24, 1 successors, FD is 3705856
+        via 2.0.0.2 (3705856/3193856), Serial1/0.16
+P 1.0.0.0/24, 1 successors, FD is 2169856
+        via Connected, Serial1/0.12
+P 1.0.3.0/24, 1 successors, FD is 3705856
+        via 1.0.0.2 (3705856/3193856), Serial1/0.12
+P 2.0.0.0/24, 1 successors, FD is 2169856
+        via Connected, Serial1/0.16
+P 2.0.1.0/24, 1 successors, FD is 2681856
+        via 2.0.0.2 (2681856/2169856), Serial1/0.16
+P 1.0.2.0/24, 1 successors, FD is 3193856
+        via 1.0.0.2 (3193856/2681856), Serial1/0.12
+P 3.0.0.0/24, 1 successors, FD is 2169856
+        via Connected, Serial1/0.110
+
+Codes: P - Passive, A - Active, U - Update, Q - Query, R - Reply,
+       r - reply Status, s - sia Status
+
+P 4.0.0.0/24, 1 successors, FD is 2169856
+        via Connected, Serial1/0.111
+P 1.0.4.0/24, 1 successors, FD is 3833856
+        via 1.0.0.2 (3833856/3321856), Serial1/0.12
+P 2.0.4.0/24, 1 successors, FD is 3833856
+        via 2.0.0.2 (3833856/3321856), Serial1/0.16
+
+
+현재 중앙 라우터의 상태 - 정상 연결
+
+R1(config)#int s1/0
+R1(config-if)#bandwidth 100
+R1(config-if)#delay 100
+

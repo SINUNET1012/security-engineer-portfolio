@@ -1,0 +1,25 @@
+Oct 28 10:23:08.812 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 10:23:08.813 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 49372.
+Oct 28 10:23:09.306 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 10:23:09.307 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips 
+Oct 28 10:23:09.307 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips
+Oct 28 10:23:09.307 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips\b1a33ebb-4126-40ea-a8d1-df919dae72b1 
+Oct 28 10:23:09.307 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips\b1a33ebb-4126-40ea-a8d1-df919dae72b1
+Oct 28 10:23:09.307 HYPERVISOR: exec_cmd: vm create ESW1 6 c3745 
+Oct 28 10:23:09.309 VM: VM ESW1 created.
+Oct 28 10:23:09.309 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW1 5027 
+Oct 28 10:23:09.309 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW1 
+Oct 28 10:23:09.310 HYPERVISOR: exec_cmd: vm set_disk0 ESW1 1 
+Oct 28 10:23:09.310 HYPERVISOR: exec_cmd: vm set_exec_area ESW1 64 
+Oct 28 10:23:09.311 HYPERVISOR: exec_cmd: vm get_status ESW1 
+Oct 28 10:23:09.311 HYPERVISOR: exec_cmd: vm set_idle_pc ESW1 0x6023f558 
+Oct 28 10:23:09.312 HYPERVISOR: exec_cmd: vm set_ios ESW1 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 10:23:09.312 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW1 c406.0be0.0000 
+Oct 28 10:23:09.313 HYPERVISOR: exec_cmd: vm set_nvram ESW1 256 
+Oct 28 10:23:09.314 HYPERVISOR: exec_cmd: vm set_ram ESW1 256 
+Oct 28 10:23:09.314 HYPERVISOR: exec_cmd: vm get_status ESW1 
+Oct 28 10:23:09.314 HYPERVISOR: exec_cmd: vm slot_add_binding ESW1 1 0 NM-16ESW 
+Oct 28 14:47:13.382 HYPERVISOR: exec_cmd: vm set_ios ESW1 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 14:47:15.576 HYPERVISOR: exec_cmd: vm set_ios ESW1 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 14:47:24.054 HYPERVISOR: exec_cmd: vm set_ios ESW1 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 28 14:47:27.864 HYPERVISOR: exec_cmd: vm set_ios ESW1 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 

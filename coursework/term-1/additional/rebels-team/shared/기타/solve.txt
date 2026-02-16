@@ -1,0 +1,51 @@
+echo "초기화 시작"
+echo "1.현재 IP 확인"
+ip a | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+
+echo "2. 게이트 웨이와 ping 테스트 실행"
+ping -c 5 172.16.0.1
+
+echo "3. DNS 주소 확인"
+cat /etc/resolv.conf
+
+echo "4. tool 설치"
+dnf -y install vim net-tools wget
+
+echo "5. 방화벽 해제"
+systemctl disable --now firewalld
+sed -i 's/SELINUX=enforcing/SELINUX=disable/g' /etc/selinux/config
+
+echo "6. 리포지터리 설치"
+sudo dnf install epel-release -y
+sudo dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+dnf -y update && dnf -y upgrade
+
+echo "7. Miniconda3 설치"
+cd ~
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh -b -p ~/miniconda3
+echo 'export PATH=$PATH:/root/miniconda3/bin/' >> /etc/bashrc
+source /etc/bashrc
+
+echo "8. jupyter notebook 설치"
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+conda install jupyter -y
+
+conda config --set auto_activate_base false
+
+echo 9 jupyter notebook 자동화
+
+jupyter notebook --generate-config # jupyter_notebook_config.py 
+
+echo "
+# IP 주소 바인딩
+c.ServerApp.ip =(ip route get 8.8.8.8 | grep -oP 'src \K[0-9.]+')
+# 포트 설정
+c.ServerApp.port = 8000
+c.ServerApp.root_dir = '/root/' 
+c.ServerApp.open_browser = False " >> ~/.jupyter/jupyter_notebook_config.py
+
+echo 10. 쥬피터 노트북 실행 설정 변경
+jupyter notebook -f ~/.jupyter/jupyter_notebook_config.py 

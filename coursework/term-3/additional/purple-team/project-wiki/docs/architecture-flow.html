@@ -1,0 +1,243 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퍼플위키 - 전체 아키텍처 흐름</title>
+  <link rel="stylesheet" href="../wiki.css" />
+</head>
+<body>
+  <header class="wiki-topbar">
+    <div class="top-inner">
+      <a class="brand" href="../index.html" aria-label="퍼플위키 홈">
+        <span class="brand-mark">P</span>
+        <strong>퍼플위키</strong>
+      </a>
+      <nav class="top-nav">
+        <a href="../index.html">개념 문서</a>
+        <a class="active" href="../docs/tech-index.html">요소 허브</a>
+        <a href="../article-asset-index.html">자료 인덱스</a>
+      </nav>
+      <div class="top-right">
+        <div class="global-search" role="search" aria-label="퍼플위키 검색">
+          <input id="global-search-input" type="search" placeholder="퍼플위키 검색" />
+          <div id="global-search-suggest" class="search-suggest" hidden></div>
+        </div>
+        <div class="top-note">
+          <a id="random-page-link" href="#">랜덤</a> · <a href="../docs/glossary.html">도움말</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="article-title">
+    <div class="title-main">
+      <p class="article-path">퍼플위키 / 요소 문서 / 섹션</p>
+      <h1>전체 아키텍처 흐름</h1>
+      <div class="article-lastmod">최근 수정 시각: 2026-02-13 17:03:41</div>
+      <div class="article-tabs">
+        <a class="active" href="#">읽기</a>
+        <a href="../docs/tech-index.html">요소</a>
+        <a href="../article-asset-index.html">자료</a>
+        <a href="../index.html">메인</a>
+      </div>
+      <p class="article-desc">로그 생성부터 탐지/대응/증적까지의 end-to-end 파이프라인을 설명합니다.</p>
+    </div>
+    <aside class="info-box">
+      <h2>문서 요약</h2>
+      <div class="info-list">
+        <div><span>문서 유형</span><strong>섹션 문서</strong></div>
+        <div><span>섹션 수</span><strong>10개</strong></div>
+        <div><span>연관 문서</span><strong>3개</strong></div>
+        <div><span>바로가기</span><strong><a href="../docs/tech-index.html">요소 허브</a></strong></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wiki-tools">
+    <div class="tool-tabs" role="tablist" aria-label="문서 탭">
+      <button type="button" class="tab active" data-mode="read">읽기</button>
+      <button type="button" class="tab" data-mode="fold">문단 관리</button>
+      <button type="button" class="tab" data-mode="nav">탐색</button>
+    </div>
+    <div class="tool-actions">
+      <input id="page-search-input" type="search" placeholder="문서 내 검색" />
+      <button id="expand-all-btn" type="button">전체 펼치기</button>
+      <button id="collapse-all-btn" type="button">전체 접기</button>
+      <button id="clear-search-btn" type="button">검색 초기화</button>
+      <span id="search-result-text" class="search-result-text">검색 대기 중</span>
+    </div>
+  </section>
+
+  <main class="layout">
+    <section class="content">
+      <section id="outline" class="panel">
+        <h2>1. 개요</h2>
+        <p>로그 생성부터 탐지/대응/증적까지의 end-to-end 파이프라인을 설명합니다.</p>
+      </section>
+
+      <section id="concept-deep" class="panel">
+        <h2>2. 핵심 개념 심화</h2>
+        <ol class="ordered">
+<li>전체 아키텍처 흐름 문서는 팀이 동일한 기준으로 의사결정하도록 핵심 용어와 경계를 고정합니다.</li>
+<li>입력 조건, 처리 규칙, 출력 결과를 분리해 기록해야 이슈 재현과 원인 분석이 가능합니다.</li>
+<li>탐지 정확도와 운영 안정성을 동시에 관리해야 실제 운영 단계에서 품질이 유지됩니다.</li>
+<li>역할 분담, 검증 근거, 변경 이력을 남겨야 협업 비용과 인수인계 비용을 줄일 수 있습니다.</li>
+<li>KPI와 회고 결과를 룰/설정 개선으로 연결하는 반복 루프가 필요합니다.</li>
+        </ol>
+      </section>
+
+      <section id="flow-model" class="panel">
+        <h2>3. 구성 흐름</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>단계</th>
+                <th>설명</th>
+                <th>결과물</th>
+              </tr>
+            </thead>
+            <tbody>
+<tr><td>기획</td><td>목표, 범위, 성공 기준, 제외 범위를 문서화합니다.</td><td>합의된 요구사항</td></tr>
+<tr><td>설계</td><td>아키텍처 흐름, 책임 분담, 데이터 표준을 정의합니다.</td><td>설계 기준서</td></tr>
+<tr><td>구현</td><td>수집-정규화-탐지-대응 체인을 구현하고 연동합니다.</td><td>동작 가능한 파이프라인</td></tr>
+<tr><td>검증</td><td>정상/공격 시나리오를 재현해 탐지·대응 결과를 기록합니다.</td><td>검증 로그와 증적</td></tr>
+<tr><td>운영</td><td>KPI, Runbook, 회고 루프로 개선을 반복합니다.</td><td>지속 개선 계획</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="implementation" class="panel">
+        <h2>4. 구현 절차</h2>
+        <ol class="ordered">
+<li>전체 아키텍처 흐름 적용 목적과 측정 지표를 먼저 확정합니다.</li>
+<li>입력 데이터 형태와 의존 구성요소를 체크리스트로 정리합니다.</li>
+<li>정상 동작 기준을 먼저 검증한 뒤 공격/예외 시나리오를 확장합니다.</li>
+<li>변경 전후 로그를 비교해 품질 지표 변화를 수치로 기록합니다.</li>
+<li>룰/설정 파일과 운영 문서를 동기화하고 변경 이력을 남깁니다.</li>
+<li>소규모 적용 후 범위를 확대하는 단계적 배포 전략을 사용합니다.</li>
+        </ol>
+      </section>
+
+      <section id="examples" class="panel">
+        <h2>5. 로그/설정 예시</h2>
+        <pre><code># 문서 실행 예시
+1) 범위와 목표 확인
+2) 단계별 점검 수행
+3) 결과를 KPI와 회고에 반영</code></pre>
+      </section>
+
+      <section id="validation" class="panel">
+        <h2>6. 검증 기준</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>지표</th>
+                <th>목표</th>
+                <th>측정 방법</th>
+              </tr>
+            </thead>
+            <tbody>
+<tr><td>정확도</td><td>90% 이상</td><td>공격 시나리오 재현 시 탐지 성공률 측정</td></tr>
+<tr><td>지연</td><td>서비스 기준 이내</td><td>이벤트 유입부터 경보 발생까지 시간 측정</td></tr>
+<tr><td>안정성</td><td>재시작 없이 운영</td><td>오류 로그/재기동 횟수 주간 점검</td></tr>
+<tr><td>운영성</td><td>문서와 실행 일치</td><td>Runbook 항목과 실제 수행 로그 대조</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ops-checklist" class="panel">
+        <h2>7. 운영 체크리스트</h2>
+        <ol class="ordered">
+<li>전체 아키텍처 흐름 적용 전 권한, 포트, 의존 서비스 상태를 확인한다.</li>
+<li>입력/출력 로그가 모두 수집되는지 샘플 이벤트로 검증한다.</li>
+<li>정상 트래픽과 공격 트래픽을 분리해 결과를 비교한다.</li>
+<li>오탐/미탐 사례를 별도 기록하고 룰 개선 항목을 추출한다.</li>
+<li>변경 이력(무엇, 왜, 언제, 담당자)을 문서에 남긴다.</li>
+<li>Runbook 기준으로 실제 운영 절차를 점검한다.</li>
+        </ol>
+      </section>
+
+      <section id="troubleshooting" class="panel">
+        <h2>8. 트러블슈팅</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>증상</th>
+                <th>원인</th>
+                <th>점검</th>
+                <th>조치</th>
+              </tr>
+            </thead>
+            <tbody>
+<tr><td>이벤트가 보이지 않음</td><td>수집 경로/포트/권한 문제</td><td>에이전트 상태, 네트워크 연결, 입력 설정 점검</td><td>수집 경로 복구 후 샘플 로그 재검증</td></tr>
+<tr><td>경보가 과도하게 발생</td><td>조건 과민 또는 기준선 부재</td><td>오탐 로그 샘플링 및 조건 비교</td><td>예외 조건 보강 및 임계치 조정</td></tr>
+<tr><td>탐지가 누락됨</td><td>필드 매핑 불일치, 룰 범위 누락</td><td>원문 로그와 탐지 조건 필드 매핑 대조</td><td>필드 정규화 보완 및 룰 조건 수정</td></tr>
+<tr><td>대응 지연 발생</td><td>역할/승인 절차 불명확</td><td>Runbook 단계별 소요 시간 확인</td><td>승인 체계 단순화 및 자동화 대상 분리</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="faq" class="panel">
+        <h2>9. FAQ</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+<tr><th>전체 아키텍처 흐름 문서는 누가 관리하는가?</th><td>해당 섹션 책임자가 초안 유지, 팀 리뷰로 확정하는 방식이 권장됩니다.</td></tr>
+<tr><th>어느 수준까지 상세화해야 하는가?</th><td>신규 팀원이 문서만으로 동일 결과를 재현할 수 있는 수준까지 상세화합니다.</td></tr>
+<tr><th>검증 증적은 무엇을 남겨야 하는가?</th><td>원문 로그, 탐지 결과, 대응 실행 로그, 변경 diff를 함께 남깁니다.</td></tr>
+<tr><th>문서가 실제와 달라졌을 때 우선순위는?</th><td>실제 운영 절차를 먼저 복구하고 즉시 문서를 갱신해 불일치를 제거합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="related" class="panel">
+        <h2>10. 연관 문서</h2>
+        <ol class="ordered">
+<li><a href="detailed-flow.html">프로젝트 세부 흐름</a></li>
+<li><a href="data-model.html">데이터 필드 표준</a></li>
+<li><a href="kpi.html">운영 품질 KPI</a></li>
+        </ol>
+      </section>
+    </section>
+
+    <aside class="toc">
+      <h2>목차</h2>
+      <div class="toc-tools">
+        <button id="toc-collapse-btn" type="button">목차 접기</button>
+      </div>
+      <a href="#outline">1. 개요</a>
+      <a href="#concept-deep">2. 핵심 개념 심화</a>
+      <a href="#flow-model">3. 구성 흐름</a>
+      <a href="#implementation">4. 구현 절차</a>
+      <a href="#examples">5. 로그/설정 예시</a>
+      <a href="#validation">6. 검증 기준</a>
+      <a href="#ops-checklist">7. 운영 체크리스트</a>
+      <a href="#troubleshooting">8. 트러블슈팅</a>
+      <a href="#faq">9. FAQ</a>
+      <a href="#related">10. 연관 문서</a>
+    </aside>
+  </main>
+
+  <div class="category-box">
+    <strong>분류</strong>
+    <a href="../index.html">퍼플위키</a>
+    <a href="../docs/tech-index.html">섹션 문서</a>
+    <a href="#related">연관 문서</a>
+  </div>
+  <footer class="license-box">
+    이 문서는 퍼플팀 내부 학습 및 프로젝트 정리를 위한 문서입니다.
+  </footer>
+
+  <button id="back-to-top-btn" class="back-to-top-btn" type="button" aria-label="맨 위로">▲</button>
+  <script src="../wiki-pages.js"></script>
+  <script src="../wiki-ui.js"></script>
+</body>
+</html>

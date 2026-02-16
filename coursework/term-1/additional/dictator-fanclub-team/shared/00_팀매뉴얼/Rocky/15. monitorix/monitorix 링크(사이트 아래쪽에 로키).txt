@@ -1,0 +1,6 @@
+https://tipsonunix.medium.com/install-monitorix-3-14-0-on-ubuntu-rocky-linux-fedora-c4be326293ff
+
+
+dnf install rrdtool perl perl-FindBin perl-HTTP-Server-Simple -y
+
+이것도 설치해야 합니다

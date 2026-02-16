@@ -1,0 +1,88 @@
+#!/bin/bash
+set -e
+
+echo "=== 1. BIND (DNS) 설치 ==="
+dnf -y install bind bind-utils
+
+echo "=== 2. named 설정 파일 수정 ==="
+sed -i "s/        listen-on port 53 { 127.0.0.1; };/        listen-on port 53 { any; };/g" /etc/named.conf
+sed -i "s/        allow-query     { localhost; };/        allow-query     { any; };/g" /etc/named.conf
+
+echo "=== 3. 존 파일 등록 ==="
+# 중복 방지: 기존 내용 제거 후 새로 작성
+grep -q 'zone "team1.com"' /etc/named.rfc1912.zones || cat <<EOF >> /etc/named.rfc1912.zones
+zone "team1.com" IN {
+        type master;
+        file "team1.com.zone";
+        allow-update { none; };
+};
+EOF
+
+echo "=== 4. 존 파일 생성 ==="
+cp -ap /var/named/named.localhost /var/named/team1.com.zone
+
+echo "=== 5. 존 파일 수정 ==="
+sed -i "s/@       IN SOA  @ rname.invalid. (/@       IN SOA  ns.team1.com. root.team1.com. (/g"  /var/named/team1.com.zone
+sed -i "s/        NS      @/        NS      ns.team1.com./g"  /var/named/team1.com.zone
+sed -i "s/        A       127.0.0.1/        A       172.16.254.4/g"  /var/named/team1.com.zone
+
+cat <<EOF >> /var/named/team1.com.zone
+ns	IN	A	172.16.254.5
+ftp	IN	A	172.16.254.5
+ww1	IN	A	172.16.254.5
+ww2	IN	A	172.16.254.5
+EOF
+
+# 권한 수정
+chown named:named /var/named/team1.com.zone
+
+echo "=== 6. Zone 파일 오류 체크 ==="
+named-checkconf /etc/named.conf
+named-checkzone team1.com /var/named/team1.com.zone
+
+echo "=== 7. named 서비스 활성화 ==="
+systemctl enable --now named
+
+echo "=== 8. Apache 가상호스트 설정 ==="
+cat <<EOF > /etc/httpd/conf.d/team1.conf
+<VirtualHost *:80>
+    ServerName ww1.team1.com
+    DocumentRoot "/home/team1"
+    <Directory "/home/team1/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName ww2.team1.com
+    DocumentRoot "/home/team2"
+    <Directory "/home/team2/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+
+echo "=== 9. 웹 디렉토리 생성 ==="
+mkdir -p /home/team1 /home/team2
+echo "<h1>Welcome to ww1.team1.com</h1>" > /home/team1/index.html
+echo "<h1>Welcome to ww2.team1.com</h1>" > /home/team2/index.html
+chown -R apache:apache /home/team1 /home/team2
+
+echo "=== 10. 사용자 생성 ==="
+USERNAME=team2
+PASSWORD='<REDACTED>'
+useradd -m -s /bin/bash "$USERNAME" || echo "사용자 이미 존재함, 건너뜀"
+echo "$USERNAME:$PASSWORD" | chpasswd
+chmod 755 /home/"$USERNAME"
+
+echo "=== 11. 서비스 재시작 ==="
+systemctl restart httpd
+systemctl restart named
+systemctl restart vsftpd
+
+echo "✅ 모든 설정 완료 (DNS + Apache + 사용자 + FTP)"
+

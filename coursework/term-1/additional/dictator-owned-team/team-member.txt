@@ -1,0 +1,27 @@
+==선생님 전달용==
+
+본사
+운영체제 : Rocky도메인 : mr.bon.com
+IP : 37.0.0.3/11
+운영체제 : Window 10도메인 : frp.bon.com
+IP : 37.0.0.0/11(dhcp)
+운영체제 : Ubuntu도메인 : wv.bon.com
+IP : 37.0.0.0/11(dhcp)
+
+데이터센터
+운영체제 : Rocky
+도메인 : ndk.data.com
+IP : 37.96.0.2/11
+운영체제 : Rocky
+도메인 : r1.data.com
+IP : 37.96.0.10/11
+운영체제 : Window 10
+도메인 : wn.data.com
+IP : 37.96.0.12/11 (dhcp)
+운영체제 : Ubuntu
+도메인 : us.data.com
+IP : 37.96.0.13/11(dhcp)
+
+대리점
+운영체제 : Ubuntu도메인 : dm.dae.com
+IP : 37.224.0.3/13

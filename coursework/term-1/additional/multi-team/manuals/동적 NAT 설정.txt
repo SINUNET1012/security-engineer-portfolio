@@ -1,0 +1,38 @@
+오늘은 표준 ACL만 사용
+conf t
+access-list 번호
+            ----   :  0 ~ 99   : 표준 ACL
+                     100 ~ 199 : 확장 ACL
+                      Name     : 이름붙은 ACL
+access-list 1 명령
+              ---   : permit : 허용 --> 범위 지정 시 permit
+                      deny   : 차단
+access-list 1 permit NI 
+                     --       : 출발지 Network --> 범위 지정 시 : 대상 NI
+                                NAT에서는 사설 네트워크 범위
+access-list 1 permit 192.168.0.0 wild-mask
+                                 ---------   : SM를 Not 연산한 결과
+                                 SM : 255.255.255.0
+                                 WM : 0.0.0.255
+access-list 1 permit 192.168.0.0 0.0.0.255
+
+
+
+
+사설 네트워크의 범위 지정 : ACL
+
+conf t
+access-list 1 permit 192.168.0.0 0.0.0.255 : 사설 범위
+####ACL에서는 wild mask를 쓴다. 기존 서브넷마스크 낫연산
+
+ip nat pool DK 12.1.1.1 12.1.1.2 netmask 255.255.255.0 : 공인 범위
+	       ------------------
+	(내 라우터 outside 포트 아이피 범위)
+
+NAT 설정
+ip nat inside source list 1 pool DK : list 1의 사설 범위를 DK의 공인범위로 사용(선착순)
+###동적 NAT : ip를 중심으로 범위
+
+PAT 설정(NAT Overload)
+ip nat inside source list 1 pool DK overload : overload를 붙이면 PAT
+###4계층의 포트를 중심으로 범위(TCP/UDP), 포트번호는 16비트로 구성

@@ -1,0 +1,48 @@
+표준 ACL (ACcess List)
+
+ - conf t
+ - access-list 번호 (번호는 아무거나 단, 표준 ACL : 0~99)
+
+access-list 1 permit [사설 IP 주소] [와일드카드 마스크]  <- 사설 IP 범위 지정
+ * access list에서는 서브넷 마스크 보다는 와일드 마스크 방식으로 진행한다 (서브넷 마스크의 반대)
+
+ip nat pool [이름] [지정할 공인 IP의 시작 주소] [지정할 공인 IP의 마지막 주소] netmask 255.255.255.0 <- 공인 IP 범위 지정
+
+
+
+
+Access List는 범위를 지정하는 것?
+
+NAT 설정
+ip nat inside source list 1 pool [공인 IP 범위 이름]
+
+
+
+
+예전 NAT 방식에서는(static) 특정 PC와 공인 IP를 지정해 줬는데
+ACL을 추가하면 이제 사설 대역과 이전에 설정한 공인 IP 범위를 동적으로 매칭시켜줄 수 있다.
+
+
+작업 순서
+1. DHCP 설정 및 할당
+   - 라우터 IP 설정 (게이트웨이 고정 1)
+   - DHCP 설정
+   - DHCP IP 할당
+
+2. LAN 영역에서 Ping 테스트
+
+3. UDP 터널 설정 및 연결
+
+4. 라우터 인터페이스 설정
+   - 라우터 포트 NAT Inside, Outside 설정 (순서 : Inside -> outside)
+   - 세컨더리 ip 생성(.3)
+
+5. Static 라우팅 설정
+
+6. PING 테스트(Time out 확인)
+
+7. ACL 설정 
+   - 사설 IP 범위 지정
+   - 공인 IP 풀 지정 (풀은 영문 성으로 지정)
+
+8. Ping 테스트 (각 공인 네트워크 지정)

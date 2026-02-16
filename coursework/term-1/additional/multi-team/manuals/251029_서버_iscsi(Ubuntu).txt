@@ -1,0 +1,103 @@
+1. 서버 (iSCSI Target) 설정
+-----------------------------------------------
+
+[1-1] 패키지 설치
+-----------------------------------------------
+sudo apt update
+sudo apt install -y targetcli-fb
+
+(서비스 자동 실행 확인)
+sudo systemctl enable --now target
+
+
+[1-2] LUN (저장공간) 준비 및 백스토어 생성
+-----------------------------------------------
+# /dev/sdb 디스크 확인 (새 디스크 추가 필요)
+sudo fdisk -l
+sudo lsblk
+
+# targetcli 진입
+sudo targetcli
+
+# 백스토어 생성 (디스크 전체를 raw 블록 장치로 사용)
+> /backstores/block create name=disk1 dev=/dev/sdb
+
+
+[1-3] iSCSI Target 생성 및 포털 설정
+-----------------------------------------------
+# IQN 생성
+# 형식: iqn.YYYY-MM.도메인역순:고유문자열
+> /iscsi/ create iqn.2025-10.com.ubuntu:storage.target1
+
+# 포털 생성 (서버 IP 지정)
+> /iscsi/iqn.2025-10.com.ubuntu:storage.target1/tpg1/portals create 192.168.1.10
+
+
+[1-4] LUN 연결
+-----------------------------------------------
+> /iscsi/iqn.2025-10.com.ubuntu:storage.target1/tpg1/luns create /backstores/block/disk1
+
+
+[1-5] ACL (접속 허용할 Initiator IQN 등록)
+-----------------------------------------------
+# 클라이언트의 IQN은 /etc/iscsi/initiatorname.iscsi 에서 확인 가능
+> /iscsi/iqn.2025-10.com.ubuntu:storage.target1/tpg1/acls create iqn.2004-10.com.ubuntu:01:68299635f96d
+
+
+[1-6] 설정 저장 및 확인
+-----------------------------------------------
+> saveconfig
+> exit
+
+# 일반 쉘에서 구성 확인
+sudo targetcli ls
+
+
+-----------------------------------------------
+2. 클라이언트 측 (iSCSI Initiator) 설정
+-----------------------------------------------
+
+[2-1] 패키지 설치
+-----------------------------------------------
+sudo apt update
+sudo apt install -y open-iscsi
+
+sudo systemctl enable --now iscsid
+
+
+[2-2] Initiator IQN 확인
+-----------------------------------------------
+cat /etc/iscsi/initiatorname.iscsi
+# 예시: InitiatorName=iqn.2004-10.com.ubuntu:01:68299635f96d
+
+
+[2-3] Target 검색 및 로그인
+-----------------------------------------------
+sudo iscsiadm -m discovery -t sendtargets -p 192.168.1.10
+sudo iscsiadm -m node --login
+
+# 자동 재연결 설정
+sudo systemctl enable open-iscsi
+
+
+[2-4] 디스크 확인 및 마운트
+-----------------------------------------------
+lsblk
+sudo fdisk -l
+
+# 새 디스크 (예: /dev/sdX)에 파일시스템 생성 및 마운트
+sudo mkfs.ext4 /dev/sdX
+sudo mkdir /mnt/iscsi
+sudo mount /dev/sdX /mnt/iscsi
+
+# 자동 마운트 (선택)
+# /etc/fstab에 다음 추가
+/dev/sdX   /mnt/iscsi   ext4   _netdev   0   0
+
+
+-----------------------------------------------
+※ 주의사항
+ - /dev/sdb 디스크의 모든 데이터가 삭제됩니다.
+ - IQN은 중복되면 안 됩니다.
+ - Target과 Initiator 간 IP 통신이 가능해야 합니다.
+-----------------------------------------------

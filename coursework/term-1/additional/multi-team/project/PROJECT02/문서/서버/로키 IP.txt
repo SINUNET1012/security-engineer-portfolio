@@ -1,0 +1,127 @@
+dnf rocky_9 minimal IP 172.16.26.10
+연습용 계정 IP : 172.16.26.11
+
+ID : root
+공용 비밀번호 : <REDACTED>
+
+#은 관리자
+$는 일반계정
+
+
+CLI 환경에서 nmtui : IP설정하는 방법
+
+순서대로 해야함
+1. 네트워크 통신 상태 확인 -> 핑 확인
+2. 서버 정보 확인 -> systemctl status sshd : sshd 동작 확인(서버 확인)
+
+vm에서 해야 할 일
+----------------------------------------------------------------------------
+modaXterm에서 할 일
+
+3. 서버를 처음 설치 한 뒤에 해야할 초기화 작업
+
+4.dnf -y install vim
+
+5. 방화벽 해제
+selinux : 커널 방화벽 해제
+          vim /etc/selinux/config
+           
+    Enforcing -> 수정 : SELINUX=disabled
+
+방화벽 → RHEL : firewalld
+                우분투 : ufw
+
+systemctl disable --now firewalld
+
+RHEL -> 패키지 설치하는 명령어 : dnf(yum)
+6. dnf -y install net-tools
+   dnf -y install wget
+
+리포지터리 설치
+7. EPEL(EPEL Repository) 설치
+sudo dnf install epel-release -y
+
+8. Remi Repository 설치
+sudo dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+
+필수 리포지터리
+9. dnf -y update <-리포지터리 목록 업데이트
+10. dnf -y upgrade <-목록에 있는 내용을 최신으로 업그레이드
+
+->>>vim up.sh로 파일로 넣어둠
+(9~10). dnf -y update&&dnf -y upgrade
+
+vim up.sh -> view 모드 : 파일의 내용을 확인할 수 있다.
+->>>(a) or i 키 누르면 insert 모드(수정 모드)
+->>> 수정모드 나오는 방법 = esc (view모드)
+
+뷰모드에서 “:”  → 명령모드  
+               w(저장버튼)
+               q(종료버튼) 
+             * q!는 무시하고 종료 (수정하다 잘못되면 강제종료)   
+
+cat (up.sh) : 파일의 내용을 보여준다
+     (명령어)
+
+11. 주피터 설치 wget 으로 .sh파일 설치
+    
+    dnf -y install wget
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+12. chmod +x Miniconda3-latest-Linux-x86_64.sh
+
+13. ./Miniconda3-latest-Linux-x86_64.sh
+
+14. vim /etc/bashrc 들어가서 설정(맨 마지막줄에 export PATH=$PATH:/root/miniconda3/bin/)
+ 
+15. source /etc/bashrc 하고난 후 -> conda
+
+16. conda install jupyter -y
+
+17. conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+18. jupyter notebook --allow-root
+
+19. jupyter notebook --allow-root --ip=<접속할_IP> --port=<포트번호>
+ex : jupyter notebook --allow-root --ip=172.16.0.21 --port=8000                                                          
+
+20. vim ju.sh -> jupyter notebook --allow-root --ip=172.16.0.21 --port=8000 &
+
+21. chmod +x ju.sh
+
+22. jupyter notebook password
+
+명령어
+clear : 화면 정리
+init 0 : vm 종료
+ls (list) : 현재 디렉터리의 내용을 보여주는 명령어
+ls -l : 리스트 목록을 보여줌
+vim up.sh -> view 모드 : 파일의 내용을 확인할 수 있다.
+cat 명령어 : 파일의 내용을 보여준다
+chmod : 파일의 퍼미션을 수정하는 명령어
+(chmod +x 추가할 곳 이름) --> ex: chmod +x Miniconda3-latest-Linux-x86_64.sh)
+wget 명령어 : http 프로토콜을 이용하여 파일을 다운로드 받는 프로그램
+./ : 실행 명령어
+/etc : 리눅스 기본 설정 들어있음
+nmtui : 도스 설정 들어가는 방법
+
+
+방화벽 해제
+selinux : 커널 방화벽 해제
+	/etc/selinux/config
+          vim /etc/selinux/config
+           
+      수정 : SELINUX=disabled
+
+방화벽 → RHEL : firewalld
+                우분투 : ufw
+
+systemctl disable --now firewalld
+
+백그라운드로 동작중인 주피터 강제 종료 
+ps -> PID 확인
+kill -9 PID
+
+daemon-reload ->서비스 수정시 재부팅 해줘야함
+

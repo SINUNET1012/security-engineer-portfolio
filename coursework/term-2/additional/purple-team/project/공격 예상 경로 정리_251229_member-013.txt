@@ -1,0 +1,71 @@
+ettercap(arp-posioning) #기본적으로 대부분 로그 안 남음
+
+nmap #os스캔을 제외한 나머지 스캔은 거의 대부분 안 남는걸로 알고있음
+
+brute froce
+#공격하는거에 따라 경로 달라짐
+OS	로그 경로
+Ubuntu	/var/log/auth.log
+Rocky9	/var/log/secure
+
+dig
+일반적으로 로그 안 남음
+로그가 남는 경우 = 대상 서버가 DNS Server일 때
+서버가 DNS일 때	경로
+BIND		/var/log/named/
+Systemd-resolved	journalctl -u systemd-resolved
+클라이언트 쪽엔 안 남음
+
+whatweb
+웹서버 요청 → access.log 에 남음
+OS		로그 위치
+Ubuntu Apache	/var/log/apache2/access.log
+Rocky9 Apache	/var/log/httpd/access_log
+Nginx		/var/log/nginx/access.log
+(요청 예시 _->"GET / HTTP/1.1" "WhatWeb/0.5.5")
+
+command injection(모름 사실)
+위치		이유
+access.log	공격 payload 기록됨
+error.log		실행 실패 / 경고
+php-fpm log	stderr 출력
+Ubuntu -> /var/log/php8.x-fpm.log
+Rocky9 -> /var/log/php-fpm/error.log
+
+sql injection()
+종류		로그 위치
+Web Request	access.log
+App 	Error	error.log
+PHP	php-fpm 로그
+DB Query Error	MariaDB 로그
+
+web shell(post일 경우는 post만떠서 애매?)
+로그		내용
+access.log	webshell.php 업로드 기록
+error.log		실행 경고
+php-fpm log	명령 실행 흔적
+
+netcat
+아마도 access.log?
+
+XSS
+남는 곳		이유
+access.log	자바스크립트 포함된 URL 기록
+error.log		필터링 오류 시
+
+hydra # hydra는 도구일 뿐이고
+결국 공격 대상 프로그램이 로그를 남김
+공격 대상	로그 위치
+SSH	auth.log / secure
+FTP vsftpd	/var/log/vsftpd.log
+HTTP 로그인	웹 서버 access.log
+
+request
+get -> access/log
+post -> post만뜸
+
+CSRF
+로그		설명
+access.log	정상 요청처럼 기록됨
+error.log	validation 실패 시만 남음
+

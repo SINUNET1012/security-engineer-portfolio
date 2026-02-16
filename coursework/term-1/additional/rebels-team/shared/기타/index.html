@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>심플 귀여운 자기소개 양식</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+    body {
+      background: #f0f4f8;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    form {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 30px 40px;
+      box-shadow: 0 8px 24px rgba(99, 99, 99, 0.15);
+      max-width: 400px;
+      width: 100%;
+      color: #333;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #ff6f91;
+      letter-spacing: 1.2px;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: 1.8px solid #ddd;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      background-color: #fafafa;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus,
+    input[type="file"]:focus {
+      border-color: #ff6f91;
+      background-color: #fff;
+      outline: none;
+      box-shadow: 0 0 8px rgba(255, 111, 145, 0.5);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-group {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    input[type="submit"],
+    input[type="reset"] {
+      background-color: #ff6f91;
+      border: none;
+      color: white;
+      padding: 12px 35px;
+      margin: 0 8px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 6px 15px rgba(255, 111, 145, 0.4);
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+      background-color: #e55a7b;
+      box-shadow: 0 8px 20px rgba(229, 90, 123, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <form action="/submit" method="post" enctype="multipart/form-data" autocomplete="off">
+    <h2>나를 소개해요 💬</h2>
+
+    <label for="name">이름</label>
+    <input type="text" id="name" name="name" placeholder="이름을 입력해주세요" required />
+
+    <label for="email">이메일</label>
+    <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요" required />
+
+    <label for="about">자기소개</label>
+    <textarea id="about" name="about" placeholder="간단하게 자기소개를 작성해 주세요" required></textarea>
+
+    <label for="photo">사진 올리기</label>
+    <input type="file" id="photo" name="photo" accept="image/*" required />
+
+    <div class="btn-group">
+      <input type="submit" value="제출하기" />
+      <input type="reset" value="초기화" />
+    </div>
+  </form>
+</body>
+</html>

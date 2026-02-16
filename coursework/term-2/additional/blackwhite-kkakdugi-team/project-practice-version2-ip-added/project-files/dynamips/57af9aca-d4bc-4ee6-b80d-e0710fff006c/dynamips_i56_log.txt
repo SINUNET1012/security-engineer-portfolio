@@ -1,0 +1,41 @@
+Jan 05 17:04:21.754 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 05 17:04:21.755 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 54875.
+Jan 05 17:04:22.218 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 05 17:04:22.219 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 05 17:04:22.219 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 05 17:04:22.219 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\8c44a692-08dd-4c8e-bd42-a8fb39804bd7 
+Jan 05 17:04:22.219 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\8c44a692-08dd-4c8e-bd42-a8fb39804bd7
+Jan 05 17:04:22.220 HYPERVISOR: exec_cmd: vm create ESW24 55 c3745 
+Jan 05 17:04:22.220 VM: VM ESW24 created.
+Jan 05 17:04:22.221 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW24 5112 
+Jan 05 17:04:22.221 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW24 
+Jan 05 17:04:22.221 HYPERVISOR: exec_cmd: vm set_disk0 ESW24 1 
+Jan 05 17:04:22.222 HYPERVISOR: exec_cmd: vm set_exec_area ESW24 64 
+Jan 05 17:04:22.222 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 17:04:22.223 HYPERVISOR: exec_cmd: vm set_idle_pc ESW24 0x60a7fc00 
+Jan 05 17:04:22.224 HYPERVISOR: exec_cmd: vm set_ios ESW24 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 05 17:04:22.224 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW24 c437.bee0.0000 
+Jan 05 17:04:22.225 HYPERVISOR: exec_cmd: vm set_nvram ESW24 256 
+Jan 05 17:04:22.225 HYPERVISOR: exec_cmd: vm set_ram ESW24 256 
+Jan 05 17:04:22.226 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 17:04:22.226 HYPERVISOR: exec_cmd: vm slot_add_binding ESW24 1 0 NM-16ESW 
+Jan 05 17:06:00.919 HYPERVISOR: exec_cmd: nio create_udp udp-e2b0e63e-46fa-4581-8642-4159860722f9 10602 127.0.0.1 10603 
+Jan 05 17:06:02.058 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW24 1 0 udp-e2b0e63e-46fa-4581-8642-4159860722f9 
+Jan 05 17:06:02.060 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 17:06:02.372 HYPERVISOR: exec_cmd: nio create_udp udp-4883fece-3c36-49d5-855e-d6a43abb02e9 10606 127.0.0.1 10607 
+Jan 05 17:06:02.375 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW24 1 1 udp-4883fece-3c36-49d5-855e-d6a43abb02e9 
+Jan 05 17:06:02.375 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 17:06:02.687 HYPERVISOR: exec_cmd: nio create_udp udp-8f4f985d-0f1d-4a2b-a09b-79db4c98fd3a 10610 127.0.0.1 10611 
+Jan 05 17:06:02.689 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW24 1 2 udp-8f4f985d-0f1d-4a2b-a09b-79db4c98fd3a 
+Jan 05 17:06:02.690 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 17:07:20.624 HYPERVISOR: exec_cmd: vm set_ios ESW24 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 05 17:07:22.167 HYPERVISOR: exec_cmd: vm set_ios ESW24 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 05 18:10:41.113 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 18:10:41.113 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding ESW24 1 1 
+Jan 05 18:10:41.114 HYPERVISOR: exec_cmd: nio delete udp-4883fece-3c36-49d5-855e-d6a43abb02e9 
+Jan 05 18:10:44.554 HYPERVISOR: exec_cmd: vm get_status ESW24 
+Jan 05 18:10:44.554 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding ESW24 1 2 
+Jan 05 18:10:44.555 HYPERVISOR: exec_cmd: nio delete udp-8f4f985d-0f1d-4a2b-a09b-79db4c98fd3a 
+Jan 05 18:15:08.791 HYPERVISOR: exec_cmd: nio create_udp udp-7ef418d1-5641-46c2-96bf-5b4500a63eb6 10610 127.0.0.1 10611 
+Jan 05 18:15:08.793 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW24 1 1 udp-7ef418d1-5641-46c2-96bf-5b4500a63eb6 
+Jan 05 18:15:08.794 HYPERVISOR: exec_cmd: vm get_status ESW24 

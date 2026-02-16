@@ -1,0 +1,170 @@
+raid 레이드
+
+Redundant(잉여) Array of Inexpensive Disks 
+: 고급 기능을 가성비 좋게 세팅하는 방식(하드디스크)
+신형하드는 대부분 SATA를 사용한다 (성능좋고 가성비 갑) 
+
+하드디스크 4개 추가 해보자!
+기존 사용하던 리눅스 전원 꺼놓고
+파워 온 밑에 에디트 버츄얼머신 클릭
+add누르고 하드디스크 선택
+사타 선택
+넥스트
+크리에이트 뉴 버츄얼 머신
+0.1 GB
+넥스트 피니시
+설정 후 파워 온 하면 부팅이 안된다.
+파워 오프 후
+CD롬에 커넥트 엣 머시기 체크 해제
+다시 시작 후 F2갈겨서 설정모드로 들어가기
+Boot에서 +하드드라이브 엔터
+nvme가 맨 아래 있다. +,-버튼을 눌러서 최상단으로 올려준다.
+f10으로 저장 종료, 엔터, 실행
+모바엑스텀으로 다시 접속
+
+명령어 : fdisk -l 입력
+새로 넣은 하드4개는 파티셔닝이 안되어있다.
+sda,sdb,sdc,sdd - 하드디스크 파티셔닝하기(공간을 어떻게 사용할지)
+명령어 : fdisk /dev/sda
+m 엔터 입력하여 help보기
+우리가 봐야할 부분은 generic부분
+d, F, l, n, p, t, v, i, 
+n입력 = add a new partition (기본 프라이머리 파티션은 4개)
+하드1개에 1개의 파티션을 만들고싶다
+n으로 들어와서 p입력 1입력 엔터 엔터(뉴 파티션에 프라이머리 파티션 생성)엔터
+w입력 = 저장 
+디스크 연결 완료 → 해당 디스크의 파티션 작업 완료
+파티션을 운영체제에서 활용할 수 있도록 초기화 작업하자! (Format)
+명령어 : mkfs -t ext4 /dev/sda1 포맷명령어(sda1 포맷 대상, 파티션으로 1이 생겼다)
+
+명령어 : mkdir /mnt/disk1 (마운트해서 사용해야한다. 디렉토리만들기)
+마운트대상 /dev/sda1
+마운트포지션 /mnt/disk1
+명령어 : mount -t ext4 /dev/sda1 /mnt/disk1
+cd disk1들어가서 ls로 로스트파운드 확인 df로 마운트 들어간거 확인 맨 밑줄
+vim /etc/fstab에 들어가서 (마운트만 걸면 재부팅시 사라진다)
+/dev/sda1    /mnt/disk1    ext4    defaults   0 0 입력
+
+sdb를 마운트시켜라 디스크2를 만들어서
+sdd를 코드를 이용하여 자동 등록
+
+명령어 : blkid (sda,sdb의 uuid확인)
+sda1 : UUID=856e5b57-db21-4c70-9bd1-512b24556c6d
+sdb1 : UUID=7922e4c0-c7da-49a5-a153-c64749310c8f
+vim /etc/fstab에 들어가서 (마운트만 걸면 재부팅시 사라진다)
+/dev/sda1    /mnt/disk1    ext4    defaults   0 0 이렇게 입력한 /dev/sda1을
+UUID=856e5b57-db21-4c70-9bd1-512b24556c6d을 넣어준다
+
+파티션 삭제하는 방법!
+마운트 해제
+umount /mnt/disk1 # sda1의 마운트 해제
+umount /mnt/disk2 # sdb1의 마운트 해제
+
+vim /etc/fstab 입력한것들 주석처리
+#UUID=856e5b57-db21-4c70-9bd1-512b24556c6d      /mnt/disk1      ext4    defaults        0 0
+#UUID=7922e4c0-c7da-49a5-a153-c64749310c8f      /mnt/disk2      ext4    defaults        0 0
+
+fdisk /dev/sda들어가서 d입력(삭제) w(저장)
+fdisk /dev/sdb들어가서 d입력(삭제) w(저장)
+
+fdisk -l 입력하여 파티션 삭제 확인
+-삭제끝-
+
+raid - 2개 이상의 하드를 묶어서(배열) 사용한다.
+
+레이드의 목적
+1. 안전성
+2. 속도
+3. 안전성 + 속도
+
+레이드의 종류
+1. RAID 0 : 스트라이핑 모드라고 부른다 - 속도
+	    최소 2개의 디스크가 필요((min(N)==2)
+	    RAID를 구 성하는 모든 디스크에 데이터를 분할한다.
+	    전체 디스크를 모두 동시에 사용하기 때문에 단일 디스크보다 빠르다 (속도의 향상)
+	용량 : 단일 디스크 용량의 N배가 된다
+	sda1=100mb / sdb1=100mb 
+	Raid 0으로 묶으면 사용가능 크기 = 200mb 
+	단점 : 하나의 디스크라도 문제가 생기면 레이드가 손상됨.
+	    - data손실
+
+sda1 sdb1를 만들고 타입은 fd(raid auto)로 바꿔준다
+fdisk /dev/sda
+n p 엔터 엔터 엔터  # 파티션1 프라이머리 생성
+t(타입변경) fd(raid auto타입) #타입은 l을 입력하여 리스트를 볼수 있따
+w(저장)
+
+mdadm 유틸리티(fdisk비슷한애)
+- 소프트웨어 RAID장치들을 관리하기 위한 리눅스 유틸리티
+dnf - y mdadm (mdadm설치)
+mdadm --create /dev/md0 --level=0 --raid-device=2 /dev/sda1 /dev/sdb1
+(md0디스크를 만들어서 sda1,sdb1을 합친다)
+
+마운트 포지션 - /mnt/stripe
+mkdir /mnt/stripe
+cd
+mount -t ext4 /dev/md0 /mnt/stripe
+
+mdadm 동작 확인
+명령어 : mdadm -D /dev/md0 (내용 확인하기, 레이드0, 용량, 디바이스갯수)
+blkid 입력하여 uuid 확인하기
+
+-레이드0끝- 
+
+실습 시나리오
+2. RAID 1 : 미러링 모드 ----> 안정성   Mirroring
+            최소 2대의 디스크가 필요하다.(min(N) == 2)
+            모든 디스크에 데이터를 복제 ---> 안정성 DATA 복구 가능
+            용량 : 실제 사용 가능한 용량은 단일 디스크의 용량과 동일
+SDC / SDD ---> sdc1 / sdd1 : 파티셔닝 ---> 묶는다. (md1)  RAID 1
+마운트 포지션 : /mnt/mirror
+ 
+sdc1,sdd1을 만들고 타입은 fd로 설정한다.
+fdisk /dev/sdc ,sdd
+n p 엔터 엔터 엔터  # 파티션1 프라이머리 생성
+t(타입변경) fd(raid auto타입) #타입은 l을 입력하여 리스트를 볼수 있다
+w(저장)
+
+mdadm --create /dev/md1 --level=1 --raid-device=2 /dev/sdc1 /dev/sdd1
+md1(메타디스크1을 만들고, 레벨1(레이드1)로 sdc1,sdd1을 합쳐서 만들어라)
+mkfs -t ext4 /dev/md1 포맷명령어(md1 포맷 대상,포맷하기)
+mkdir /mnt/mirror (디렉터리생성)
+cd
+mount -t ext4 /dev/md0 /mnt/mirror (마운트걸어주기)
+
+mdadm -D /dev/md1 (확인하기,레이드1,용량100)
+blkid (md1의 uuid확인)
+-레이드2끝-
+
+
+마운트 해제 
+umount /mnt/mirror ,stripe
+
+mdadm 실행 멈추기 (md0,md1삭제)
+mdadm -S /dev/md1
+mdadm -S /dev/md0
+
+파티션 삭제
+fdisk /dev/sda ,b,c,d 들어가서 d w
+
+
+
+여태 실습한거 전부 취소 삭제 해제 하여 
+sda,sdb를 md0 레이드1로 만든다
+sdc,sdd를 md1 레이드1로 만든다
+
+abcd 파티션만들기
+fdisk /dev/sda n p 엔터엔터엔터 t fd w
+md만들기 (md0, md1, md2 생성)
+mdadm --create /dev/md0 --level=1 --raid-device=2 /dev/sda1 /dev/sdb1
+mdadm --create /dev/md1 --level=1 --raid-device=2 /dev/sdc1 /dev/sdd1
+mdadm --create /dev/md2 --level=0 --raid-device=2 /dev/md0 /dev/md1
+포맷하기 md2만 포맷하기
+mkfs -t ext4 /dev/md2
+마운트걸기 md2만 마운트걸기 (mkdir /mnt/ms)
+mount -t ext4 /dev/md2 /mnt/ms
+
+df로 마운트 확인
+mdadm -D /dev/md2 (확인하기,레이드0,용량200)
+blkid 로 uuid확인 후 fstab에 추가해준다.
+md0과 md1을 레이드0으로 만든다.

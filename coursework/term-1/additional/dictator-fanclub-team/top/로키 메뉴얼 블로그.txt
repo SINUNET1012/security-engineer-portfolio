@@ -1,0 +1,18 @@
+https://blog.naver.com/muyang2_2 
+
+1. LAMP, FTP 설정
+https://blog.naver.com/muyang2_2/224004169474
+
+2. Virtual Host
+https://blog.naver.com/muyang2_2/224012942533
+
+3. DNS 개인 실습
+: 단순 도메인 세팅
+https://blog.naver.com/muyang2_2/224013978801
+
+4. DNS 팀단위 실습
+: 팀장이 DNS관리자 나머지가 웹사이트 관리자
+https://blog.naver.com/muyang2_2/224017712349
+
+5. DNF, PHP, mariaDB 설정
+https://blog.naver.com/muyang2_2/224025416244

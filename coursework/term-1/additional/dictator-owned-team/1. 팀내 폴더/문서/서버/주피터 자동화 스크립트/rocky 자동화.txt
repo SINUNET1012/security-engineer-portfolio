@@ -1,0 +1,133 @@
+#!/bin/bash
+# =====================================
+# Rocky Linux + Miniconda + Jupyter 자동 설치 (systemd 호환 완전판)
+# notebook==6.5.7 고정 / 환경로드 방식 개선
+# =====================================
+
+set -e
+
+# -----------------------------
+# 변수 정의
+# -----------------------------
+SERVER_IP=$(hostname -I | awk '{print $1}')
+JUPYTER_PORT=8000
+CONDA_ROOT="/root/miniconda3"
+CONDA_PYTHON="$CONDA_ROOT/bin/python3"
+CONDA_PIP="$CONDA_ROOT/bin/pip"
+USER="root"
+HOME_DIR="/root"
+
+echo "🔑 Jupyter 접속 비밀번호를 입력하세요:"
+read -s JUPYTER_PASSWORD
+echo ""
+echo "✅ 비밀번호 입력 완료"
+
+# -----------------------------
+# 1️⃣ 시스템 기본 구성
+# -----------------------------
+echo "=== [1/8] 시스템 준비 ==="
+dnf -y update
+dnf -y install vim wget net-tools curl python3-pip firewalld policycoreutils-python-utils
+
+systemctl enable --now firewalld
+
+# -----------------------------
+# 2️⃣ Miniconda 설치
+# -----------------------------
+if [ ! -d "$CONDA_ROOT" ]; then
+    echo "✅ Miniconda 설치 중..."
+    cd /root
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda3.sh
+    chmod +x Miniconda3.sh
+    ./Miniconda3.sh -b -p "$CONDA_ROOT"
+else
+    echo "Miniconda 이미 설치됨."
+fi
+
+export PATH="$CONDA_ROOT/bin:$PATH"
+grep -qxF "export PATH=$CONDA_ROOT/bin:\$PATH" /root/.bashrc || echo "export PATH=$CONDA_ROOT/bin:\$PATH" >> /root/.bashrc
+$CONDA_ROOT/bin/conda config --set auto_activate_base false
+
+# -----------------------------
+# 3️⃣ Jupyter 설치 (클래식 버전)
+# -----------------------------
+echo "=== [2/8] Jupyter (Classic) 설치 ==="
+$CONDA_PIP install --upgrade pip setuptools wheel --quiet
+$CONDA_PIP install jupyter==1.0.0 notebook==6.5.7 jupyter_core jupyter_server --quiet
+
+# notebook.auth 확인
+if ! $CONDA_PYTHON -c "from notebook.auth import passwd" &>/dev/null; then
+    echo "⚙️ notebook.auth 모듈 재설치..."
+    $CONDA_PIP install --force-reinstall notebook==6.5.7
+fi
+
+# -----------------------------
+# 4️⃣ 비밀번호 설정
+# -----------------------------
+HASHED_PASS=$($CONDA_PYTHON -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))")
+
+mkdir -p /root/.jupyter
+cat > /root/.jupyter/jupyter_notebook_config.json <<EOF
+{
+  "NotebookApp": {
+    "password": "$HASHED_PASS",
+    "ip": "0.0.0.0",
+    "port": $JUPYTER_PORT,
+    "open_browser": false,
+    "allow_root": true
+  }
+}
+EOF
+echo "✅ 비밀번호 설정 완료"
+
+# -----------------------------
+# 5️⃣ systemd 서비스 생성
+# -----------------------------
+SERVICE_FILE="/etc/systemd/system/jupyter.service"
+echo "=== [4/8] Jupyter systemd 서비스 등록 ==="
+
+cat > $SERVICE_FILE <<EOF
+[Unit]
+Description=Jupyter Notebook Service (Classic)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c 'source /root/miniconda3/bin/activate && exec jupyter notebook --ip=0.0.0.0 --port=$JUPYTER_PORT --allow-root'
+WorkingDirectory=$HOME_DIR
+User=$USER
+Group=$USER
+Restart=always
+RestartSec=10
+Environment="PATH=/root/miniconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable jupyter
+systemctl restart jupyter || systemctl start jupyter
+
+# -----------------------------
+# 6️⃣ 방화벽 및 SELinux 설정
+# -----------------------------
+echo "=== [5/8] 방화벽 및 SELinux 설정 ==="
+firewall-cmd --permanent --add-port=$JUPYTER_PORT/tcp
+firewall-cmd --reload
+semanage port -a -t http_port_t -p tcp $JUPYTER_PORT 2>/dev/null || semanage port -m -t http_port_t -p tcp $JUPYTER_PORT
+
+# -----------------------------
+# 7️⃣ 서비스 상태 점검
+# -----------------------------
+echo "=== [6/8] 서비스 상태 확인 ==="
+systemctl status jupyter --no-pager || true
+
+# -----------------------------
+# 8️⃣ 완료 안내
+# -----------------------------
+echo "✅ 설치 완료!"
+echo "🌐 접속 주소: http://$SERVER_IP:$JUPYTER_PORT"
+echo "🔑 비밀번호: (입력하신 값)"
+echo "📄 로그 파일: /var/log/jupyter.log"
+

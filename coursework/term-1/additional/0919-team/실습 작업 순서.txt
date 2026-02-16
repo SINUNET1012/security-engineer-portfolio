@@ -1,0 +1,13 @@
+<작업 순서>
+1. IP 설정
+2. ISO 설치
+3. Jupyter/Python 설치 -> 자동화
+4. DHCP (라우터)
+5. 라우팅테이블 등록
+6. Ping Test
+7. LAMP(httpd/apache)
+8. FTP
+9. DNS
+
+Team Domain 
+ 1) sinu.com      2) kon.com    3) hyeonji.com

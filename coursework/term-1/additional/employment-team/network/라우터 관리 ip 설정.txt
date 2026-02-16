@@ -1,0 +1,5 @@
+라우터 관리ip
+conf t
+int loopback0
+ip add 1.1.1.1 255.255.255.0
+end

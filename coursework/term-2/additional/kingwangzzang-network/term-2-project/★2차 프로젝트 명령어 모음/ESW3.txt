@@ -1,0 +1,53 @@
+ESW3
+conf t
+ip routing
+track 1 int f0/0 line-protocol
+exit
+exit
+vlan database
+vlan 20
+exit
+conf t
+int f0/0
+ip add 10.1.120.2 255.255.248.0
+no sh
+exit
+int vlan 20
+ip add 10.1.168.1 255.255.248.0
+vrrp 20 ip 10.1.168.254
+vrrp 20 priority 120 
+vrrp 20 preempt
+vrrp 20 track 1 decrement 30
+no sh
+exit
+int f1/3
+sw mo ac
+sw ac vlan 20 
+router eigrp 200
+net 10.0.0.0
+no auto
+end
+
+conf t
+snmp-server community switch RO
+end
+
+conf t
+int f1/3
+sh
+no sh
+end
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

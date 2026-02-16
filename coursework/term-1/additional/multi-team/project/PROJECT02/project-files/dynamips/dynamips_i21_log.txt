@@ -1,0 +1,20 @@
+Oct 28 16:06:44.356 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 16:06:44.357 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 52898.
+Oct 28 16:06:44.601 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 16:06:44.603 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\PROJECT02\project-files\dynamips 
+Oct 28 16:06:44.605 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\PROJECT02\project-files\dynamips
+Oct 28 16:06:44.605 HYPERVISOR: exec_cmd: frsw create FRSW1 
+Oct 28 16:06:59.213 HYPERVISOR: exec_cmd: nio create_udp udp-fa047e23-a970-463e-b7d3-f16700a1347c 10001 172.16.26.1 10000 
+Oct 28 16:07:00.784 HYPERVISOR: exec_cmd: nio create_udp udp-d9e7f722-f2c5-46b0-92b6-f4271938603e 10005 172.16.26.1 10004 
+Oct 28 16:07:00.785 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-fa047e23-a970-463e-b7d3-f16700a1347c 102 udp-d9e7f722-f2c5-46b0-92b6-f4271938603e 201 
+Oct 28 16:07:00.787 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-d9e7f722-f2c5-46b0-92b6-f4271938603e 201 udp-fa047e23-a970-463e-b7d3-f16700a1347c 102 
+Oct 28 16:07:02.455 HYPERVISOR: exec_cmd: nio create_udp udp-99057e2d-d704-40f3-ad5a-a3d044260c3a 10009 172.16.26.1 10008 
+Oct 28 16:07:02.456 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-fa047e23-a970-463e-b7d3-f16700a1347c 103 udp-99057e2d-d704-40f3-ad5a-a3d044260c3a 301 
+Oct 28 16:07:02.483 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-99057e2d-d704-40f3-ad5a-a3d044260c3a 301 udp-fa047e23-a970-463e-b7d3-f16700a1347c 103 
+Oct 28 16:07:04.150 HYPERVISOR: exec_cmd: nio create_udp udp-93ac2c57-6089-499d-a506-316e965c18bf 10013 172.16.26.1 10012 
+Oct 28 16:07:04.151 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-fa047e23-a970-463e-b7d3-f16700a1347c 104 udp-93ac2c57-6089-499d-a506-316e965c18bf 401 
+Oct 28 16:07:04.179 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-93ac2c57-6089-499d-a506-316e965c18bf 401 udp-fa047e23-a970-463e-b7d3-f16700a1347c 104 
+Oct 28 16:07:18.239 HYPERVISOR: exec_cmd: frsw delete FRSW1 
+Oct 28 16:07:18.398 HYPERVISOR: exec_cmd: hypervisor stop 
+Oct 28 16:07:18.614 HYPERVISOR: Stopped.
+Oct 28 16:07:18.614 GENERAL: reset done.

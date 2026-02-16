@@ -1,0 +1,19 @@
+sudo su -
+
+apt-get update && apt-get dist-upgrade -y
+
+sudo apt install open-vm-tools open-vm-tools-desktop -y
+
+sudo apt install --reinstall xclip xsel
+
+sudo dpkg-reconfigure tzdata
+
+sudo so-restart suricata
+
+so-allow
+
+vi /etc/nsm/rules/local.rules
+
+alert icmp any any -> 172.16.18.51 any (msg:"ICMP Detected"; sid:1000001; rev:1;)
+
+sudo rule-update

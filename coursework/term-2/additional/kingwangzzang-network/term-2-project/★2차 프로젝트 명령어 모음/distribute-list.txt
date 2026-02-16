@@ -1,0 +1,6 @@
+R3
+conf t
+access-list 20 deny 40.0.0.0 0.255.255.255
+accest-list 20 permit any
+router eigrp 100
+distribute-list 20 out e2/0

@@ -1,0 +1,8 @@
+R13
+conf t
+access-list 101 deny ip host 50.1.0.20 host 40.1.192.20 
+access-list 101 permit ip any any
+int f0/0
+ip access-group 101 in
+end
+

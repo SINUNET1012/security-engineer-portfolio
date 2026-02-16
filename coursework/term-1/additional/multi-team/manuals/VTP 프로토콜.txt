@@ -1,0 +1,39 @@
+VTP : Vlan Transfer Protocol, Vlan 정보를 전달하는 프로토콜
+
+동작 모드
+
+Server 모드 : default
+	      vlan 생성, 수정, 삭제 가능, 주변 Client 모드의 스위치에 vlan 정보 전달
+
+Client 모드 : vlan 생성 불가능, Server 모드의 스위치가 전달한 vlan 정보를 받아 동기화하고 주변에 전달
+
+
+TransParent 모드 : 독립적, vlan 생성, 수정, 삭제 가능, 서버가 전달하는 vlan 정보를 받고 주변에 전달은 하지만
+     (투 명)       자신의 정보에 동기화 시키지는 않음
+
+
+Configuration Revision : 시리얼 넘버와 같다. vlan 정보가 업데이트 될 때마다 1씩 증가(Server 모드만)
+
+
+
+show vtp status : vtp 상태 확인
+vlan database
+vtp domain 도메인이름.com : 도메인 이름 설정
+vtp password cisco : 비밀번호를 cisco로 설정
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

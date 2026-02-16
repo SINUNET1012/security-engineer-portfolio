@@ -1,0 +1,110 @@
+  1 # ==========================================
+  2 # 1. 정찰 및 스캔 탐지 (Reconnaissance)
+  3 # ==========================================
+  4 # ICMP Ping 탐지
+  5 alert icmp any any -> any any (msg:"ICMP Ping Detected"; itype:8; sid:1000001; rev:1;)
+  6 
+  7 # DNS 영역 전송 시도 탐지 (dnsenum 등 도구 사용 시)
+  8 alert tcp any any -> any 53 (msg:"DNS Zone Transfer Attempt (AXFR)"; flow:established,to_server; content:"|00 fc|"; offset:12; sid:1000002; rev:1;)
+  9 
+ 10 # Generic DNSENUM 활동 탐지 (UDP 기반 활동 감시)
+ 11 alert udp any any -> any 53 (msg:"Generic DNSENUM Tool Activity Detected"; content:"|01 00 00 01 00 00 00 00 00 00|"; offset:2; pcre:"/\x0c[a-z]{12}[\x01-\x3f]/"; content:"|00 01 00     01|"; distance:1; sid:1000003; rev:1;)
+ 12 
+ 13 # Nmap Stealth Scan (SYN Scan) 탐지
+ 14 alert tcp any any -> any 80,443 (msg:"SCAN Nmap SYN Stealth Scan Detected"; flags:S; flow:stateless; detection_filter:track by_src, count 20, seconds 10; sid:1000004; rev:1;)
+ 15 
+ 16 # Nmap PHP Version Probe 탐지 (수식어 위치 최적화)
+ 17 alert tcp any any -> any 80 (msg:"SCAN Nmap PHP Version Probe"; flow:to_server,established; content:"User-Agent|3A|"; http_header; nocase; content:"Nmap"; distance:0; within:40; sid    :1000005; rev:1;)
+ 18 
+ 19 # Nmap OS/Service Detection (GenericLines) 탐지
+ 20 alert tcp any any -> any any (msg:"Nmap GenericLines Service Probe Detected"; content:"|0d 0a 0d 0a|"; depth:4; sid:1000006; rev:1;)
+ 21 
+ 22 # Web Fingerprinting (WhatWeb) 탐지
+ 23 alert tcp any any -> any any (msg:"WhatWeb Scan Detected"; content:"WhatWeb"; http_header; nocase; sid:1000007; rev:1;)
+ 24 
+ 25 # ==========================================
+ 26 # 2. 무차별 대입 및 서비스 거부 공격 (Brute Force & DoS)
+ 27 # ==========================================
+ 28 # FTP 로그인 시도 탐지 (USER/PASS)
+ 29 alert tcp any any -> any 21 (msg:"FTP Login Attempt - USER"; content:"USER"; nocase; sid:1000008; rev:1;)
+ 30 alert tcp any any -> any 21 (msg:"FTP Login Attempt - PASS"; content:"PASS"; nocase; sid:1000009; rev:1;)
+ 31 
+ 32 # SSH Brute Force 공격 탐지
+ 33 alert tcp any any -> any 22 (msg:"SSH Brute Force Attack Detected"; flags:S; detection_filter:track by_src, count 10, seconds 60; sid:1000010; rev:1;)
+ 34 
+ 35 # HTTP DoS 공격 탐지 (임계치를 200으로 상향 조정)
+ 36 alert udp any any -> any any (msg:"DoS Attack - Excessive HTTP Requests"; flow:to_server; detection_filter:track by_src, count 200, seconds 10; sid:1000011; rev:2;)
+ 37 
+ 38 # ==========================================
+ 39 # 3. 웹 취약점 및 주입 공격 (Injection & XSS & CSRF)
+ 40 # ==========================================
+ 41 # SQL Injection 탐지 (특수문자 Hex 처리로 구문 에러 방지)
+ 42 alert tcp any any -> any 80 (msg:"SQLi Attempt - Semicolon"; content:"|3b|"; http_uri; sid:1000012; rev:1;)
+ 43 alert tcp any any -> any 80 (msg:"SQLi Attempt - Hash"; content:"|23|"; http_uri; sid:1000013; rev:1;)
+ 44 alert tcp any any -> any 80 (msg:"SQLi Attempt - Quotes"; content:"|27|"; http_uri; sid:1000014; rev:1;)
+ 45 alert tcp any any -> any 80 (msg:"SQLi Attempt - UNION"; content:"union"; http_uri; nocase; sid:1000015; rev:1;)
+46 alert tcp any any -> any 80 (msg:"SQLi Attempt - SUBSTRING"; content:"substring"; http_uri; nocase; sid:1000016; rev:1;)
+ 47 
+ 48 # Command Injection 탐지 (POST 데이터 내 특수문자 감시)
+ 49 alert tcp any any -> any 80 (msg:"Command Injection Attempt"; content:"POST"; http_method; content:"|3b|"; http_client_body; sid:1000017; rev:1;)
+ 50 
+ 51 # Reflected XSS 탐지 (스크립트 태그)
+ 52 alert tcp any any -> any any (msg:"XSS Attempt - Script Tag"; content:"<script>"; http_uri; nocase; sid:1000018; rev:1;)
+ 53 
+ 54 # 쿠키 탈취 시도 탐지 (JavaScript 쿠키 접근)
+ 55 alert tcp any any -> any any (msg:"Possible Cookie Theft Attempt"; flow:to_server,established; content:"document.cookie"; http_uri; nocase; sid:1000019; rev:1;)
+ 56 
+ 57 # CSRF 공격 탐지 (Referer 헤더 및 키워드 감시)
+ 58 alert tcp any any -> any 80 (msg:"CSRF Attempt Detected"; content:"Referer|3a|"; http_header; content:"csrf"; http_uri; nocase; sid:1000020; rev:1;)
+ 59 
+ 60 # ==========================================
+ 61 # 4. 파일 취약점 및 사후 활동 (LFI, File Upload, Exploit)
+ 62 # ==========================================
+ 63 # LFI 공격 탐지 (경로 탐색 및 시스템 파일 접근)
+ 64 alert tcp any any -> any 80 (msg:"LFI Attempt - Path Traversal"; content:"|2e 2e 2f|"; http_uri; nocase; sid:1000021; rev:1;)
+ 65 alert tcp any any -> any 80 (msg:"LFI Attempt - /etc/passwd"; content:"/etc/passwd"; http_uri; nocase; sid:1000022; rev:1;)
+ 66 
+ 67 # 파일 업로드 공격 탐지 (웹쉘 의심 확장자 감시)
+ 68 alert tcp any any -> any 80 (msg:"Suspicious File Upload - PHP"; flow:to_server,established; content:"filename="; http_client_body; content:".php"; http_client_body; sid:1000023; re    v:1;)
+ 69 
+ 70 # 리버스 쉘/백도어 접근 탐지
+ 71 alert tcp any any -> any any (msg:"Exploit - Backdoor Access Detected"; flow:to_server,established; content:"/vulnerabilities/exec/backdoor.php"; nocase; sid:1000024; rev:1;)
+ 72 
+ 73 #2-1-A dnsenum
+ 74 alert udp any any -> any 53 (msg:"dns scan detect - too many dns query"; detection_filter:track by_src, count 10, seconds 60; sid:1000025; rev:1;)
+ 75 alert udp any 53 -> any any (msg:"DNS NXDOMAIN (No Such Name) Detected"; byte_test:1, =, 3, 3; sid:1000026; rev:1;)
+ 76 
+ 77 #mail bruteforce
+ 78 alert tcp any any -> any 80 (msg:"Roundcube Mail Brute Force Attempt Detected"; flow:to_server,established; content:"POST"; http_method; content:"/roundcubemail/"; http_uri; content    :"_task=login"; http_uri; content:"_pass="; http_client_body; threshold:type threshold, track by_src, count 5, seconds 60; sid:1000307; rev:1;)
+ 79 
+ 80 #reflected xss
+ 81 alert tcp any any -> any any (msg:"Reflected XSS Attack - Cookie Stealing Attempt"; flow:to_server,established; content:"script"; http_uri; content:"document.cookie"; http_uri; noca    se; sid:1000308; rev:1;)
+ 82 
+ 83 #reverse shell
+ 84 alert tcp any any -> any any (msg:"Netcat Reverse Shell Detected"; flow:established,to_server; content:"/bin/sh"; nocase; sid:1000027; rev:1;)
+ 85 
+ 86 #sql injection
+ 87 alert tcp any any -> any 80 (msg:"SQL Injection Attempt - Authentication Bypass Detected"; content:"POST"; http_method; content:"/DVWA/login.php"; http_uri; content:"|27 20|OR|20 27    |"; http_client_body; content:"|27 3d 27|"; http_client_body; sid:1000309; rev:2;)
+ 88 
+ 89 alert tcp any any -> any 80 (msg:"SQLi Attempt - Semicolon"; content:"|3b|"; http_uri; sid:1000028; rev:1;)
+ 90 alert tcp any any -> any 80 (msg:"SQLi Attempt - Hash"; content:"|23|"; http_uri; sid:1000029; rev:1;)
+ 91 alert tcp any any -> any 80 (msg:"SQLi Attempt - Quotes"; content:"|27|"; http_uri; sid:1000030; rev:1;)
+ 92 alert tcp any any -> any 80 (msg:"SQLi Attempt - UNION"; content:"union"; http_uri; nocase; sid:1000031; rev:1;)
+ 93 alert tcp any any -> any 80 (msg:"SQLi Attempt - SUBSTRING"; content:"substring"; http_uri; nocase; sid:1000032; rev:1;)
+ 94 
+ 95 #whatweb
+ 96 alert tcp any any -> any 80 (msg:"WhatWeb Scanner Detection"; flow:to_server,established; content:"WhatWeb"; http_header; nocase; sid:1000310; rev:1;)
+ 97 alert tcp any any -> any any (msg:"WhatWeb Scan Detected"; content:"WhatWeb"; http_header; sid:9010204; rev:1;)
+ 98 
+ 99 #webshell
+100 alert tcp any any -> any 80 (msg:"HTTP Linux Directory Access: etc"; content:"etc";  sid:1000033; rev:1;)
+101 alert tcp any any -> any 80 (msg:"WEB-ATTACK /etc/passwd access attempt"; flow:established,to_server; content:"/etc/passwd"; http_uri; sid:1000034; rev:1;)
+102 
+103 #request
+104 alert tcp any any -> any 80 (msg:"Python-Requests POST Activity Detected"; flow:established,to_server; content:"POST"; http_method; content:"python-requests"; http_header; sid:10000    35; rev:1;)
+105 
+106 #reverse shell
+107 alert tcp any any -> any any (msg:"Linux Command Detected in TCP Data (id/systemctl/cat)"; pcre:"/(id|systemctl|cat)/"; sid:1000036; rev:1;)
+108 
+109 #command injection
+110 alert tcp any any -> any 80 (msg:"HTTP Form Item Injection Attempt"; pcre:"/[\;&]/P"; sid:1000037; rev:1;)

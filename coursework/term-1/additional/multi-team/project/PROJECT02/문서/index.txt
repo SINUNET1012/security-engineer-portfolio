@@ -1,0 +1,12 @@
+#insert()함수
+
+insert(index, value)는 리스트의 지정한 위치에 새로운 값을 삽입합니다.
+기존 요소들은 뒤로 밀립니다.
+리스트 크기가 증가합니다.
+
+예시)
+numbers = [1, 2, 4, 5]
+numbers.insert(2, 3)  # 2번 인덱스에 3을 삽입
+print(numbers)
+
+[1, 2, 3, 4, 5]

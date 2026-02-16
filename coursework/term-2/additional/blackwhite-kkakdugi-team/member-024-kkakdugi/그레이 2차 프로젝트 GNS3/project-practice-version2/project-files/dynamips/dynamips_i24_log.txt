@@ -1,0 +1,24 @@
+Jan 13 12:00:46.852 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 13 12:00:46.853 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 65113.
+Jan 13 12:00:47.291 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 13 12:00:47.292 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 13 12:00:47.292 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 13 12:00:47.292 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\d1ebd45f-d3fc-4542-bc5a-9a00134660eb 
+Jan 13 12:00:47.293 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\d1ebd45f-d3fc-4542-bc5a-9a00134660eb
+Jan 13 12:00:47.293 HYPERVISOR: exec_cmd: vm create ESW16 25 c3745 
+Jan 13 12:00:47.297 VM: VM ESW16 created.
+Jan 13 12:00:47.298 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW16 5044 
+Jan 13 12:00:47.298 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW16 
+Jan 13 12:00:47.298 HYPERVISOR: exec_cmd: vm set_disk0 ESW16 1 
+Jan 13 12:00:47.299 HYPERVISOR: exec_cmd: vm set_exec_area ESW16 64 
+Jan 13 12:00:47.299 HYPERVISOR: exec_cmd: vm get_status ESW16 
+Jan 13 12:00:47.300 HYPERVISOR: exec_cmd: vm set_idle_pc ESW16 0x60a7fc00 
+Jan 13 12:00:47.301 HYPERVISOR: exec_cmd: vm set_ios ESW16 C:/Users/TJ/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Jan 13 12:00:47.301 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW16 c419.a5fc.0000 
+Jan 13 12:00:47.302 HYPERVISOR: exec_cmd: vm set_nvram ESW16 256 
+Jan 13 12:00:47.302 HYPERVISOR: exec_cmd: vm set_ram ESW16 256 
+Jan 13 12:00:47.302 HYPERVISOR: exec_cmd: vm get_status ESW16 
+Jan 13 12:00:47.303 HYPERVISOR: exec_cmd: vm slot_add_binding ESW16 1 0 NM-16ESW 
+Jan 13 12:00:49.831 HYPERVISOR: Stopped.
+Jan 13 12:00:49.834 VM: VM ESW16 destroyed.
+Jan 13 12:00:54.745 GENERAL: reset done.

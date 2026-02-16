@@ -1,0 +1,10 @@
+Jan 05 17:04:11.169 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 05 17:04:11.170 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 54811.
+Jan 05 17:04:11.648 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 05 17:04:11.649 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 05 17:04:11.649 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 05 17:04:11.650 HYPERVISOR: exec_cmd: frsw create FRSW3 
+Jan 06 10:16:09.127 HYPERVISOR: exec_cmd: frsw delete FRSW3 
+Jan 06 10:16:09.155 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 06 10:16:09.439 HYPERVISOR: Stopped.
+Jan 06 10:16:09.439 GENERAL: reset done.

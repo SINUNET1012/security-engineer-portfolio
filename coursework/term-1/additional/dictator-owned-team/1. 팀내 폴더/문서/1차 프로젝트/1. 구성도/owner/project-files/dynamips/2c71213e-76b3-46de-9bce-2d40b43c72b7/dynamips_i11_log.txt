@@ -1,0 +1,36 @@
+Oct 31 14:51:00.653 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 31 14:51:00.654 HYPERVISOR: Started on IP = 172.16.56.1, TCP port = 49210.
+Oct 31 14:51:00.660 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 31 14:51:00.660 HYPERVISOR: exec_cmd: hypervisor working_dir D:\GNS 33\projects\owner1\project-files\dynamips 
+Oct 31 14:51:00.660 GENERAL: working_dir=D:\GNS 33\projects\owner1\project-files\dynamips
+Oct 31 14:51:00.661 HYPERVISOR: exec_cmd: hypervisor working_dir D:\GNS 33\projects\owner1\project-files\dynamips\af0af180-163b-4562-b110-9ac8002dcf15 
+Oct 31 14:51:00.661 GENERAL: working_dir=D:\GNS 33\projects\owner1\project-files\dynamips\af0af180-163b-4562-b110-9ac8002dcf15
+Oct 31 14:51:00.661 HYPERVISOR: exec_cmd: vm create ESW6 18 c3745 
+Oct 31 14:51:00.662 VM: VM ESW6 created.
+Oct 31 14:51:00.662 HYPERVISOR: exec_cmd: vm set_con_tcp_port ESW6 5029 
+Oct 31 14:51:00.663 HYPERVISOR: exec_cmd: c3745 get_mac_addr ESW6 
+Oct 31 14:51:00.663 HYPERVISOR: exec_cmd: vm set_disk0 ESW6 1 
+Oct 31 14:51:00.663 HYPERVISOR: exec_cmd: vm set_exec_area ESW6 64 
+Oct 31 14:51:00.664 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 31 14:51:00.664 HYPERVISOR: exec_cmd: vm set_idle_pc ESW6 0x60a80f7c 
+Oct 31 14:51:00.665 HYPERVISOR: exec_cmd: vm set_ios ESW6 C:/Users/tj/GNS3/images/IOS/c3745-adventerprisek9-mz.124-25d.image 
+Oct 31 14:51:00.665 HYPERVISOR: exec_cmd: c3745 set_mac_addr ESW6 c412.332c.0000 
+Oct 31 14:51:00.666 HYPERVISOR: exec_cmd: vm set_nvram ESW6 256 
+Oct 31 14:51:00.666 HYPERVISOR: exec_cmd: vm set_ram ESW6 256 
+Oct 31 14:51:00.667 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 31 14:51:00.667 HYPERVISOR: exec_cmd: vm slot_add_binding ESW6 1 0 NM-16ESW 
+Oct 31 14:51:08.146 HYPERVISOR: exec_cmd: nio create_udp udp-f2460d9d-9770-43a2-bec6-5bc18c90b430 10058 127.0.0.1 10059 
+Oct 31 14:51:08.441 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 4 udp-f2460d9d-9770-43a2-bec6-5bc18c90b430 
+Oct 31 14:51:08.443 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 31 14:51:08.739 HYPERVISOR: exec_cmd: nio create_udp udp-d5012ab5-5aef-456e-bd21-2e98e63f542d 10074 127.0.0.1 10075 
+Oct 31 14:51:08.741 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 1 udp-d5012ab5-5aef-456e-bd21-2e98e63f542d 
+Oct 31 14:51:08.741 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 31 14:51:08.819 HYPERVISOR: exec_cmd: nio create_udp udp-353571b8-7b40-42a6-a339-c136f1735dee 10078 127.0.0.1 10079 
+Oct 31 14:51:08.822 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 0 udp-353571b8-7b40-42a6-a339-c136f1735dee 
+Oct 31 14:51:08.822 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 31 14:51:13.150 HYPERVISOR: exec_cmd: nio create_udp udp-bc6ad743-e4ba-488e-b9c6-c9c99a72c759 10174 127.0.0.1 10175 
+Oct 31 14:51:13.152 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 2 udp-bc6ad743-e4ba-488e-b9c6-c9c99a72c759 
+Oct 31 14:51:13.152 HYPERVISOR: exec_cmd: vm get_status ESW6 
+Oct 31 14:51:13.232 HYPERVISOR: exec_cmd: nio create_udp udp-4c361a06-4beb-4bd0-a670-cba7178a5ee2 10178 127.0.0.1 10179 
+Oct 31 14:51:13.235 HYPERVISOR: exec_cmd: vm slot_add_nio_binding ESW6 1 3 udp-4c361a06-4beb-4bd0-a670-cba7178a5ee2 
+Oct 31 14:51:13.235 HYPERVISOR: exec_cmd: vm get_status ESW6 

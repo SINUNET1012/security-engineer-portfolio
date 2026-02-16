@@ -1,0 +1,8 @@
+1. IP 설정 (혜원: 172.16.25.10/16)
+2. up.sh 파일 실행(서버 셋팅 코드_v1.3 으로 했습니다)
+3. 주피터 디렉터리 생성 
+mkdir /root/jupyter
+4. smb 클라이언트 설치
+sudo dnf -y install samba-client
+5. 마운트
+mount -t cifs //172.16.254.8/homes /root/jupyter -o username='hw',password='<REDACTED>'

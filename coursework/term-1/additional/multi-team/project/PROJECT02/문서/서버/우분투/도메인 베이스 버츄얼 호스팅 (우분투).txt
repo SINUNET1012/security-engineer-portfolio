@@ -1,0 +1,64 @@
+도메인 베이스 버츄얼 호스팅
+
+#!/bin/bash
+
+echo "===== [1] Apache 포트 설정 (Listen 80만 사용) ====="
+# ports.conf 에서 Listen 81 제거
+sudo sed -i '/^Listen 81$/d' /etc/apache2/ports.conf
+
+# Listen 80이 없으면 추가
+grep -q "^Listen 80" /etc/apache2/ports.conf || echo "Listen 80" | sudo tee -a /etc/apache2/ports.conf
+
+echo "===== [2] 웹 루트 디렉터리 생성 및 권한 설정 ====="
+# /home/8team 디렉터리
+sudo mkdir -p /home/8team
+echo "<h1>Welcome to ww1.8team.com</h1>" | sudo tee /home/8team/index.html
+sudo chown -R www-data:www-data /home/8team
+
+# /home/test 디렉터리
+sudo mkdir -p /home/test
+echo "<h1>Welcome to ww2.8team.com</h1>" | sudo tee /home/test/index.html
+sudo chown -R www-data:www-data /home/test
+
+echo "===== [3] VirtualHost 설정 파일 생성 ====="
+VHOST_CONF="/etc/apache2/sites-available/vhost.conf"
+
+sudo tee "$VHOST_CONF" > /dev/null <<EOF
+<VirtualHost *:80>
+    ServerName ww1.8team.com
+    DocumentRoot "/home/8team"
+    <Directory "/home/8team/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName ww2.8team.com
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+
+echo "===== [4] 사이트 설정 적용 ====="
+sudo a2dissite 000-default.conf
+sudo a2ensite vhost.conf
+
+echo "===== [5] Apache 재시작 ====="
+sudo systemctl reload apache2
+
+echo "===== [6] 로컬 도메인 테스트 안내 ====="
+echo ""
+echo "※ 실제 도메인 대신 테스트하려면 /etc/hosts 파일에 다음을 추가하세요:"
+echo "------------------------------------------------------"
+echo "127.0.0.1   ww1.8team.com"
+echo "127.0.0.1   ww2.8team.com"
+echo "------------------------------------------------------"
+echo "그 후 웹 브라우저에서 접속:"
+echo "➡ http://ww1.8team.com"
+echo "➡ http://ww2.8team.com"

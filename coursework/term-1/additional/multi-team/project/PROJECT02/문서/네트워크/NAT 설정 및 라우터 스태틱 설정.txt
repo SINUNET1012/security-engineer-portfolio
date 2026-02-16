@@ -1,0 +1,51 @@
+라우터 스태틱 설정
+
+ip route 192.168.2.0 255.255.255.0 (상대방 라우터 포트 ex : 192.168.1.2)
+           ------------
+        목적지 네트워크
+
+
+사설 네트워크의 범위 지정 --> ACL
+
+conf t
+access-list 1 permit 192.168.0.0 0.0.0.255 <--- 사설 범위
+            숫자                       --------- : not연산 (0=1, 1=0)
+
+ip nat pool KONG ex)12.1.1.2 12.1.1.3 ->2개 netmask 255.255.255.0 <----공인 범위
+
+
+NAT 설정
+ip nat inside source     list 1      pool KONG
+                             ------     ------------
+                          사설IP대역   공인IP대역
+
+ip nat inside source list 1 pool aaa
+ip nat pool aaa 208.0.100.2 208.0.100.3 netmask 255.255.255.0
+(공인 IP + secondary IP까지)
+
+사설IP -> 공인IP
+
+소스 IP 변경 : 아웃바운드로 나갈 때
+데스티네이션 IP 변경 : 인바운드로 들어올때
+
+정적NAT에서는 공인 IP와 사설 IP가 1대1로 매칭된다.
+
+conf t
+int f0/0
+내부 -> ip 대역 설정( ex: 192.168.90.1)
+외부 -> ip add 상대방 ( ex: 203.2.100.2 255.255.255.0)
+
+
+conf t
+int (인사이드 포트)
+ip nat inside
+ex
+int (아웃사이드 포트)
+ip nat outside 
+ip nat inside source static 192.168.0.3 12.1.1.2
+end
+sh ip nat translations
+
+포트 + NAT => PAT
+
+ip nat inside source list 1 pool aaa overload

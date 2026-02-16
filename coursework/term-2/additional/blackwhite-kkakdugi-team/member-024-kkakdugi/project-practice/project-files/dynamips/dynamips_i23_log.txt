@@ -1,0 +1,30 @@
+Jan 18 16:01:43.151 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 18 16:01:43.151 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 62148.
+Jan 18 16:01:43.639 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 18 16:01:43.639 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 18 16:01:43.639 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 18 16:01:43.639 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\93aa5dde-7ae2-4298-9159-1a20d425d1dc 
+Jan 18 16:01:43.640 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\93aa5dde-7ae2-4298-9159-1a20d425d1dc
+Jan 18 16:01:43.640 HYPERVISOR: exec_cmd: vm create R11 27 c7200 
+Jan 18 16:01:43.641 VM: VM R11 created.
+Jan 18 16:01:43.642 HYPERVISOR: exec_cmd: vm set_con_tcp_port R11 5195 
+Jan 18 16:01:43.642 HYPERVISOR: exec_cmd: c7200 get_mac_addr R11 
+Jan 18 16:01:43.642 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 18 16:01:43.642 HYPERVISOR: exec_cmd: vm slot_add_binding R11 0 0 C7200-IO-FE 
+Jan 18 16:01:43.643 HYPERVISOR: exec_cmd: vm set_disk0 R11 0 
+Jan 18 16:01:43.644 HYPERVISOR: exec_cmd: vm set_exec_area R11 64 
+Jan 18 16:01:43.644 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 18 16:01:43.644 HYPERVISOR: exec_cmd: vm set_idle_pc R11 0x60645960 
+Jan 18 16:01:43.645 HYPERVISOR: exec_cmd: vm set_ios R11 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 18 16:01:43.646 HYPERVISOR: exec_cmd: c7200 set_mac_addr R11 ca1b.bc48.0000 
+Jan 18 16:01:43.646 HYPERVISOR: exec_cmd: vm set_nvram R11 512 
+Jan 18 16:01:43.647 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 18 16:01:43.647 HYPERVISOR: exec_cmd: vm slot_add_binding R11 1 0 PA-4T+ 
+Jan 18 16:01:43.647 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 18 16:01:43.648 HYPERVISOR: exec_cmd: vm slot_add_binding R11 2 0 PA-4E 
+Jan 18 16:02:28.753 HYPERVISOR: exec_cmd: nio create_udp udp-6174c7c7-7c2b-4bb4-938c-b46450b1a920 10178 127.0.0.1 10179 
+Jan 18 16:02:29.654 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R11 0 0 udp-6174c7c7-7c2b-4bb4-938c-b46450b1a920 
+Jan 18 16:02:29.655 HYPERVISOR: exec_cmd: vm get_status R11 
+Jan 18 16:03:10.288 HYPERVISOR: exec_cmd: nio create_udp udp-46ab7e89-e4ea-4771-bea0-2c87f614cef2 10458 127.0.0.1 10459 
+Jan 18 16:03:10.291 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R11 1 0 udp-46ab7e89-e4ea-4771-bea0-2c87f614cef2 
+Jan 18 16:03:10.291 HYPERVISOR: exec_cmd: vm get_status R11 

@@ -1,0 +1,51 @@
+Jan 18 16:01:59.834 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 18 16:01:59.836 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 62245.
+Jan 18 16:02:00.313 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 18 16:02:00.314 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 18 16:02:00.314 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 18 16:02:00.314 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\34e01706-b494-4bc0-ba50-17f6ce276400 
+Jan 18 16:02:00.315 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\34e01706-b494-4bc0-ba50-17f6ce276400
+Jan 18 16:02:00.315 HYPERVISOR: exec_cmd: vm create R29 61 c7200 
+Jan 18 16:02:00.317 VM: VM R29 created.
+Jan 18 16:02:00.318 HYPERVISOR: exec_cmd: vm set_con_tcp_port R29 5263 
+Jan 18 16:02:00.318 HYPERVISOR: exec_cmd: c7200 get_mac_addr R29 
+Jan 18 16:02:00.318 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:02:00.319 HYPERVISOR: exec_cmd: vm slot_add_binding R29 0 0 C7200-IO-FE 
+Jan 18 16:02:00.320 HYPERVISOR: exec_cmd: vm set_disk0 R29 0 
+Jan 18 16:02:00.321 HYPERVISOR: exec_cmd: vm set_exec_area R29 64 
+Jan 18 16:02:00.321 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:02:00.322 HYPERVISOR: exec_cmd: vm set_idle_pc R29 0x60645960 
+Jan 18 16:02:00.323 HYPERVISOR: exec_cmd: vm set_ios R29 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 18 16:02:00.324 HYPERVISOR: exec_cmd: c7200 set_mac_addr R29 ca3d.8a50.0000 
+Jan 18 16:02:00.324 HYPERVISOR: exec_cmd: vm set_nvram R29 512 
+Jan 18 16:02:00.325 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:02:00.325 HYPERVISOR: exec_cmd: vm slot_add_binding R29 1 0 PA-4T+ 
+Jan 18 16:02:00.326 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:02:00.326 HYPERVISOR: exec_cmd: vm slot_add_binding R29 2 0 PA-4T+ 
+Jan 18 16:02:00.327 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:02:00.327 HYPERVISOR: exec_cmd: vm slot_add_binding R29 3 0 PA-4E 
+Jan 18 16:03:30.628 HYPERVISOR: exec_cmd: nio create_udp udp-f55a85d0-6c4e-4baa-977f-544ad91b8f31 10596 127.0.0.1 10597 
+Jan 18 16:03:31.729 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R29 1 0 udp-f55a85d0-6c4e-4baa-977f-544ad91b8f31 
+Jan 18 16:03:31.729 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:03:32.235 HYPERVISOR: exec_cmd: nio create_udp udp-c29ac297-4811-44cd-ab72-c9f063c78c52 10606 127.0.0.1 10607 
+Jan 18 16:03:32.244 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R29 0 0 udp-c29ac297-4811-44cd-ab72-c9f063c78c52 
+Jan 18 16:03:32.244 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:03:32.513 HYPERVISOR: exec_cmd: nio create_udp udp-8a04b5d4-f3f0-4935-9d20-29243499954b 10614 127.0.0.1 10615 
+Jan 18 16:03:32.515 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R29 3 0 udp-8a04b5d4-f3f0-4935-9d20-29243499954b 
+Jan 18 16:03:32.516 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:17:37.595 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:17:37.595 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding R29 1 0 
+Jan 18 16:17:37.596 HYPERVISOR: exec_cmd: nio delete udp-f55a85d0-6c4e-4baa-977f-544ad91b8f31 
+Jan 18 16:17:37.796 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:17:37.797 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding R29 0 0 
+Jan 18 16:17:37.798 HYPERVISOR: exec_cmd: nio delete udp-c29ac297-4811-44cd-ab72-c9f063c78c52 
+Jan 18 16:17:38.015 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:17:38.015 HYPERVISOR: exec_cmd: vm slot_remove_nio_binding R29 3 0 
+Jan 18 16:17:38.016 HYPERVISOR: exec_cmd: nio delete udp-8a04b5d4-f3f0-4935-9d20-29243499954b 
+Jan 18 16:17:38.262 HYPERVISOR: exec_cmd: vm get_status R29 
+Jan 18 16:17:38.263 HYPERVISOR: exec_cmd: vm extract_config R29 
+Jan 18 16:17:38.263 HYPERVISOR: exec_cmd: vm delete R29 
+Jan 18 16:17:38.263 VM: VM R29 destroyed.
+Jan 18 16:17:38.264 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 18 16:17:38.266 HYPERVISOR: Stopped.
+Jan 18 16:17:38.266 GENERAL: reset done.

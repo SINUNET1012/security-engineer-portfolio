@@ -1,0 +1,17 @@
+기술
+
+------------로키, 우분투-----------
+서비스		로키		우분투
+VirtualHost	O		X
+DNS		△(미흡)		O
+FTP		△(계정+)		O
+웹 + php		△(php)		O
+DB		O		X
+phpmyadmin	X		X (회의 통해서 만들지 여부 결정)
+
+
+
+--------------WIN----------------
+win 10 설치	X
+win 10 DHCP	X
+Hyper-V		X(없어도 될 듯)

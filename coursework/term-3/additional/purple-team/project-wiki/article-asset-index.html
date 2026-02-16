@@ -1,0 +1,200 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퍼플위키 - 프로젝트 자료 인덱스</title>
+  <link rel="stylesheet" href="wiki.css" />
+</head>
+<body>
+  <header class="wiki-topbar">
+    <div class="top-inner">
+      <a class="brand" href="index.html" aria-label="퍼플위키 홈">
+        <span class="brand-mark">P</span>
+        <strong>퍼플위키</strong>
+      </a>
+      <nav class="top-nav">
+        <a href="index.html">개념 문서</a>
+        <a href="docs/tech-index.html">요소 허브</a>
+        <a class="active" href="article-asset-index.html">자료 인덱스</a>
+      </nav>
+      <div class="top-right">
+        <div class="global-search" role="search" aria-label="퍼플위키 검색">
+          <input id="global-search-input" type="search" placeholder="퍼플위키 검색" />
+          <div id="global-search-suggest" class="search-suggest" hidden></div>
+        </div>
+        <div class="top-note">
+          <a id="random-page-link" href="#">랜덤</a> · <a href="docs/glossary.html">도움말</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="article-title">
+    <div class="title-main">
+      <p class="article-path">퍼플위키 / 프로젝트 문서 / 자료 인덱스</p>
+      <h1>퍼플위키: 프로젝트 자료 인덱스</h1>
+      <p class="article-desc">파일/폴더/링크/통계 중심으로 저장소 자산을 탐색하는 문서입니다. 개념 정리 문서는 <a href="index.html">메인 페이지</a>에서 확인할 수 있습니다.</p>
+    </div>
+    <aside class="info-box">
+      <h2>문서 정보</h2>
+      <div class="hero-meta" id="hero-meta"></div>
+    </aside>
+  </section>
+
+  <section class="wiki-tools">
+    <div class="tool-tabs" role="tablist" aria-label="문서 탭">
+      <button type="button" class="tab active" data-mode="read">읽기</button>
+      <button type="button" class="tab" data-mode="fold">문단 관리</button>
+      <button type="button" class="tab" data-mode="nav">탐색</button>
+    </div>
+    <div class="tool-actions">
+      <input id="page-search-input" type="search" placeholder="문서 내 검색" />
+      <button id="expand-all-btn" type="button">전체 펼치기</button>
+      <button id="collapse-all-btn" type="button">전체 접기</button>
+      <button id="clear-search-btn" type="button">검색 초기화</button>
+      <button id="focus-file-search-btn" type="button">파일 검색으로 이동</button>
+      <span id="search-result-text" class="search-result-text">검색 대기 중</span>
+    </div>
+  </section>
+
+  <main class="layout">
+    <aside class="toc">
+      <h2>목차</h2>
+      <div class="toc-tools">
+        <button id="toc-collapse-btn" type="button">목차 접기</button>
+      </div>
+      <a href="#overview">개요</a>
+      <a href="#quick-start">빠른 이해 순서</a>
+      <a href="#timeline">진행 타임라인</a>
+      <a href="#stack">기술 스택 맵</a>
+      <a href="#highlights">핵심 포인트</a>
+      <a href="#folders">폴더/자산 분포</a>
+      <a href="#members">팀원별 자산</a>
+      <a href="#top-files">대용량 파일</a>
+      <a href="#index">전체 파일 인덱스</a>
+      <a href="#links">외부 참고 링크</a>
+    </aside>
+
+    <section class="content">
+      <section id="overview" class="panel">
+        <h2>1. 개요</h2>
+        <p>
+          이 저장소는 3차 퍼플팀 프로젝트의 실습/회의/매뉴얼/룰셋/개인 작업 자료를 모아둔 통합 작업 공간입니다.
+          핵심 흐름은 <strong>로그 수집(ELK) -> 탐지 룰 작성(Suricata/ModSecurity/Wazuh) -> 자동화(Ansible) -> 검증(Nessus/공격 시나리오)</strong>입니다.
+        </p>
+        <div class="stat-grid" id="stat-grid"></div>
+      </section>
+
+      <section id="quick-start" class="panel">
+        <h2>2. 빠른 이해 순서</h2>
+        <ol class="ordered">
+          <li><code>99_회의록</code>: 일정, 역할, 의사결정 흐름 먼저 파악</li>
+          <li><code>02_학습자료/[3차 흐름 잡기]</code>: 프로젝트 전체 아키텍처/학습 프레임 파악</li>
+          <li><code>03_메뉴얼, 룰셋</code>: 실제 구축 절차와 탐지 룰 기준 확인</li>
+          <li><code>00_개인 폴더</code>: 팀원별 실습 결과물/세부 로그/보조 문서 확인</li>
+        </ol>
+      </section>
+
+      <section id="timeline" class="panel">
+        <h2>3. 진행 타임라인</h2>
+        <div id="timeline-list" class="timeline-list"></div>
+      </section>
+
+      <section id="stack" class="panel">
+        <h2>4. 기술 스택 맵</h2>
+        <div class="stack-grid">
+          <article>
+            <h3>수집/적재</h3>
+            <p>Filebeat, Syslog, Logstash, Elasticsearch</p>
+          </article>
+          <article>
+            <h3>탐지</h3>
+            <p>Suricata(NIDS), ModSecurity(WAF), Wazuh(HIDS)</p>
+          </article>
+          <article>
+            <h3>검증/공격 시나리오</h3>
+            <p>Nessus, 실습 패킷, 모의 공격 로그</p>
+          </article>
+          <article>
+            <h3>자동화/운영</h3>
+            <p>Ansible, 룰 취합, 운영 가이드 문서화</p>
+          </article>
+          <article>
+            <h3>네트워크 실습</h3>
+            <p>OSPF, EIGRP, RIP, IPv6, GRE/IPsec, GNS3</p>
+          </article>
+          <article>
+            <h3>악성코드 분석</h3>
+            <p>CAPE 구성/로그, 샌드박스 운용 트러블슈팅</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="highlights" class="panel">
+        <h2>5. 핵심 포인트 요약</h2>
+        <ol class="ordered">
+          <li><strong>NIDS + HIDS 병행</strong>: Suricata만으로 놓칠 수 있는 암호화/호스트 내부 행위는 Wazuh 룰로 보완하는 방향이 명시됨</li>
+          <li><strong>로그 기반 자동 대응</strong>: 단순 수집이 아니라 Kibana 검증 후 차단 자동화까지 연결하는 운영 루프를 목표로 진행됨</li>
+          <li><strong>룰셋 출처</strong>: Nessus 스캔 결과와 실제 로그/패킷 증거를 기반으로 ModSecurity/Suricata/Wazuh 룰을 작성하는 구조</li>
+          <li><strong>Ansible 완성 이후 과제</strong>: 팀원 전체가 독자적으로 설명/재구축 가능한 수준으로 지식 이전과 문서 통합 진행</li>
+          <li><strong>저장소 용량 특성</strong>: 대용량 ZIP/VM 파일 비중이 매우 높아, 공유/백업 정책을 따로 두는 것이 유리함</li>
+        </ol>
+      </section>
+
+      <section id="folders" class="panel">
+        <h2>6. 폴더/자산 분포</h2>
+        <div id="folder-table"></div>
+      </section>
+
+      <section id="members" class="panel">
+        <h2>7. 팀원별 자산 분포</h2>
+        <div id="member-table"></div>
+      </section>
+
+      <section id="top-files" class="panel">
+        <h2>8. 대용량 파일 TOP</h2>
+        <p class="note">대용량 압축/가상머신 파일이 저장소 용량 대부분을 차지합니다.</p>
+        <div id="top-file-table"></div>
+      </section>
+
+      <section id="index" class="panel">
+        <h2>9. 전체 파일 인덱스</h2>
+        <div class="controls">
+          <input id="search-input" type="search" placeholder="파일명/경로 검색" />
+          <select id="folder-filter"></select>
+          <select id="ext-filter"></select>
+          <select id="sort-select">
+            <option value="path">정렬: 경로</option>
+            <option value="size">정렬: 크기(내림차순)</option>
+            <option value="date">정렬: 수정일(최신순)</option>
+          </select>
+          <button id="reset-btn" type="button">초기화</button>
+        </div>
+        <div id="result-meta" class="result-meta"></div>
+        <div id="file-table"></div>
+      </section>
+
+      <section id="links" class="panel">
+        <h2>10. 외부 참고 링크</h2>
+        <div id="link-list" class="link-list"></div>
+      </section>
+    </section>
+  </main>
+  <div class="category-box">
+    <strong>분류</strong>
+    <a href="index.html">퍼플위키</a>
+    <a href="#index">자료 인덱스</a>
+    <a href="#links">외부 링크</a>
+  </div>
+  <footer class="license-box">
+    이 문서는 퍼플팀 내부 학습 및 프로젝트 정리를 위한 문서입니다.
+  </footer>
+  <button id="back-to-top-btn" class="back-to-top-btn" type="button" aria-label="맨 위로">▲</button>
+
+  <script src="wiki-data.js"></script>
+  <script src="app.js"></script>
+  <script src="wiki-pages.js"></script>
+  <script src="wiki-ui.js"></script>
+</body>
+</html>

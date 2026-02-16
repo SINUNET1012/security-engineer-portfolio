@@ -1,0 +1,13 @@
+# Path to your rules files
+# 경로를 /etc/snort/rules 폴더로 명확하게 지정합니다.
+var RULE_PATH /etc/snort/rules
+var SO_RULE_PATH /etc/snort/so_rules
+var PREPROC_RULE_PATH /etc/snort/preproc_rules
+
+# Reputation preprocessor settings
+# 화이트/블랙리스트 경로도 절대 경로로 변경합니다.
+var WHITE_LIST_PATH /etc/snort/rules
+var BLACK_LIST_PATH /etc/snort/rules
+
+sudo touch /etc/snort/rules/white_list.rules
+sudo touch /etc/snort/rules/black_list.rules

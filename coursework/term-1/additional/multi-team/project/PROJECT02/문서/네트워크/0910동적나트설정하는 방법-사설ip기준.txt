@@ -1,0 +1,50 @@
+사설 네트워크의 범위 지정 : ACL 액세스 리스트
+동적 나트
+
+*메인라우터와 연결하는 사설ip를 가진 라우터 기준
+
+ - 라우터 더블클릭
+ - conf t
+ - int 포트번호 (f0/0)
+ - ip add 10.10.10.1 255.255.255.0  (사용 pc는 ip따로 설정 ex:10.10.10.2 255.255.255.0 10.10.10.1)
+ - no sh (e2/0)
+ - int 포트번호
+ - ip add 203.0.100.2
+ - exit
+ - access-list 1 permit 10.10.10.0 0.0.0.255 (내가 사용 하는 pc의 ip대역, 와일드 마스크 -> 원래 서브넷에서 낫연산을 한다 -> 0을 1로, 1을 0으로)  <-- 사설네트워크 범위 지정?? 사용가능한 ip대역지정??
+ - (내가쓰는 피시의 아이피 10.10.10.2~4 255.255.255.0 나트 설정 된 사용가능한 ip)
+ - end
+ - sh ip access-list (들어가서 입력한 내용 들어갔는지 확인)
+    ex) 10 permit 10.10.10.0, wildcard bits 0.0.0.255
+ - conf t 
+ - int e2/0
+ - ip add 203.0.100.3 255.255.255.0 secondary (e2/0 포트에 203.0.100.3 이라는 서브 주소를 추가한다, 2개 이상의 pc를 사용하기 위해)
+   #사용가능한 아웃사이드 주소는 203.0.100.2~3 .2. 3으로 두개 뿐. 2개의 PC만 사용가능, 각각 1개의 아웃사이드 아이피 사용 가능
+ - int f0/0 
+ - ip nat inside
+ - int e2/0
+ - ip nat outside
+ - exit 
+ - ip nat pool YY(내맘데로 이름정하기,대문자로쓰기) 203.0.100.2 203.0.100.3(공인IP의 범위를 쓴다) netmask 255.255.255.0(넷마스크) <--공인의 범위
+ - ip nat inside source list 1 pool YY (nat 설정)
+ - 스태틱하기
+ - ip route 192.168.2.0(상대방 ni) 255.255.255.0(서브넷) 203.0.100.1(내 라우터와 연결되어있는 상대방의 라우터 홉 주소)
+ - end 
+ - sh ip ro (192.168.2.0/24 via 203.0.100.1 <- 추가된거 확인)
+
+
+
+
+PAT (공인ip 1가지로 여러개의 pc가 통신이 가능하게 하는 방법 #포트번호를 부여하여 가능하다? ex 10.10.10.2(포트번호40) -> 1개의 공인 ip로 나감)
+conf t 
+ip nat inside soure list 1 pool YY overload 
+
+R8#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R8(config)#no ip nat inside source list 1 pool YY (기존에 만들었던 다이나믹 적용 명령어 "pool YY" 삭제하는 명령어)
+
+Dynamic mapping in use, do you want to delete all entries? [no]: yes    # yes를 입력하여 초기화 한다.
+R8(config)#ip nat inside source list 1 pool YY overload
+sh run (다이나믹 있던 자리에 overload 생성 됨)
+
+

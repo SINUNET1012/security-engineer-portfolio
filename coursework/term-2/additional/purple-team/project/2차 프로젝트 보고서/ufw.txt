@@ -1,0 +1,53 @@
+1. UFW 초기화 (중요)
+
+기존 allow/deny 섞여 있으면 무조건 꼬임
+
+sudo ufw reset
+
+2. 기본 정책을 DROP으로 설정
+
+이게 핵심이다
+
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+
+deny incoming = DROP
+→ 응답 자체를 안 함
+
+3. SSH 화이트리스트만 허용 (관리자 IP만)
+
+예시: 내부 관리 PC가 10.4.0.100이라고 가정
+
+sudo ufw allow from 10.4.0.100 to any port 22 proto tcp
+
+
+⚠️ allow ssh 같은 포괄 룰 절대 쓰면 안 됨
+
+4. 칼리 IP(10.1.152.10)는 명시적 DROP
+
+UFW는 deny도 있지만, default deny면 사실 없어도 됨
+그래도 명확히 하려면:
+
+sudo ufw deny from 10.1.152.10 to any port 22 proto tcp
+
+5. Pv6 완전 차단 (이거 안 하면 100% 뚫린다)
+sudo nano /etc/default/ufw
+
+IPV6=no
+
+
+적용:
+
+sudo ufw reload
+
+6. UFW 활성화
+sudo ufw enable
+sudo ufw status verbose
+
+
+정상 상태 예시:
+
+Status: active
+Default: deny (incoming), allow (outgoing)
+22/tcp ALLOW IN from 10.4.0.100

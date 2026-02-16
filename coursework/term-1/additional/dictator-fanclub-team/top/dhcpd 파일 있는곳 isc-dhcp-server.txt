@@ -1,0 +1,7 @@
+파일있는곳
+
+/usr/share/doc/isc-dhcp-server/examples/dhcpd.conf.example
+
+cp /usr/share/doc/isc-dhcp-server/examples/dhcpd.conf.example /etc/dhcp/dhcpd.conf
+cd /etc/dhcp
+vi dhcpd.conf

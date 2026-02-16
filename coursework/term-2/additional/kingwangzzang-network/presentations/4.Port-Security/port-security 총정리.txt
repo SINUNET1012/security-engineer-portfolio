@@ -1,0 +1,50 @@
+명령어
+
+기본 활성화 명령어
+int g0/0
+switchport mode access
+switchport port-security
+
+
+static 설정
+int g0/0
+switchport mode access
+switchport port-security
+switchport port-security mac-add <MAC주소>
+
+dynamic설정 (port-security만 켜면 자동 동작)
+int g0/1
+switchport mode access
+switchport port-security
+switchport port-security maximum (숫자)
+
+sticky 설정
+int g0/0
+switchport mode access
+switchport port-security
+switchport port-security mac-address sticky
+swithcport port-security maximum (숫자)
+
+
+Violation 모드 설정
+swithchport port-security violation protect
+swithchport port-security violation restrict
+swithchport port-security violation shutdown <- 기본값
+
+자동복구 활성화
+errdisable recovery cause psecure-violation
+errdisable recovery interval 30
+
+초 단위 자동 복구
+errdisable recovery interval <초>
+
+완성형 (Sticky + Restrict)
+interface g0/2
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+
+err-disable 확인
+show interface status err-disabled

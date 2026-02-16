@@ -1,0 +1,96 @@
+=====================================================
+전체 구성 메뉴얼 (DNS+CMS+MAIL)
+=====================================================
+기본 구성 : Rocky9 1대, 우분투 2대
+기본 IP 설정 및 네트워크 연결 완료 확인
+SSH 연결 허용 설정
+방화벽 비활성화
+vim편집기 설치, 업데이트
+=====================================================
+DNS
+=====================================================
+1. dns 설치
+2. dns 설정
+3. 전용 zone파일 추가
+4. /etc/named.rfc1912.zones zone 파일 연결 설정 추가
+5. dns reload
+6. NFS 백업 연결
+7. SNMP 클라이언트 연결
+=====================================================
+CMS
+기본 구성 : wget, unzip 설치
+=====================================================
+1. 아파치, php(8.4) 설치
+2. WP 구성
+2-1. WP 전용 유저/디렉터리 생성
+2-2. WP /home/wp 디렉터리에서 전용 압축파일 wget
+2-3. 압축파일 unzip으로 압축 풀기
+2-4. /home/wp 하위 포함 디렉터리에 소유권과 권한 부여
+2-5. wp-config.php 설정 파일에서 DB서버와 계정 관련 정보 입력
+2-6. 아파치 버추얼 호스트에 WP 전용 추가
+3. Joomla 구성
+3-1. Joomla 전용 유저/디렉터리 생성
+3-2. JL /home/jl 디렉터리에서 전용 압축파일 wget
+3-3. 압축파일 unzip으로 압축 풀기
+3-4.  /home/jl 하위 포함 디렉터리에 소유권과 권한 부여
+3-5. 아파치 버추얼 호스트에 jl 전용 추가
+4. 등록한 버추얼 호스트로 접속해 DB연결 과정 진행
+5. NFS 백업 연결
+6. SNMP 클라이언트 연결
+=====================================================
+MAIL
+=====================================================
+1. 아파치, php(8.4) 설치
+2. postfix 설치
+2-1. 메일 전용 디렉터리 준비 / 소유권, 권한 설정
+- /home/mails/mail
+- touch /home/mails/mail/inbox (mbox 파일 생성)
+- chown -R mails:mails /home/mails/mail (소유권 이전)
+- chmod -R 700 /home/mails/mail (보안을 위해 권한 제한)
+
+2-1. postfix 설정(SMTP)
+/etc/postfix/main.cf
+- home_mailbox = mail/inbox
+- mail_spool_directory =
+
+- smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+- myhostname = mails.bs.com
+- mydomain = bs.com
+- myorigin = $mydomain
+
+- mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+- mynetworks = +허용할 네트워크 대역 추가
+
+3. dovecot 설치
+3-1. dovecot 설정(IMAP)
+
+/etc/dovecot/conf.d/10-auth.conf
+- disable_plaintext_auth = no
+- auth_mechanisms = plain login
+
+- auth_worker_max_count = 100 (로그인 횟수 제한)
+- auth_failure_delay = 0
+
+/etc/dovecot/conf.d/10-mail.conf
+- mail_location = mbox:~/mail:INBOX=~/mail/inbox
+
+/etc/dovecot/conf.d/10-ssl.conf
+- ssl = no
+
+4. roundcube 설치
+4-1. roundcube 설정
+/etc/roundcube/config.inc.php
+
+$config['db_dsnw'] = 'mysql://bs:bs401%21%40@10.1.176.10/bs_mails'; (DB연결 내용 추가)
+
+$config['imap_host'] = ["localhost:143"]; (143번 포트)
+
+$config['smtp_host'] = 'localhost:25'; (25번 포트)
+
+$config['smtp_user'] = '';
+$config['smtp_pass'] = ''; (공백)
+
+
+5. 아파치 버추얼 호스트 설정
+6. NFS 백업 연결
+7. SNMP 클라이언트 연결

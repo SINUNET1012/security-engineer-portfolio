@@ -1,0 +1,186 @@
+WAZUH
+
+NIDS(네트워크 탐지)가 놓친 것을 와주를 사용하여 HIDS(호스트 탐지)를 해야한다.
+NIDS와 HIDS의 상호보완
+HTTPS처럼 암호화 된 트래픽은 수리카타가 잡을 수 없다.
+암호화된 패킷이 서버에 도착해서 복호화 후 로그가 남으면 와주가 탐지 가능하다.
+이미 뚫린 뒤의 행동은 시스템에 로그로 남는다. (내부 파일 변경, 권한 상승 등 )
+"수리카타는 **'현관문(네트워크)'**을 지키는 CCTV 역할을 하고,
+와주는 **'집 안(시스템)'**에서 일어나는 파일 변조나 이상 행위를 감시하는 보안요원 역할을 합니다.
+특히 **암호화 통신(SSL)**이나 내부자 위협은 네트워크 장비만으로는 탐지가 불가능하기 때문에,
+ **심층 방어(Defense in Depth)**를 위해 시스템 로그를 분석하는 와주를 사용한다."
+
+네서스를 통하여 취약점 스캔을 하고, 서버팀에서 서버에 남은 로그 분석하여 공유해준 내용을 기반으로 와주 룰을 작성한다.
+경로 = https://docs.google.com/document/d/1upAfkQw0UjVno9uMpRHt46RpMPTTljLGF-awP31qxBg/edit?tab=t.ts0anc3p5jlu
+
+웹 로그에서 GET /../../etc/passwd 공격을 탐지합니다
+<rule id="100102" level="12">
+  <if_sid>31100</if_sid> <url type="pcre">\.\./\.\./.+/etc/passwd</url>
+  <description>Web: Directory Traversal Attempt (/etc/passwd) detected</description>
+  <group>web,attack,</group>
+</rule>
+설명: 웹 접속 로그(id:31100) 중에서 URL에 ../../와 /etc/passwd 패턴이 보이면 탐지 url type="pcre"은 정규표현식
+# 와주 기본 룰에서 비슷한 탐지 룰이 있다. /var/ossec/ruleset/rules/0245-web_rules.xml
+
+Nessus User-Agent가 찍힌 로그를 탐지합니다.
+<rule id="100103" level="7">
+  <if_sid>31100</if_sid>
+  <regex>Nessus|nessus</regex>
+  <description>Web: Nessus Vulnerability Scanner detected (User-Agent)</description>
+  <group>web,recon,</group>
+</rule>
+설명: 웹 로그 내용 중 Nessus라는 단어(대소문자 무시)가 포함되어 있으면 "누군가 스캐너를 돌리고 있다"고 경고합니다.
+
+이미지 하단 DNS Log 분석 부분의 AXFR started 로그를 탐지합니다.
+<rule id="100104" level="10">
+  <program_name>named</program_name>
+  <match>AXFR started</match>
+  <description>DNS: Zone Transfer (AXFR) attempt detected from %{srcip}</description>
+  <group>dns,recon,</group>
+</rule>
+설명: named 데몬 로그 중 AXFR started가 뜨면, 존 파일 탈취 시도로 간주하고 탐지합니다.
+
+이미지 맨 아래의 update failed: not authoritative 로그를 탐지합니다.
+<rule id="100105" level="8">
+  <program_name>named</program_name>
+  <match>updating zone</match>
+  <match>denied|failed</match>
+  <description>DNS: Unauthorized Dynamic Update attempt detected</description>
+  <group>dns,attack,</group>
+</rule>
+설명: 누군가 DNS 레코드를 마음대로 바꾸려다(updating zone) 거절당한(denied 또는 failed) 상황을 잡아냅니다.
+
+<rule id="100111" level="15">
+  <if_sid>31100</if_sid>
+  <regex>\$\{jndi:(ldap|rmi|dns|nis|iiop|corba|nds|http):</regex> 
+  <description>Web: Critical Log4Shell (JNDI Injection) Attack Attempt Detected</description>
+  <group>web,attack,log4j,</group>
+  <mitre>
+    <id>T1190</id> 
+  </mitre>
+</rule>
+# Log4Shell 공격의 시그니처를 찾는 정규표현식
+# 공개된 어플리케이션 공격 ( log4j ) 이라고 매핑
+
+SSH Log4Shell (JNDI Injection) 공격 탐지
+${jndi:ldap://log4shell...} 같은 문구가 보입니다. 공격자가 SSH 사용자 이름(User ID) 적는 칸에 악성 코드를 넣어서 서버를 장악하려는 매우 치명적인 시도입니다.
+<rule id="100201" level="15">
+  <if_sid>5700</if_sid> <match>jndi:ldap</match>
+  <description>Critical: Log4Shell (CVE-2021-44228) Exploit attempt via SSH detected from %{srcip}</description>
+  <group>syslog,sshd,exploit,attack,</group>
+</rule>
+설명: SSH 로그(id:5700) 중에서 jndi:ldap라는 문자열이 발견되면, **경보 레벨 15(최고 위험)**로 즉시 알립니다.
+
+SSH 프로토콜 스캐닝/오류 탐지
+로그 상단에 Protocol major versions differ, Unable to negotiate, bad service request 등이 쏟아지고 있습니다. 이는 Nessus 같은 취약점 스캐너가 억지로 접속을 시도할 때 발생하는 전형적인 "찌꺼기 로그"입니다.
+<rule id="100202" level="7">
+  <if_sid>5700</if_sid>
+  <regex>Protocol major versions differ|Unable to negotiate|bad service request|Did not receive identification</regex>
+  <description>SSH: Abnormal Protocol Negotiation (Potential Scanning) from %{srcip}</description>
+  <group>syslog,sshd,recon,</group>
+</rule>
+설명: 정상적인 접속이 아니라, 프로토콜 버전이 안 맞거나 협상에 실패하는 경우를 "스캐닝 행위"로 간주하여 탐지합니다.
+
+특정 공격 도구(Nessus) 이름 탐지
+로그에 Invalid user nessus라고 대놓고 공격 도구 이름이 찍혀 있습니다.
+<rule id="100203" level="8">
+  <if_sid>5710</if_sid> <match>nessus</match>
+  <description>SSH: Login attempt using vulnerability scanner name (Nessus) from %{srcip}</description>
+  <group>syslog,sshd,recon,</group>
+</rule>
+설명: 로그인 실패 로그(id:5710) 중에서 사용자 이름에 nessus가 포함되어 있으면 탐지합니다.
+
+FTP 인증 실패 (vsftpd) 탐지
+이미지 맨 아래에 vsftpd 프로세스가 authentication failure를 일으키고 있습니다. SSH 공격을 하던 IP가 FTP(21번 포트)도 찔러보는 상황입니다.
+<rule id="100204" level="5">
+  <program_name>vsftpd</program_name>
+  <match>authentication failure</match>
+  <description>FTP: vsftpd Authentication Failure detected from %{srcip}</description>
+  <group>syslog,vsftpd,authentication_failed,</group>
+</rule>
+설명: 프로그램 이름이 vsftpd이고 authentication failure 메시지가 뜨면 탐지합니다.
+
+RPC 및 NFS 관련 공격 시도
+bad TCP reclen 오류는 취약점 스캐너나 버퍼 오버플로우 공격 도구가 비정상적인 데이터를 마구잡이로 보낼 때 발생하는 전형적인 흔적
+
+RPC/NFS 버전 스캐닝 탐지
+unknown version (1 for prog 100003, nfsd) 공격자가 **"너 NFS 버전 1도 지원해?"**라고 묻는 상황
+아주 오래된 취약점을 찾으려는 **다운그레이드 공격(Downgrade Attack)**이나 구형 스캐너의 활동
+<rule id="100301" level="8">
+  <if_sid>4100</if_sid> <match>unknown version</match>
+  <match>prog 100003</match>
+  <description>NFS: RPC Unknown Version Scan attempt detected from %{srcip}</description>
+  <group>syslog,kernel,rpc,recon,</group>
+</rule>
+설명: 커널 로그(id:4100) 중 unknown version과 prog 100003(NFS 프로그램 번호)이 동시에 나오면 탐지합니다.
+
+RPC Bad TCP Record Length (버퍼 오버플로우/Fuzzing 시도)
+RPC: bad TCP reclen 0x247b6a6e
+0x247b6a6e처럼 말도 안 되게 긴 데이터를 보내서 서버를 뻗게 만들거나(DoS), 뚫으려는(Overflow) 명확한 공격 시도
+<rule id="100302" level="12">
+  <if_sid>4100</if_sid>
+  <match>RPC: bad TCP reclen</match>
+  <description>RPC: Malformed Packet Detected (Potential Buffer Overflow/Fuzzing) from %{srcip}</description>
+  <group>syslog,kernel,rpc,exploit,</group>
+</rule>
+설명: bad TCP reclen (잘못된 길이) 메시지가 뜨면 시스템에 치명적일 수 있으므로 **경보 레벨 12(위험)**로 즉시 알립니다.
+
+NFS Peername Resolution 실패 (IP 스푸핑 의심)
+nfsd: peername failed (err 107)! 서버가 접속하려는 놈의 정체(Hostname)를 확인하려 했으나 실패한 경
+공격자가 자신의 **IP를 변조(Spoofing)**했거나, DNS에 없는 공격용 일회성 IP를 쓸 때 자주 발생
+<rule id="100303" level="5">
+  <if_sid>4100</if_sid>
+  <match>nfsd: peername failed</match>
+  <description>NFS: Client Peername Resolution Failed (Suspicious Connection)</description>
+  <group>syslog,kernel,nfs,</group>
+</rule>
+설명: nfsd가 접속자의 이름을 알아내지 못해 에러를 뱉는 상황을 기록합니다.
+
+************************************************************************************************************************
+<rule id="100302" level="12">
+<rule>: "여기서부터 룰 정의를 시작한다"는 태그
+id="100302" 이 룰의 고유 번호 # 사용자가 직접 만드는 커스텀 룰은 보통 100000번 이상부터 사용합니다. (1~99999번은 와주가 기본으로 갖고 있는 시스템 룰이라 건드리면 안 됩니다.)
+level="12" 이 공격이 얼마나 위험한지를 나타내는 점수 0~16
+
+<if_sid>4100</if_sid> 이 룰은 4100번 룰이 통과된 후에만 검사해라
+모든 로그를 다 검사하면 시스템이 느려집니다.
+4100번 룰은 와주 기본 룰로, **"이 로그는 리눅스 커널(Kernel) 로그야"**라고 분류해 주는 역할을 합니다.
+웹 로그나 윈도우 로그는 보지 말고, 커널 로그일 때만 아래 내용을 검사해!"라고 범위를 좁혀주는 1차 관문입니다.
+
+<match>RPC: bad TCP reclen</match>
+<match> Snort의 content:"..."와 똑같은 역할
+
+<description>RPC: Malformed Packet Detected (Potential Buffer Overflow/Fuzzing) from %{srcip}</description>
+<description> 대시보드에 띄울 제목입니다.
+%{srcip} 변수, 
+Wazuh는 로그를 읽을 때 "누가(IP)" 공격했는지를 미리 분석해서 srcip라는 변수에 담아둡니다.
+%{srcip}라고 쓰면, 경보가 울릴 때 자동으로 **공격자 IP(예: 172.16.28.140)**로 바꿔치기해서 보여줍니다.
+결과: "RPC: Malformed Packet Detected... from 172.16.28.140"
+
+<group>syslog,kernel,rpc,exploit,</group>
+<group> 중에 로그를 검색하기 쉽게 태그를 달아주는 겁니다
+kernel 로그이고, rpc 관련이고, exploit(해킹 시도) 같으니까 이렇게 태그를 달아두면, 나중에 "RPC 공격만 다 보여줘"라고 검색할 때 편합니다.
+
+<program_name>named</program_name>
+<program_name> 로그를 남긴 프로그램 이름이 named인 것만 검사해라
+다른 프로그램(예: sshd, ftp) 로그까지 뒤지면 시간 낭비니까, 딱 DNS 로그만 보라고 범위를 좁혀준 것입니다.
+
+룰 적용 파일 경로 /var/ossec/etc/rules/local_rules.xml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

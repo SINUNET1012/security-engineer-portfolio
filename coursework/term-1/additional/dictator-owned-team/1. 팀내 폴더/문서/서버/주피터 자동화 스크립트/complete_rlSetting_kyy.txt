@@ -1,0 +1,66 @@
+echo "초기화를 시작합니다."
+
+echo "1. 현재 IP를 확인합니다."
+#ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' # : 기존 명령어
+ip_addr=$(ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v '^127\.' | head -n1) 
+# 1. 기존의 방식대로 ip(옥텟 4개) 형식 추출
+# 2. grep -v '^127\.' : 1번에서 루프백 형식(127.*.*.*) ip를 제거
+# 3. head -n1: 첫 번째 IP만 선택
+echo "$ip_addr" #ip_addr 명령어의 값 출력
+
+echo "2. 게이트 웨이와 ping 테스트를 실행합니다."
+ping -c 1 172.16.0.1 #ping 오래 걸리는거 싫어서 1번만 하는거임
+
+echo "3. DNS Server 주소 확인."
+cat /etc/resolv.conf
+
+echo "4. Repository 설치"
+sudo dnf install epel-release -y
+sudo dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+
+echo "5. 짜투리 패키지 설치"
+dnf -y install vim wget net-tools #공백으로 구분되어 vim, wget, net-tools 설치
+
+echo "6. Miniconda3 설치"
+cd ~ #루트(홈) 디렉터리로 이동 : 설치 위치 고정
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh #미니콘다 파일에 실행 권한 추가
+./Miniconda3-latest-Linux-x86_64.sh -b -p ~/miniconda3 #미니콘다 설치파일 실행 : 설치 과정에서 발생하는 확인 과정 생략 + 가상환경 비활성화 설정
+
+#echo "(구)7. 가상환경 비활성화 설정"
+#conda config --set auto_activate_base false # 파이썬 가상환경 비활성화 설정 : 껐다 켜야 비활성화 적용됨
+
+echo "7. 환경변수 편집"
+echo "export PATH=$PATH:/root/miniconda3/bin/" >> /etc/bashrc #환경변수 파일 수정
+#>> : 리다이렉트 기호 2개 : 이어쓰기
+source /etc/bashrc # 환경변수 파일 수정 적용
+
+echo "8. jupyter 설치"
+#echo "10. jupyter notebook 실행 테스트"
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+conda install jupyter -y
+#jupyter notebook --allow-root --ip="$ip_addr" --port=8000 #ip_addr 변수에 저장된 ip 값 가져와서 jupyter 실행함
+
+echo "9. 방화벽 설정"
+sudo sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+
+root 계정 로그인 시 firewalld 상태 출력
+PROFILE="/root/.bash_profile"
+if ! grep -q "firewalld --no-pager" "$PROFILE" 2>/dev/null; then
+    cat <<'EOF' >> "$PROFILE"
+
+systemctl status firewalld --no-pager
+firewall-cmd --list-all
+EOF
+fi
+
+sudo systemctl daemon-reexec
+
+echo "모든 설정이 완료되었습니다. 곧 재부팅합니다"
+sleep 3
+sudo reboot
+
+
+echo "10. jupyter notebook 실행 테스트"
+jupyter notebook --allow-root --ip="$ip_addr" --port=8000

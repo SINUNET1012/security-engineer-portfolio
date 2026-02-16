@@ -1,0 +1,16 @@
+Feb 08 14:42:25.915 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Feb 08 14:42:25.916 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 62464.
+Feb 08 14:42:26.350 HYPERVISOR: exec_cmd: hypervisor version 
+Feb 08 14:42:26.351 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips 
+Feb 08 14:42:26.353 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips
+Feb 08 14:42:26.353 HYPERVISOR: exec_cmd: frsw create FRSW2 
+Feb 08 14:45:07.547 HYPERVISOR: exec_cmd: nio create_udp udp-259021d2-9297-405c-9d2a-c6115d5ba4c0 10531 172.16.22.1 10530 
+Feb 08 14:45:08.073 HYPERVISOR: exec_cmd: nio create_udp udp-53b6a41e-c37b-4290-8759-e410e7b99ea4 10534 172.16.22.1 10535 
+Feb 08 14:45:08.587 HYPERVISOR: exec_cmd: nio create_udp udp-9aecce68-4d15-45e8-b12f-b3a350c7393a 10538 172.16.22.1 10539 
+Feb 08 14:45:34.448 HYPERVISOR: exec_cmd: nio create_udp udp-9b21fe5a-3338-4fe9-aebf-56e8d925b04f 10630 172.16.22.1 10631 
+Feb 08 14:45:34.449 HYPERVISOR: exec_cmd: frsw create_vc FRSW2 udp-259021d2-9297-405c-9d2a-c6115d5ba4c0 101 udp-9b21fe5a-3338-4fe9-aebf-56e8d925b04f 202 
+Feb 08 14:45:34.464 HYPERVISOR: exec_cmd: frsw create_vc FRSW2 udp-9b21fe5a-3338-4fe9-aebf-56e8d925b04f 202 udp-259021d2-9297-405c-9d2a-c6115d5ba4c0 101 
+Feb 08 20:35:22.539 HYPERVISOR: exec_cmd: frsw delete FRSW2 
+Feb 08 20:35:22.613 HYPERVISOR: exec_cmd: hypervisor stop 
+Feb 08 20:35:22.720 HYPERVISOR: Stopped.
+Feb 08 20:35:22.720 GENERAL: reset done.

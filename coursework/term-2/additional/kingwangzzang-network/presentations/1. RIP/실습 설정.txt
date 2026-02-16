@@ -1,0 +1,60 @@
+R1
+
+conf t
+router rip
+version 2
+network 1.0.0.0
+network 192.168.100.0
+no auto-summary
+
+R1(config)#int s1/0
+R1(config-if)#ip rip aut
+R1(config-if)#ip rip authentication mod md5
+R1(config-if)#ip rip au
+R1(config-if)#ip rip authentication ke
+R1(config-if)#ip rip authentication key-chain RIP_KEY
+R1(config-if)#end
+
+R2
+
+router rip
+version 2
+network 192.168.100.0
+network 192.168.200.0
+no auto-summary
+
+R2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R2(config)#int s1/0
+R2(config-if)#ip rip au
+R2(config-if)#ip rip authentication mode md5
+R2(config-if)#ip rip au
+R2(config-if)#ip rip authentication ke
+R2(config-if)#ip rip authentication key-chain RIP_KEY
+R2(config-if)#end
+
+R2(config)#int s1/1
+R2(config-if)#ip rip au
+R2(config-if)#ip rip authentication mode md5
+R2(config-if)#ip rip aut
+R2(config-if)#ip rip authentication ke
+R2(config-if)#ip rip authentication key-chain RIP_KEY
+R2(config-if)#end
+
+R3
+
+conf t
+router rip
+version 2
+network 192.168.200.0
+network 1.0.0.0
+no auto-summary
+
+R3(config)#int s1/1
+R3(config-if)#ip rip aut
+R3(config-if)#ip rip authentication mode md5
+R3(config-if)#ip rip au
+R3(config-if)#ip rip authentication ke
+R3(config-if)#ip rip authentication key-chain RIP_KEY
+R3(config-if)#end
+

@@ -1,0 +1,125 @@
+#!/bin/bash
+# Ubuntu용 MariaDB 및 phpMyAdmin 완전 자동 설치 스크립트
+# by Gemini (Rocky Linux 스크립트 기반 수정)
+
+# 사용자 정의 변수
+DB_ROOT_PASSWORD="<REDACTED>"  # DB root 계정 비밀번호 설정 (필수 수정)
+DB_USER="wj"                              # 일반 사용자 계정 이름
+DB_PASS="<REDACTED>"                        # 일반 사용자 계정 비밀번호
+DB_NAME="wj"                              # 생성할 데이터베이스 이름
+
+echo "=================================================="
+echo "      MariaDB 및 phpMyAdmin 자동 설치 시작 (Ubuntu)"
+echo "=================================================="
+sleep 1
+
+# --- 1. MariaDB 설치 및 서비스 시작 ---
+
+echo "1. 시스템 업데이트 및 MariaDB 서버 설치"
+sudo apt update -y
+# mariadb-server를 설치하면 클라이언트(mariadb)도 함께 설치됩니다.
+sudo apt install mariadb-server -y
+
+echo "2. MariaDB 서비스 시작 및 상태 확인"
+sudo systemctl start mariadb
+sudo systemctl status mariadb | head -n 3
+# 부팅 시 자동 시작 활성화
+sudo systemctl enable mariadb
+
+# --- 2. mysql_secure_installation 자동화 (Expect 사용) ---
+
+echo "3. MariaDB 초기 보안 설정 자동화"
+# MariaDB 설치 직후에는 DB root 비밀번호가 설정되어 있지 않으므로,
+# expect 스크립트는 설정되지 않은 상태(Enter)로 초기 비밀번호를 처리합니다.
+
+expect <<EOF
+set timeout 10
+spawn sudo mysql_secure_installation
+
+# Enter current password for root (enter for none):
+expect "Enter current password for root (enter for none):"
+send "\r"
+
+# Switch to unix_socket authentication [Y/n]: (Ubuntu에서는 보통 root 비번 설정부터 시작)
+# Enter root password:
+expect "Set root password? \[Y/n]"
+send "Y\r"
+expect "New password:"
+send "$DB_ROOT_PASSWORD\r"
+expect "Re-enter new password:"
+send "$DB_ROOT_PASSWORD\r"
+
+# Remove anonymous users? [Y/n]
+expect "Remove anonymous users? \[Y/n]"
+send "Y\r"
+
+# Disallow root login remotely? [Y/n] (외부 접속 허용을 위해 'n' 선택)
+expect "Disallow root login remotely? \[Y/n]"
+send "y\r"
+
+# Remove test database and access to it? [Y/n]
+expect "Remove test database and access to it? \[Y/n]"
+send "Y\r"
+
+# Reload privilege tables now? [Y/n]
+expect "Reload privilege tables now? \[Y/n]"
+send "Y\r"
+expect eof
+EOF
+
+echo "MariaDB root 비밀번호 설정 완료: $DB_ROOT_PASSWORD"
+sleep 1
+
+# --- 3. 일반 사용자 계정 및 데이터베이스 생성 ---
+
+echo "4. 사용자 계정 '$DB_USER' 및 데이터베이스 '$DB_NAME' 생성"
+
+# SQL 명령을 파일로 저장하여 실행
+SQL_COMMANDS="
+CREATE DATABASE $DB_NAME;
+CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
+FLUSH PRIVILEGES;
+"
+
+# mysql 명령을 사용하여 SQL 실행 (DB root 계정 사용)
+echo "$SQL_COMMANDS" | sudo mysql -u root -p"$DB_ROOT_PASSWORD"
+
+echo "사용자 '$DB_USER'@'%' 생성 및 '$DB_NAME' DB 권한 위임 완료"
+
+# --- 4. Apache2 및 PHP, phpMyAdmin 설치 ---
+
+echo "5. Apache2, PHP 및 phpMyAdmin 설치"
+# Ubuntu에서 php-mysqli는 php-mysql로 대체됨
+sudo apt install -y apache2 php libapache2-mod-php php-mbstring php-zip php-gd php-curl php-mysql phpmyadmin expect
+
+echo "6. Apache2 서비스 시작 및 방화벽 설정"
+sudo systemctl start apache2
+sudo systemctl enable apache2
+
+# UFW 방화벽 (Ubuntu 기본 방화벽)에서 HTTP(80) 포트 허용
+if command -v ufw &> /dev/null
+then
+    sudo ufw allow http
+    sudo ufw reload
+    echo "UFW 방화벽에서 80 포트 허용 완료"
+fi
+
+# --- 5. phpMyAdmin 설정 조정 ---
+
+echo "7. phpMyAdmin 설정 파일 조정"
+# phpMyAdmin이 설치된 후 Apache2가 인식하도록 심볼릭 링크를 사용하거나 설정 파일을 수정해야 함.
+# Ubuntu는 자동 설정되나, /etc/phpmyadmin/apache.conf 파일이 /etc/apache2/conf-available/phpmyadmin.conf로 링크됨.
+# 필요한 모듈 활성화
+sudo a2enconf phpmyadmin
+sudo a2enmod rewrite
+
+# Apache 재시작
+sudo systemctl restart apache2
+
+echo "=================================================="
+echo "      MariaDB 및 phpMyAdmin 설치 완료!"
+echo "=================================================="
+echo "DB root 비밀번호: $DB_ROOT_PASSWORD"
+echo "생성된 DB 계정: $DB_USER / $DB_PASS"
+echo "phpMyAdmin 접속: http://<서버_IP>/phpmyadmin"

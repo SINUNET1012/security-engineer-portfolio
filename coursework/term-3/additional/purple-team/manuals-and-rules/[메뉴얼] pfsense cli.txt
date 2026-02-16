@@ -1,0 +1,50 @@
+pfSense의 모든 설정(인터페이스, 방화벽 규칙, 서비스 등)은 XML 형식으로 저장됩니다.
+파일 경로: /conf/config.xml (수정 전 백업 권장)
+
+<filter> 의 <rule>은 L3(IP), L4(Port) 계층에서 트래픽을 허용하고 차단
+<type>에서 허용 or 차단 설정 
+<interface>는 pfsense가 인터페이스 wan이랑 lan 그 중에서 어떤 규칙을 적용할건지 
+<protocol>에서 tcp, udp 등 설정
+<source>, <destination>에서  어디서 들어오고 나가는 ip인지 설정
+<snmpd>여기서 recommunity 모니터링 설정
+
+pfSsh.php
+pfSense 내부에서 돌아가는 전용 PHP 셸(Shell)
+웹 GUI에서 마우스로 클릭해서 하는 모든 설정을 CLI 명령어로 수행할 수 있게 해주는 도구
+CLI 기반 자동화를 위해 가장 핵심이 되는 도구이며, 단순한 텍스트 수정보다 훨씬 강력하고 안전
+
+왜 이 도구가 필요한가
+보통 리눅스에서는 설정 파일(XML 등)만 고치면 끝이지만
+pfSense는 파일을 고친 후에도 시스템 엔진에 "설정이 바뀌었으니 적용하라"는 신호를 줘야 함
+pfSsh.php는 이 과정을 한 번에 처리
+실시간 반영: 명령어를 내리는 즉시 방화벽 규칙이나 라우팅 설정이 시스템에 즉시 적용
+안전성: 시스템 내부 로직을 그대로 사용하므로, 수동으로 XML을 고치다 발생할 수 있는 오타나 설정 깨짐 현상을 방지 
+스크립트 연동: Python 스크립트에서 이 도구를 호출하면 사람이 직접 GUI에 들어가지 않아도 자동으로 설정을 바꿀 수 있습니다. (무슨말?)
+
+grep -A 5 "<snmpd>" /conf/config.xml
+        <snmpd>
+                <syslocation></syslocation>
+                <syscontact></syscontact>
+                <rocommunity>public</rocommunity>
+        </snmpd>
+        <diag>
+
+sed -i '' 's/<rocommunity>public<\/rocommunity>/<rocommunity>new_public<\/rocommunity>/g' /conf/config.xml
+
+grep -A 5 "<snmpd>" /conf/config.xml                                    
+        <snmpd>
+                <syslocation></syslocation>
+                <syscontact></syscontact>
+                <rocommunity>new_public</rocommunity>
+        </snmpd>
+        <diag>
+
+rm /tmp/config.cache             # 예전 설정 캐시 삭제 (파일을 새로 읽게 만듦)
+pfSsh.php playback resyncfilter # 전체 설정 동기화 및 서비스 반영
+echo "filter_configure();" | pfSsh.php # 위 플레이백이 에러가 난다면 pfSsh.php를 사용
+
+	pfSsh.php (내부 함수 호출)					    	sed (직접 파일 수정)
+방식	pfSense의 공식 PHP 함수를 사용해 메모리와 파일을 동시에 수정함          텍스트 편집기처럼 config.xml 파일의 글자만 바꿈
+안전성	매우 높음. 오타가 나도 시스템이 거부함				낮음. 태그 하나만 잘못 건드려도 설정 전체가 깨짐
+편의성	복잡함. PHP 문법을 알아야 하고 전역 변수 참조 설정이 까다로움		매우 간편함. 한 줄의 명령어로 즉시 수정 가능함
+반영속도  즉시 반영됨 (함수 호출 시)						파일만 바뀜. 반드시 캐시 삭제와 리로드 과정이 추가로 필요함

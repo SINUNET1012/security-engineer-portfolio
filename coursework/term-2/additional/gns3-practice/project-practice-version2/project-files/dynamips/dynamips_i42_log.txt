@@ -1,0 +1,50 @@
+Feb 08 14:42:31.023 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Feb 08 14:42:31.024 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 62495.
+Feb 08 14:42:31.458 HYPERVISOR: exec_cmd: hypervisor version 
+Feb 08 14:42:31.460 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips 
+Feb 08 14:42:31.461 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips
+Feb 08 14:42:31.462 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips\b8286ac2-803d-42da-a353-b3a5246e8221 
+Feb 08 14:42:31.463 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips\b8286ac2-803d-42da-a353-b3a5246e8221
+Feb 08 14:42:31.464 HYPERVISOR: exec_cmd: vm create R26 52 c7200 
+Feb 08 14:42:31.479 VM: VM R26 created.
+Feb 08 14:42:31.481 HYPERVISOR: exec_cmd: vm set_con_tcp_port R26 5109 
+Feb 08 14:42:31.482 HYPERVISOR: exec_cmd: c7200 get_mac_addr R26 
+Feb 08 14:42:31.482 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:42:31.483 HYPERVISOR: exec_cmd: vm slot_add_binding R26 0 0 C7200-IO-FE 
+Feb 08 14:42:31.487 HYPERVISOR: exec_cmd: vm set_disk0 R26 0 
+Feb 08 14:42:31.489 HYPERVISOR: exec_cmd: vm set_exec_area R26 64 
+Feb 08 14:42:31.491 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:42:31.492 HYPERVISOR: exec_cmd: vm set_idle_pc R26 0x60645960 
+Feb 08 14:42:31.495 HYPERVISOR: exec_cmd: vm set_ios R26 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Feb 08 14:42:31.496 HYPERVISOR: exec_cmd: c7200 set_mac_addr R26 ca34.cb70.0000 
+Feb 08 14:42:31.498 HYPERVISOR: exec_cmd: vm set_nvram R26 512 
+Feb 08 14:42:31.499 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:42:31.499 HYPERVISOR: exec_cmd: vm slot_add_binding R26 1 0 PA-4T+ 
+Feb 08 14:42:31.500 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:42:31.501 HYPERVISOR: exec_cmd: vm slot_add_binding R26 2 0 PA-4T+ 
+Feb 08 14:42:31.502 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:42:31.502 HYPERVISOR: exec_cmd: vm slot_add_binding R26 3 0 PA-4E 
+Feb 08 14:43:51.808 HYPERVISOR: exec_cmd: nio create_udp udp-b3abeed8-f440-46e2-8c0a-0a96672bc1f5 10306 127.0.0.1 10307 
+Feb 08 14:43:53.153 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R26 1 1 udp-b3abeed8-f440-46e2-8c0a-0a96672bc1f5 
+Feb 08 14:43:53.154 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:43:55.615 HYPERVISOR: exec_cmd: nio create_udp udp-fd235890-366d-464c-a172-177c1aece720 10312 127.0.0.1 10313 
+Feb 08 14:43:55.619 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R26 1 2 udp-fd235890-366d-464c-a172-177c1aece720 
+Feb 08 14:43:55.619 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:44:23.722 HYPERVISOR: exec_cmd: nio create_udp udp-232d33da-aaec-4275-920b-5666f569aa6d 10386 127.0.0.1 10387 
+Feb 08 14:44:23.724 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R26 1 3 udp-232d33da-aaec-4275-920b-5666f569aa6d 
+Feb 08 14:44:23.725 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:44:24.404 HYPERVISOR: exec_cmd: nio create_udp udp-7ddca488-2895-4c6f-9e0a-258888e0fd9b 10392 127.0.0.1 10393 
+Feb 08 14:44:24.407 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R26 2 0 udp-7ddca488-2895-4c6f-9e0a-258888e0fd9b 
+Feb 08 14:44:24.407 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 14:45:08.086 HYPERVISOR: exec_cmd: nio create_udp udp-782a134a-eb06-420b-a18e-3a24229d08ad 10536 127.0.0.1 10537 
+Feb 08 14:45:08.088 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R26 1 0 udp-782a134a-eb06-420b-a18e-3a24229d08ad 
+Feb 08 14:45:08.089 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 20:35:22.419 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 20:35:22.421 HYPERVISOR: exec_cmd: vm extract_config R26 
+Feb 08 20:35:29.424 HYPERVISOR: exec_cmd: vm get_status R26 
+Feb 08 20:35:29.771 HYPERVISOR: exec_cmd: vm extract_config R26 
+Feb 08 20:35:30.128 HYPERVISOR: exec_cmd: vm delete R26 
+Feb 08 20:35:30.525 VM: VM R26 destroyed.
+Feb 08 20:35:32.719 HYPERVISOR: exec_cmd: hypervisor stop 
+Feb 08 20:35:32.989 HYPERVISOR: Stopped.
+Feb 08 20:35:32.989 GENERAL: reset done.

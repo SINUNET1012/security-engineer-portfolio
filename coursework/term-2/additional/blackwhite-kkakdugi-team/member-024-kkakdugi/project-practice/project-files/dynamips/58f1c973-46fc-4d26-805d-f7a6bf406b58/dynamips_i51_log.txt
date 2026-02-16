@@ -1,0 +1,43 @@
+Jan 05 17:04:18.711 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 05 17:04:18.712 HYPERVISOR: Started on IP = 172.16.17.1, TCP port = 54859.
+Jan 05 17:04:19.176 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 05 17:04:19.177 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips 
+Jan 05 17:04:19.177 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips
+Jan 05 17:04:19.177 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\adfb7cdc-c0ff-43b1-8915-e29330a26f52 
+Jan 05 17:04:19.177 GENERAL: working_dir=C:\Users\TJ\GNS3\projects\project-practice\project-files\dynamips\adfb7cdc-c0ff-43b1-8915-e29330a26f52
+Jan 05 17:04:19.177 HYPERVISOR: exec_cmd: vm create R23 49 c7200 
+Jan 05 17:04:19.178 VM: VM R23 created.
+Jan 05 17:04:19.178 HYPERVISOR: exec_cmd: vm set_con_tcp_port R23 5106 
+Jan 05 17:04:19.178 HYPERVISOR: exec_cmd: c7200 get_mac_addr R23 
+Jan 05 17:04:19.179 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:04:19.179 HYPERVISOR: exec_cmd: vm slot_add_binding R23 0 0 C7200-IO-FE 
+Jan 05 17:04:19.180 HYPERVISOR: exec_cmd: vm set_disk0 R23 0 
+Jan 05 17:04:19.180 HYPERVISOR: exec_cmd: vm set_exec_area R23 64 
+Jan 05 17:04:19.181 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:04:19.181 HYPERVISOR: exec_cmd: vm set_idle_pc R23 0x60645960 
+Jan 05 17:04:19.182 HYPERVISOR: exec_cmd: vm set_ios R23 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 05 17:04:19.182 HYPERVISOR: exec_cmd: c7200 set_mac_addr R23 ca31.8534.0000 
+Jan 05 17:04:19.183 HYPERVISOR: exec_cmd: vm set_nvram R23 512 
+Jan 05 17:04:19.183 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:04:19.183 HYPERVISOR: exec_cmd: vm slot_add_binding R23 1 0 PA-4T+ 
+Jan 05 17:04:19.184 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:04:19.184 HYPERVISOR: exec_cmd: vm slot_add_binding R23 2 0 PA-4T+ 
+Jan 05 17:04:19.185 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:04:19.185 HYPERVISOR: exec_cmd: vm slot_add_binding R23 3 0 PA-4E 
+Jan 05 17:06:05.062 HYPERVISOR: exec_cmd: nio create_udp udp-302a6d20-3213-49ad-898a-4a91a8559f07 10628 127.0.0.1 10629 
+Jan 05 17:06:06.226 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R23 3 0 udp-302a6d20-3213-49ad-898a-4a91a8559f07 
+Jan 05 17:06:06.228 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:06:15.953 HYPERVISOR: exec_cmd: nio create_udp udp-a0f1d7b0-bf5a-4193-850a-41fc091259f7 10688 127.0.0.1 10689 
+Jan 05 17:06:15.955 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R23 1 0 udp-a0f1d7b0-bf5a-4193-850a-41fc091259f7 
+Jan 05 17:06:15.956 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 05 17:07:12.149 HYPERVISOR: exec_cmd: vm set_ios R23 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 05 17:07:13.404 HYPERVISOR: exec_cmd: vm set_ios R23 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 06 10:16:08.969 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 06 10:16:08.971 HYPERVISOR: exec_cmd: vm extract_config R23 
+Jan 06 10:16:09.402 HYPERVISOR: exec_cmd: vm get_status R23 
+Jan 06 10:16:09.404 HYPERVISOR: exec_cmd: vm extract_config R23 
+Jan 06 10:16:09.406 HYPERVISOR: exec_cmd: vm delete R23 
+Jan 06 10:16:09.406 VM: VM R23 destroyed.
+Jan 06 10:16:09.428 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 06 10:16:09.442 HYPERVISOR: Stopped.
+Jan 06 10:16:09.442 GENERAL: reset done.

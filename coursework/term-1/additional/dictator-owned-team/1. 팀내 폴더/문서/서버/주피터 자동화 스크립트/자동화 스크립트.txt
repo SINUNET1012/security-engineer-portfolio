@@ -1,0 +1,35 @@
+ip_addr=$(ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v '^127\.' | head -n1) 
+
+#jupyter notebook 실행 테스트
+echo "12. jupyter 자동화 시스템을 설정합니다."
+jupyter notebook --generate-config
+
+#jupyter_notebook_config 파일에 설정값 적용
+echo "
+c.ServerApp.ip = \"$ip_addr\"
+c.ServerApp.port = 8000
+c.ServerApp.root_dir = '/root/'
+c.ServerApp.open_browser = False
+" >> ~/.jupyter/jupyter_notebook_config.py
+
+jupyter notebook -f ~/.jupyter/jupyter_notebook_config.py
+
+echo "
+[Unit]
+Description=JupyterNotebook
+After=network.target
+
+[Service]
+User=root
+Environment=\"PATH=/opt/jupyterhub-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/miniconda3/bin/\"
+ExecStart=/root/miniconda3/bin/jupyter notebook --allow-root -f /root/.jupyter/jupyter_notebook_config.py
+
+[Install]
+WantedBy=multi-user.target
+" > /etc/systemd/system/jupyter.service
+
+systemctl daemon-reload
+systemctl start jupyter
+systemctl enable jupyter
+
+systemctl status jupyter

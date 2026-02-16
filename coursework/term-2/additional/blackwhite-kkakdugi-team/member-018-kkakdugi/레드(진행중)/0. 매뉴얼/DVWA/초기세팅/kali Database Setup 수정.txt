@@ -1,0 +1,27 @@
+칼리는 dvwa를 설치해서 명령어로 킬 수 있음
+
+1. dvwa 설치
+ - sudo apt -y install dvwa
+비밀번호 입력 1111
+
+2. 시작
+ - dvwa-start
+비밀번호 입력 1111
+
+* 종료
+ - dvwa-stop
+비밀번호 입력 1111
+
+시작하면 http://127.0.0.1:42001  로도 접속이 가능하나 자동으로 켜지니 굳이 쓸 필요는 없을 듯
+종료 시 주소로 접속 불가능
+
+3. 로그인
+홈페이지가 자동으로 켜지면 아이디/비번 admin/admin
+
+4. Creat / Reset Database 클릭하여 초기화 진행
+칼리는 php나 recaptcha 등 아무것도 안건드려도 됨 바로 초기화
+
+5. 다시 로그인
+아이디/비번 admin/password
+
+6. 보안단계 DVWA Security low 설정

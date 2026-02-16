@@ -1,0 +1,48 @@
+SPAN SW2
+
+en
+vlan database
+vlan 20
+exit
+
+conf t
+int g1/2
+sw mo ac
+sw ac vlan 20
+ex
+int g1/3
+sw mo ac
+sw ac vlan 20
+ex
+int g3/1
+sw mo ac
+sw ac vlan 20
+end
+
+conf t
+int vlan 1
+ip add 10.1.168.253 255.255.248.0
+no sh
+end
+
+conf t
+monitor session 1 source interface g3/1
+monitor session 1 destination interface g2/1
+end
+
+conf t
+snmp-server community switch RO
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

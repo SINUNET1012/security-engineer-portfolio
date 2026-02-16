@@ -1,0 +1,24 @@
+#/var/log 안에 jupyter 파일 생성
+cd /var/log
+mkdir jupyter
+
+#/var/log/jupyter 안에 access.log 생성 (error 생성도 해도 됨)
+cd /var/log/jupyter
+touch access.log
+touch error.log
+
+#~/.jupyter/jupyter_notebook_config.py 안에 log_level을 'INFO'로 저장
+vi ~/.jupyter/jupyter_notebook_config.py
+
+c.ServerApp.log_level = 'INFO'
+
+# /etc/systemd/system/jupyter.service 안에 Service 밑에 내용 저장
+vi /etc/systemd/system/jupyter.service
+
+StandardOutput=append:/var/log/jupyter/access.log
+StandardError=append:/var/log/jupyter/error.log
+
+
+# 데몬 리로드, 주피터 재시작
+systemctl daemon-reload
+systemctl restart jupyter

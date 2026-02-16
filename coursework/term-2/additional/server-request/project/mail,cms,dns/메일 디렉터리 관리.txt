@@ -1,0 +1,29 @@
+우분투 기준
+
+chown client:client /home/client/mail/inbox
+chown mails:mails /home/mails/mail/inbox
+chmod 600 /home/client/mail/inbox
+chmod 600 /home/mails/mail/inbox
+
+### 2. Postfix 설정 수정 (Vim 편집기)
+# 파일 경로: /etc/postfix/main.cf
+# 아래 두 항목을 찾아 수정하거나 파일 끝에 추가
+home_mailbox = mail/inbox
+사용자의 홈 디렉터리(~)를 기준으로 어느 폴더의 어느 파일에 메일을 저장할 것인가
+mail_spool_directory = 
+Postfix가 수신한 메일을 저장할 시스템 공용 저장소(Spool)의 위치를 정의
+
+### 3. Dovecot 설정 수정 (Vim 편집기)
+# 파일 경로: /etc/dovecot/conf.d/10-mail.conf
+# mail_location 항목을 찾아 아래와 같이 수정합니다.
+mail_location = mbox:~/mail:INBOX=~/mail/inbox
+
+### 4. 서비스 재시작 및 DB 정상화
+
+systemctl restart postfix
+systemctl restart dovecot
+systemctl restart mariadb
+
+### 5. 최종 확인 명령어
+# 전송 후 파일 크기가 0바이트 이상으로 늘어났는지 확인
+ls -l /home/client/mail/inbox

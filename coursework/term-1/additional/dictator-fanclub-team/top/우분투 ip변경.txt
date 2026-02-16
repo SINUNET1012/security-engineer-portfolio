@@ -1,0 +1,39 @@
+cd /etc/netplan
+
+ls
+
+vim 50~
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens33:
+      dhcp4: no
+      addresses:
+        - 192.168.16.150/24        
+      gateway4: 192.168.0.1
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+변경 후 Ctrl + O 저장
+          Ctrl + X 종료
+
+적용 명령
+sudo netplan apply
+
+ip 확인
+ip a
+
+맞으면 sshd ㄱㄱ
+sudo systemctl status sshd (이거도 해주고)
+
+
+#####
+s
+nmcli connection modify ens33 ipv4.addresses 172.16.16.150/16
+nmcli connection modify ens33 ipv4.gateway 172.16.0.1
+nmcli connection modify ens33 ipv4.dns 8.8.8.8
+nmcli connection modify ens33 ipv4.method manual
+nmcli connection up ens33

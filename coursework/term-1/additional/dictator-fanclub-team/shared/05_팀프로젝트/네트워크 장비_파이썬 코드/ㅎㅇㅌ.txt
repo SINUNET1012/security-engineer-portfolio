@@ -1,0 +1,20 @@
+SSH로 작업해야될것
+
+1. DHCP
+2. DNS
+3. VH
+4. Apache
+5. MariaDB
+6. PHP, phpmyAdmin
+7. ftp
+8. smb        - 회의
+9. nfs          - 회의
+10. diskquota  - 회의
+11. raid
+12. VNC
+13. XRDP
+-------------------------
+본인 컴퓨터
+MonitoriX
+
+

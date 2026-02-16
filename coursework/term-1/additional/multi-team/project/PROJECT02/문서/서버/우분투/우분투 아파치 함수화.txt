@@ -1,0 +1,110 @@
+#!/bin/bash
+set -e
+
+### =====[ 함수 정의 ]=====
+
+check_environment() {
+    echo "===== [1] 사전 환경 확인 ====="
+    
+    echo "[+] SELinux 상태 확인"
+    if command -v getenforce &>/dev/null; then
+        getenforce
+    else
+        echo "SELinux 미설치 또는 Ubuntu는 비활성화 상태"
+    fi
+
+    echo "[+] 방화벽 상태 확인 (ufw)"
+    sudo ufw status || echo "ufw 명령어 실패"
+
+    echo "[+] 시스템 정보 도구 설치 (inxi)"
+    sudo apt update -y
+    sudo apt install -y inxi
+}
+
+install_apache() {
+    echo "===== [2] Apache 설치 및 서비스 설정 ====="
+    sudo apt install -y apache2
+    sudo systemctl enable apache2
+    sudo systemctl restart apache2
+}
+
+setup_directories() {
+    echo "===== [3] 사용자 웹 디렉터리 생성 ====="
+    sudo mkdir -p /home/8team /home/test
+
+    echo "<h1>Welcome to ww1.8team.com</h1>" | sudo tee /home/8team/index.html > /dev/null
+    echo "<h1>Welcome to ww2.8team.com</h1>" | sudo tee /home/test/index.html > /dev/null
+
+    sudo chown -R www-data:www-data /home/8team
+    sudo chown -R www-data:www-data /home/test
+}
+
+configure_ports() {
+    echo "===== [4] Apache 포트 설정 ====="
+    # 포트 81 제거
+    sudo sed -i '/^Listen 81$/d' /etc/apache2/ports.conf
+
+    # Listen 80 추가 (중복 방지)
+    grep -q "^Listen 80" /etc/apache2/ports.conf || echo "Listen 80" | sudo tee -a /etc/apache2/ports.conf
+}
+
+configure_virtualhost() {
+    echo "===== [5] VirtualHost 설정 ====="
+    local VHOST_CONF="/etc/apache2/sites-available/vhost.conf"
+
+    sudo tee "$VHOST_CONF" > /dev/null <<EOF
+<VirtualHost *:80>
+    ServerName ww1.8team.com
+    DocumentRoot "/home/8team"
+    <Directory "/home/8team/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName ww2.8team.com
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+}
+
+apply_apache_config() {
+    echo "===== [6] Apache 설정 적용 ====="
+    sudo a2dissite 000-default.conf
+    sudo a2ensite vhost.conf
+    sudo systemctl reload apache2
+}
+
+print_guide() {
+    echo "===== [7] 테스트 안내 ====="
+    echo ""
+    echo "※ /etc/hosts 파일에 다음 항목을 추가하세요:"
+    echo "---------------------------------------------"
+    echo "127.0.0.1   ww1.8team.com"
+    echo "127.0.0.1   ww2.8team.com"
+    echo "---------------------------------------------"
+    echo "웹 브라우저에서 다음 주소 접속:"
+    echo "➡ http://ww1.8team.com"
+    echo "➡ http://ww2.8team.com"
+}
+
+### =====[ 실행 시작 ]=====
+
+main() {
+    check_environment
+    install_apache
+    setup_directories
+    configure_ports
+    configure_virtualhost
+    apply_apache_config
+    print_guide
+}
+
+main "$@"

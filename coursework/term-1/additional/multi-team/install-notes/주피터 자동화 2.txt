@@ -1,0 +1,41 @@
+1. jupyter notebook --generate-config
+
+2. ls -al로 .jupyter 확인
+
+3. cd .jupyter/로 주피터 디렉토리로 접속 후 ls로 확인
+
+4. vim jupyter_notebook_config.py
+
+5. 맨 밑으로 내려서 c.ServerApp.ip = '172.16.0.10'
+                         c.ServerApp.port = 8000
+                         c.ServerApp.root_dir = '/root/'
+                         c.ServerApp.open_browser = False
+입력 후 저장
+ jupyter notebook -allow--root ip  port(명령어)
+6. jupyter notebook -f ~/.jupyter/jupyter_notebook_config.py(실행파일)
+
+7. 백그라운드로 동작 중인 주피터 끄기
+    ps → PID 확인
+
+    kill -9 PID
+
+8. cd /etc/systemd/system/로 시스템 들어가기
+
+9. vim /etc/systemd/system/jupyter.service
+
+10. [Unit]
+Description=JupyterNotebook
+After=network.target
+
+[Service]
+User=root
+Environment="PATH=/opt/jupyterhub-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/miniconda3/bin/"
+ExecStart=/root/miniconda3/bin/jupyter notebook --allow-root -f /root/.jupyter/jupyter_notebook_config.py
+
+[Install]
+WantedBy=multi-user.target
+
+11. systemctl daemon-reload
+systemctl start jupyter
+
+12. 재부팅 시 자동 활성화 : systemctl enable jupyter

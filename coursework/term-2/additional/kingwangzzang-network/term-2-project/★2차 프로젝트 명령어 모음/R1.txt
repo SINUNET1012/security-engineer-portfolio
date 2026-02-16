@@ -1,0 +1,65 @@
+R1
+conf t
+int s1/0
+enc fr
+no sh
+int s1/0.17 po
+ip add 10.1.80.1 255.255.248.0
+frame-relay interface-dlci 107 
+int s1/0.12 po
+ip add 10.1.0.1 255.255.248.0
+fra int 102
+int s1/0.13 po
+ip add 10.1.24.1 255.255.248.0
+fra int 103 
+int s1/0.14 po
+ip add 10.1.56.1 255.255.248.0
+fra int 104 
+exit
+router eigrp 100
+net 10.0.0.0
+no auto
+
+key chain A
+key 1
+key-string cisco
+int s1/0.17 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.12 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.13 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.14 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+
+int f0/0
+ip add 172.16.255.1 255.255.0.0
+no sh
+ex
+ip route 0.0.0.0 0.0.0.0 172.16.0.1
+end
+---static을 eigrp로
+conf t
+router eigrp 100
+redistribute static metric 1544 100 255 1 1500
+
+conf t
+snmp-server community router RO
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

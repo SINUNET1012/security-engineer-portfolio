@@ -1,0 +1,29 @@
+apache 사전 작업 스크립트
+
+#!/bin/bash
+
+echo "===== [1] 사전 작업 확인 (Ubuntu) ====="
+echo "[+] SELinux 상태 확인"
+if command -v getenforce &>/dev/null; then
+    getenforce
+else
+    echo "SELinux 패키지가 설치되어 있지 않음 (Ubuntu는 기본적으로 SELinux 비활성화)"
+fi
+
+echo "[+] 방화벽 상태 확인 (ufw)"
+sudo ufw status
+
+echo "[+] 시스템 정보 도구 설치 (inxi)"
+sudo apt update && sudo apt install -y inxi
+
+echo "===== [2] Apache2 설치 ====="
+sudo apt install -y apache2
+
+echo "===== [3] Apache2 서비스 재시작 및 활성화 ====="
+sudo systemctl restart apache2
+sudo systemctl enable apache2
+
+echo "===== [4] 웹 서버 접속 확인 ====="
+IP=$(hostname -I | awk '{print $1}')
+echo "웹 브라우저에서 다음 주소로 접속해 보세요:"
+echo "👉 http://$IP:80"

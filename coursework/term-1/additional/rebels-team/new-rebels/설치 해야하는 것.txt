@@ -1,0 +1,11 @@
+작업 기술:
+
+
+목록:
+우분투
+록키9
+윈도우 22
+Window 10 DHCP
+설치~ 초기화
+DHCP, HTML FTP VH DNS
+

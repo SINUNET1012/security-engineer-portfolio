@@ -1,0 +1,60 @@
+#!/bin/bash
+# 사용자 : wj
+
+echo "=== Apache 웹 서버 및 FTP 서버 자동화 설치 스크립트 (Ubuntu) ==="
+
+USER_HOME="/home/wj"
+HTTPD_CONF="/etc/apache2/sites-available/000-default.conf"
+
+echo "1. 시스템 업데이트 및 필수 패키지 설치"
+apt update -y
+apt upgrade -y
+apt install -y software-properties-common inxi
+
+echo "2. Apache 웹 서버 설치"
+apt install -y apache2
+
+echo "3. Apache 서비스 시작 및 활성화"
+systemctl enable apache2
+systemctl restart apache2
+
+echo "4. Apache DocumentRoot를 사용자 홈 디렉토리로 변경"
+
+# 1. 홈 디렉토리 존재 확인
+if [ ! -d "$USER_HOME" ]; then
+    echo "디렉토리 $USER_HOME 가 존재하지 않습니다."
+    exit 1
+fi
+
+# 2. 권한 설정
+chmod 755 "$USER_HOME"
+
+# 3. 백업
+cp "$HTTPD_CONF" "${HTTPD_CONF}.bak_$(date +%F_%T)"
+
+# 4. DocumentRoot 변경
+sed -i "s|DocumentRoot /var/www/html|DocumentRoot $USER_HOME|g" "$HTTPD_CONF"
+
+# 5. <Directory> 블록을 apache2.conf에 추가 (Ubuntu는 여기서 권한 제어함)
+APACHE_MAIN_CONF="/etc/apache2/apache2.conf"
+cp "$APACHE_MAIN_CONF" "${APACHE_MAIN_CONF}.bak_$(date +%F_%T)"
+
+# 기존 /var/www/html 블록 수정
+sed -i "s|<Directory /var/www/>|<Directory $USER_HOME>|g" "$APACHE_MAIN_CONF"
+
+# 6. Apache 재시작
+systemctl reload apache2
+
+echo "변경 완료! Apache의 DocumentRoot가 $USER_HOME 으로 설정되었습니다."
+
+echo "5. 사용자 디렉토리 권한 조정 (임시: 모든 권한, 실제 운영에서는 최소 권한 권장)"
+chmod 777 "$USER_HOME"
+
+echo "6. FTP 서버 설치 (vsftpd)"
+apt install -y vsftpd
+
+echo "7. vsftpd 서비스 시작 및 활성화"
+systemctl enable vsftpd
+systemctl start vsftpd
+
+echo "=== 작업 완료! Apache + FTP 서버 설치 및 설정 완료 ==="

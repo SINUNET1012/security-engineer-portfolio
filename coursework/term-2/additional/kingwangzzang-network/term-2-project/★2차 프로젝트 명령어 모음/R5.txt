@@ -1,0 +1,45 @@
+R5
+conf t
+int s1/0
+enc fr
+no sh
+int s1/0.52 po
+ip add 10.1.96.5 255.255.248.0
+frame-relay interface-dlci 502
+exit
+exit
+router eigrp 200
+net 10.0.0.0
+no auto
+
+
+int f0/0
+ip add 10.1.104.1 255.255.248.0
+no sh
+exit
+int e2/0
+ip add 10.1.112.1 255.255.248.0
+no sh
+exit
+int e2/1
+ip add 10.1.120.1 255.255.248.0
+no sh
+end
+
+conf t
+snmp-server community router RO
+end
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

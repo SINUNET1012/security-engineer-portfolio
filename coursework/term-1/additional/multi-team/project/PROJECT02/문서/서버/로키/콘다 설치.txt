@@ -1,0 +1,13 @@
+1.dnf -y install wget
+
+2. 실행파일로 변경 : chmod +x Miniconda3
+
+3. 실행 : ./Miniconda3~
+
+4. 환경변수 등록 : vim /etc/bashrc
+
+5. 맨 마지막줄에 : export PATH=$PATH:/root/miniconda3/bin/
+
+6. 적용 명령어 : source /etc/bashrc
+
+7. conda 입력

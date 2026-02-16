@@ -1,0 +1,68 @@
+
+UDT tunnels
+
+나의 로컬포트 만들기
+
+상대방(리무트) 로컬포트 만들기
+
+상대방의 로컬포트와 나의 로컬포트가 크로스해야함
+
+컬리전 : ICMP(패킷)를 동시에 보냈을때 충돌하는 현상
+컷-쓰루 : 스위치가 MAC을 읽고 해당하는 MAC으로만 보내주는 것
+
+라우터가 없으면 동일 네트워크 (게이트웨이가 없기 때문)
+
+
+
+183.98.149.177 - 원격 연결 IP
+
+원격 연결 시 
+---------------------------------------------------------------------------------
+라우터에서 할 때
+IP 설정
+conf t-> int f0/0 -> ip add 192.168.10.1 255.255.255.0
+
+conf t
+1. dhcp pool 생성
+
+ip dhcp pool (이름)
+network 192.168.10.0 255.255.255.0
+dns-server 8.8.8.8
+default-router 192.168.10.1
+ex
+ip dhcp excluded-address
+          ------------------- : 제외 IP 192.168.10.1~192.168.10.9
+
+스위치에서 할 때
+1. dhcp pool 생성
+
+ip dhcp pool (이름)
+network 192.168.10.0 255.255.255.0
+dns-server 8.8.8.8
+default-router 192.168.10.1
+ex
+ip dhcp excluded-address
+          ------------------- : 제외 IP 192.168.10.1~192.168.10.9
+
+service dhcp
+
+sh ip dhcp binding
+
+dhcp 디스커버리 패킷
+
+스위치에 서버 IP 설정하는 방법
+
+ESW1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+ESW1(config)#int vlan 1
+ESW1(config-if)#ip add 192.168.0.254 255.255.255.0
+ESW1(config-if)#no sh
+ESW1(config-if)#end
+
+
+ipconfig /release <---- 자동할당한 정보 삭제
+ipconig /rnew    <---- DHCP 정보 요청
+
+nmtui  <--- 로키 도스 설정
+
+

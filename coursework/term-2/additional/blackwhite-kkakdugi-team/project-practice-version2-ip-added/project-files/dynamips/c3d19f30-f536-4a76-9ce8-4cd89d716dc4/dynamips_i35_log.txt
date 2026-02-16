@@ -1,0 +1,26 @@
+Jan 12 10:53:28.786 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 12 10:53:28.787 HYPERVISOR: Started on IP = 172.16.3.1, TCP port = 65383.
+Jan 12 10:53:29.198 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 12 10:53:29.199 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 12 10:53:29.199 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 12 10:53:29.199 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\d51810d5-752f-4c3f-b197-c17476c4d9b9 
+Jan 12 10:53:29.200 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\d51810d5-752f-4c3f-b197-c17476c4d9b9
+Jan 12 10:53:29.200 HYPERVISOR: exec_cmd: vm create R12 33 c7200 
+Jan 12 10:53:29.205 VM: VM R12 created.
+Jan 12 10:53:29.205 HYPERVISOR: exec_cmd: vm set_con_tcp_port R12 5072 
+Jan 12 10:53:29.205 HYPERVISOR: exec_cmd: c7200 get_mac_addr R12 
+Jan 12 10:53:29.206 HYPERVISOR: exec_cmd: vm get_status R12 
+Jan 12 10:53:29.206 HYPERVISOR: exec_cmd: vm slot_add_binding R12 0 0 C7200-IO-FE 
+Jan 12 10:53:29.207 HYPERVISOR: exec_cmd: vm set_disk0 R12 0 
+Jan 12 10:53:29.207 HYPERVISOR: exec_cmd: vm set_exec_area R12 64 
+Jan 12 10:53:29.208 HYPERVISOR: exec_cmd: vm get_status R12 
+Jan 12 10:53:29.208 HYPERVISOR: exec_cmd: vm set_idle_pc R12 0x60645960 
+Jan 12 10:53:29.209 HYPERVISOR: exec_cmd: vm set_ios R12 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 12 10:53:29.210 HYPERVISOR: exec_cmd: c7200 set_mac_addr R12 ca21.9174.0000 
+Jan 12 10:53:29.210 HYPERVISOR: exec_cmd: vm set_nvram R12 512 
+Jan 12 10:53:29.211 HYPERVISOR: exec_cmd: vm get_status R12 
+Jan 12 10:53:29.211 HYPERVISOR: exec_cmd: vm slot_add_binding R12 1 0 PA-4T+ 
+Jan 12 10:53:29.211 HYPERVISOR: exec_cmd: vm get_status R12 
+Jan 12 10:53:29.212 HYPERVISOR: exec_cmd: vm slot_add_binding R12 2 0 PA-4T+ 
+Jan 12 10:53:29.212 HYPERVISOR: exec_cmd: vm get_status R12 
+Jan 12 10:53:29.212 HYPERVISOR: exec_cmd: vm slot_add_binding R12 3 0 PA-4E 

@@ -1,0 +1,10 @@
+Staging / Stageless Payload: 공격 코드를 조각내어 전달하거나 한 번에 전달하는 방식의 차이 이해
+(fragmentation)??
+
+Process Injection: 실행 중인 정상 프로세스의 메모리 영역에 악성 코드를 삽입하는 기술
+
+Traffic Encoding: 보안 장비(IDS/IPS) 탐지 회피를 위한 네트워크 트래픽 난독화
+
+AV Evasion (Anti-Virus Evasion): 백신의 정적/동적 분석을 회피하는 기술 (Umbrella)
+
+x11vnc: 침투한 리눅스 GUI 환경 시스템에 VNC 서버를 실행하여 원격 데스크톱 제어권을 획득												

@@ -1,0 +1,47 @@
+R7
+int s1/0
+enc fr
+no sh
+int s1/0.71 po
+ip add 10.1.80.2 255.255.248.0
+fra int 701 
+int s1/0.72 po
+ip add 10.1.72.2 255.255.248.0
+fra int 702
+int s1/0.713 po
+ip add 10.1.88.1 255.255.248.0
+fra int 713 
+router eigrp 100 
+net 10.0.0.0
+no auto
+key chain A
+key 1
+key-string cisco
+int s1/0.71 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.72 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+int s1/0.713 po
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 A
+end
+
+conf t
+snmp-server community router RO
+end
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

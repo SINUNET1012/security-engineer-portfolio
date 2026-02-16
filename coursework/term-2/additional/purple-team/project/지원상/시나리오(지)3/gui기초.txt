@@ -1,0 +1,10 @@
+1. 우분투 gui다운
+https://releases.ubuntu.com/18.04/ubuntu-18.04.6-desktop-amd64.iso
+그담 설정 후 실행은 알아서 ㅇㅈ?
+
+2. 업뎃 및 업글 
+
+3. 복붙 설정 및 화면 크기 설정
+apt install -y open-vm-tools open-vm-tools-desktop
+
+4. 그 이후는 한글파일 ㄱㄱ

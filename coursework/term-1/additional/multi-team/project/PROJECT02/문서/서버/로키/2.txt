@@ -1,0 +1,27 @@
+    -    rw-r--r--
+: 대상의 속성이 파일이다.
+          — : 소유자
+            ----  : 소유 그룹
+                       —--  : 기타(other)
+
+문자 = 이진수1
+- = 이진수0
+
+초록색=실행 파일
+
+conda config --set auto_activate_base false
+
+환경변수 등록
+/root/miniconda3/bin/conda
+
+컨트롤+d = 파이썬 종료
+
+http://172.16.26.10:8000/tree - 주피터(파이썬 수업)
+
+<시스템 자동화>
+vim ju.sh
+--->>들어가서 i로 insert 모드 후
+jupyter notebook --allow-root --ip=172.16.26.10 --port=8000
+-> esc 후 :wq로 저장
+[root@localhost ~]# chmod +x ju.sh
+[root@localhost ~]# ./ju.sh

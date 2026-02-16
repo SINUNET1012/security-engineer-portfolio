@@ -1,0 +1,13 @@
+대략적인 공인 네트워크와 사설 네트워크가 있는 환경에서 DHCP 및 NAT 설치 과정
+
+1. 네트워크를 구성한다
+2. 라우터들의 IP를 할당한다
+3. DHCP 서버를 구성한다
+4. LAN에 있는 각 PC들은 DHCP서비스로 IP를 할당 받는다
+5. 내부 LAN에서 서로 통신이 되는지 PING 테스트를 한다
+6. 라우팅을 한다
+7. NAT의 Outside와 Inside를 지정한다
+8. ACL을 만든다 (사설 IP 범위 지정)
+8. Outside 풀을 만든다 (공인 IP 범위 지정)
+9. NAT를 설정한다 (ip nat inside source list [access-list 번호] pool [Outside 풀 이름] overload)
+   * port

@@ -1,0 +1,83 @@
+웹페이지 만들기 스크립트
+
+#!/bin/bash
+
+# 1. 기본 웹 디렉터리 설정
+echo "===== [1] 기본 웹페이지 생성 ====="
+sudo mkdir -p /var/www/html
+echo "8team" | sudo tee /var/www/html/index.html
+
+# 2. 새 사용자 디렉터리 생성
+echo "===== [2] 사용자 디렉터리 생성 (/home/8team) ====="
+sudo mkdir -p /home/8team
+echo "8team custom page" | sudo tee /home/8team/index.html
+sudo chown -R www-data:www-data /home/8team
+
+# 3. Apache 설정 변경 - DocumentRoot 및 Directory
+echo "===== [3] Apache 설정 변경 (000-default.conf) ====="
+APACHE_CONF="/etc/apache2/sites-available/000-default.conf"
+
+# 백업
+sudo cp $APACHE_CONF ${APACHE_CONF}.bak
+
+# DocumentRoot 변경
+sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /home/8team|' $APACHE_CONF
+
+# <Directory> 설정 추가
+sudo tee /etc/apache2/conf-available/custom-dir.conf > /dev/null <<EOF
+<Directory "/home/8team">
+    AllowOverride None
+    Options Indexes FollowSymLinks
+    Require all granted
+</Directory>
+EOF
+
+sudo a2enconf custom-dir.conf
+
+# 4. VirtualHost 설정 추가
+echo "===== [4] VirtualHost 설정 추가 ====="
+sudo tee /etc/apache2/sites-available/vhost.conf > /dev/null <<EOF
+<VirtualHost *:80>
+    DocumentRoot "/home/8team"
+    <Directory "/home/8team/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:81>
+    DocumentRoot "/home/test"
+    <Directory "/home/test/">
+        AllowOverride None
+        Options Indexes FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+
+sudo a2ensite vhost.conf
+
+# 5. 포트 81 활성화
+echo "===== [5] Apache가 포트 81을 리스닝하도록 설정 ====="
+sudo sed -i '/^Listen 80$/a Listen 81' /etc/apache2/ports.conf
+
+# 6. test 계정 추가
+echo "===== [6] 사용자 test 계정 생성 ====="
+sudo useradd -m test
+echo "test:test" | sudo chpasswd
+
+# 기본 웹 페이지 파일 생성
+sudo mkdir -p /home/test
+echo "test page on port 81" | sudo tee /home/test/index.html
+sudo chown -R www-data:www-data /home/test
+
+# 7. Apache 재시작
+echo "===== [7] Apache 재시작 ====="
+sudo systemctl reload apache2
+
+# 8. 결과 안내
+echo "===== [8] 설정 완료 ====="
+IP=$(hostname -I | awk '{print $1}')
+echo "✅ http://$IP        → /home/8team"
+echo "✅ http://$IP:81     → /home/test"

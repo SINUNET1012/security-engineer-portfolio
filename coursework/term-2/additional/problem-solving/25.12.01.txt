@@ -1,0 +1,36 @@
+<레드팀 문제>
+1. dns 서버 172.16.24.27을 등록하고  red1.com을 dig,DNSenum과 DNSRecon을 사용해서 zone파일을 확인하십쇼.
+
+Trying Zone Transfer for red1.com on www.red1.com ... 
+red1.com.                                604800   IN    SOA               (
+red1.com.                                604800   IN    NS       www.red1.com.
+ww1.red1.com.                            604800   IN    A        172.16.24.27
+ww2.red1.com.                            604800   IN    A        172.16.24.105
+www.red1.com.                            604800   IN    A        172.16.24.10
+
+2. 확인한 zone 파일에서 각 사이트들을 whatweb을 이용해 OS와 title을 정리하십쇼.
+ww1 = ubuntu,Title[나의 첫 웹사이트]   
+ww2 = Debian Title[Apache2 Debian Default Page: It works]
+www = Rocky Title[Login :: Damn Vulnerable Web Application (DVWA)]
+3. 확인한 사이트를 들어가봅시다!
+
+<퍼플팀 문제>
+
+1. 레드팀 1번 문제를 수행하고, zone transfer 공격에 대한 로그를 확인하라.
+    1. 로그 위치 
+    ubuntu : /var/log/syslog
+    rocky : /var/log/messages
+2. 레드팀 2번 문제를 수행하고, whatweb 도구를 활용한 로그를 확인하라.
+    1. 로그 위치
+    ubuntu : /var/log/apache2/access.log
+    rocky : /var/log/httpd/access_log
+    혹은 본인이 지정한 로그 위치
+
+<네트워크 문제(RIP)>
+
+-pc는 자유롭게 붙이기
+1. split-horizon
+라우터 3개와 프레임릴레이 스위치 1개를 이용해 멀티포인트로 같은 네트워크로 설정한다. 이때, 허브 & 스포크 구조가 되는데, 허브 역할을 하는 라우터에서 split-horizon을 꺼주고 라우팅 테이블을 정상적으로 교환하게 하자.
+
+2. offset-list
+위의 랩에 이어서 라우터를 두 개 더 추가한다. 링 구조가 들어갈 수 있게 연결하고 로드밸런싱이 일어나는 대역이 있는지 확인한다. 이때 로드밸런싱이 있다면 offset-list로 없애주고, 로드밸런싱이 없다면 offset-list로 로드밸런싱으로 만들어주자!!!

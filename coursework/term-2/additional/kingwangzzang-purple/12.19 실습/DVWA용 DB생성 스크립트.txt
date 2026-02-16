@@ -1,0 +1,44 @@
+#!/bin/bash
+# 파일명: setup_dvwa_db.sh
+# 설명: DVWA를 위한 데이터베이스(dvwa) 및 사용자 생성
+
+echo "=== 2. DVWA용 데이터베이스 설정 시작 ==="
+
+# --- DVWA DB 설정 값 ---
+DB_NAME="dvwa"
+DB_USER="dvwa"
+DB_PASS="password"
+# ---------------------
+
+# MariaDB가 실행 중인지 확인
+if ! systemctl is-active --quiet mariadb; then
+    echo "오류: MariaDB가 실행 중이지 않습니다. 1번 스크립트를 먼저 실행하세요."
+    exit 1
+fi
+
+echo "MariaDB에 접속하여 DVWA 전용 DB 및 사용자를 생성합니다..."
+
+# SQL 명령어 실행 (root 권한으로 접속)
+# sudo mysql을 쓰면 비밀번호 없이 root 접속이 가능합니다 (Ubuntu 기본 설정)
+sudo mysql -u root <<EOF
+-- 1. 기존에 같은 이름의 DB가 있다면 삭제하고 다시 생성 (초기화)
+DROP DATABASE IF EXISTS $DB_NAME;
+CREATE DATABASE $DB_NAME;
+
+-- 2. 사용자 생성 (이미 있으면 비번 변경)
+CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';
+ALTER USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';
+
+-- 3. 권한 부여
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+echo "--------------------------------------------------"
+echo " [성공] DVWA 데이터베이스 설정이 완료되었습니다."
+echo "--------------------------------------------------"
+echo " 1. Database Name : $DB_NAME"
+echo " 2. User ID       : $DB_USER"
+echo " 3. Password      : <REDACTED>
+echo "--------------------------------------------------"
+echo " * 나중에 DVWA 설정 파일(config.inc.php)에 위 정보를 입력하세요."

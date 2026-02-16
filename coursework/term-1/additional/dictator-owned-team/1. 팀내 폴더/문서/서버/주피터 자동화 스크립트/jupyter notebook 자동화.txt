@@ -1,0 +1,44 @@
+echo "Jupyter 설정 파일 생성"
+mkdir -p ~/.jupyter
+
+IP=$(ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -n1)
+
+cat > ~/.jupyter/jupyter_notebook_config.py <<EOF
+c.ServerApp.ip = '${IP}'
+c.ServerApp.port = 8000
+c.ServerApp.root_dir = '/root/'
+c.ServerApp.open_browser = False
+EOF
+
+
+echo "루트 디렉토리 생성 "
+mkdir -p /root/
+
+echo "systemd 서비스 파일 생성"
+cat > /etc/systemd/system/jupyter.service <<EOF
+[Unit]
+Description=JupyterNotebook
+After=network.target
+
+[Service]
+User=root
+Environment="PATH=/opt/jupyterhub-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/miniconda3/bin/"
+ExecStart=/root/miniconda3/bin/jupyter notebook --allow-root -f /root/.jupyter/jupyter_notebook_config.py
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+echo "systemd 서비스 리로드 및 등록"
+systemctl daemon-reload
+systemctl enable jupyter
+
+echo "Jupyter 서비스상태확인 및  시작"
+systemctl status jupyter
+systemctl start jupyter
+
+
+
+sleep 2
+
+echo " 완료."

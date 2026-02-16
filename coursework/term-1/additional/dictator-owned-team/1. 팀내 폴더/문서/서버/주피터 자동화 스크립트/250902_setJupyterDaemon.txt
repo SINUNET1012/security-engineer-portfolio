@@ -1,0 +1,39 @@
+echo "1. 설정파일 생성(오버라이드)"
+jupyter notebook --generate-config
+
+echo "2. jupyter 옵션 작성"
+echo "
+c.ServerApp.ip = '172.16.4.2'
+c.ServerApp.port = 8000
+c.ServerApp.root_dir = '/root/'
+c.ServerApp.open_browser = False
+" >> ~/.jupyter/jupyter_notebook_config.py
+
+echo "3. jupyter 실행시 설정 파일 적용"
+jupyter notebook -f ~/.jupyter/jupyter_notebook_config.py 
+
+echo "4. jupyter service 파일 생성 및 수정"
+echo "
+[Unit]
+Description=JupyterNotebook # 이름 지정
+After=network.target # 네트워크 기능 사용하겠다
+
+[Service]
+User=root #루트 계정 권한으로 이 서비스 실행하겠다.
+Environment=\"PATH=/opt/jupyterhub-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/miniconda3/bin/\"
+#환경변수경로 설정
+ExecStart=/root/miniconda3/bin/jupyter notebook --allow-root -f /root/.jupyter/jupyter_notebook_config.py
+#이전에 만든 설정파일을 옵션으로, jupyter notebook 명령어를 자동으로 실행한다.
+[Install]
+WantedBy=multi-user.target # 기본값
+" > ~/etc/systemd/system/jupyter.service
+
+echo "5. 수정한 서비스 적용"
+systemctl daemon-reload
+
+echo "6. 재부팅시 자동 활성화"
+systemctl enable jupyter
+
+echo "7. jupyter 시작 및 상태 확인"
+systemctl start jupyter
+systemctl status jupyter

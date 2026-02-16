@@ -1,0 +1,25 @@
+redistribute span sw
+
+en
+conf t
+monitor session 1 source interface g0/0
+monitor session 1 source interface g0/1
+monitor session 1 destination interface g0/2
+end
+
+conf t
+snmp-server community switch RO
+
+conf t
+line vty 0 4
+password cisco
+ip domain name kwz.com
+crypto key generate rsa
+2048
+ip ssh version 2
+username bn privilege 15 password cisco
+line vty 0 4
+transport input ssh
+login local
+ip ssh time-out 60
+ip ssh authentication-retries 3

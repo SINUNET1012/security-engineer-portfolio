@@ -1,0 +1,751 @@
+import paramiko
+import netmiko
+import subprocess
+import re
+import sys
+import os
+import getpass
+# netmiko, paramiko, dns.resolver 라이브러리가 필요합니다.
+# 설치: pip install paramiko netmiko dnspython
+
+try:
+    import dns.resolver
+    from netmiko.exceptions import NetmikoTimeoutException, NetmikoAuthenticationException
+except ImportError:
+    print("🚨 필수 라이브러리가 누락되었습니다. 'pip install paramiko netmiko dnspython'을 실행해주세요.")
+    sys.exit(1)
+
+
+# --- 전역 설정 변수 ---
+SSH_IP = ""
+SSH_USERNAME = ""
+SSH_PASSWORD = ""
+
+# 네트워크 장비 기본 설정 (Netmiko)
+NET_USERNAME = "owner"
+NET_PASSWORD = "cisco"
+DEVICE_TYPE = "cisco_ios" # Netmiko 접속 시 사용할 기본 드라이버
+NAMED_ZONE_DIR = "/var/named" # 원격 DNS 서버의 Zone 파일 기본 경로
+
+# =========================================================================
+# === 네트워크 장비 관리 (1. 네트워크 장비) 기능 ===
+# =========================================================================
+
+def detect_device_type(net_connect: netmiko.base_connection.BaseConnection) -> str:
+    """
+    'show version' 명령을 실행하여 장비가 라우터인지 스위치인지 자동으로 감지합니다.
+    """
+    print("✅ 접속 성공. 'show version'을 실행하여 장비 유형을 자동으로 감지합니다...")
+    try:
+        output = net_connect.send_command("show version", read_timeout=20)
+        output_lower = output.lower()
+        
+        if re.search(r"(c3560|c3750|c3850|c2960|catalyst)", output_lower):
+            print("-> [자동 감지] 유형: 스위치 (Switch)")
+            return "S"
+            
+        if re.search(r"(c2900|c1900|c4300|isr|router)", output_lower):
+            print("-> [자동 감지] 유형: 라우터 (Router)")
+            return "R"
+
+        output_ip_route = net_connect.send_command("show ip route")
+        if "gateway of last resort" in output_ip_route.lower():
+             print("-> [자동 감지] 유형: 라우터 (Routing table found)")
+             return "R"
+        
+        print("-> [감지 실패] 키워드를 찾지 못했습니다. 기본 '스위치' 유형으로 설정합니다.")
+        return "S"
+
+    except Exception as e:
+        print(f"❌ 장비 유형 자동 감지 중 오류 발생: {e}. 기본 '라우터' 유형으로 설정합니다.")
+        return "R" 
+
+
+def handle_specific_command(net_connect: netmiko.base_connection.BaseConnection, command: str):
+    """지정된 명령어를 실행하고 결과를 출력"""
+    print(f"\n--- Executing: {command} ---")
+    try:
+        output = net_connect.send_command(command, read_timeout=20)
+        print(output)
+    except Exception as e:
+        print(f"❌ 명령어 실행 중 오류 발생: {e}")
+
+def handle_save_running_config(net_connect: netmiko.base_connection.BaseConnection):
+    """Running-config를 로컬 텍스트 파일로 저장"""
+    ip = net_connect.host
+    hostname = net_connect.find_prompt().replace("#", "").replace(">", "")
+    
+    print(f"\n--- {hostname} Running-config 저장 ---")
+    
+    try:
+        config = net_connect.send_command('show running-config', read_timeout=30)
+    except Exception as e:
+        print(f"❌ 'show run' 실행 중 오류: {e}")
+        return
+
+    filename = f"{hostname}_{ip}_running_config.txt"
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(config)
+        print(f"✅ Running-config가 '{filename}'에 성공적으로 저장되었습니다.")
+        print(f"   경로: {os.path.abspath(filename)}") 
+    except Exception as e:
+        print(f"❌ 로컬 파일 저장 중 오류: {e}")
+
+def handle_network_cli(net_connect: netmiko.base_connection.BaseConnection):
+    """Netmiko 접속 후 CLI 명령어를 직접 입력하는 함수"""
+    print("\n[--- 네트워크 명령어 입력 모드 ---]")
+    print(" 'exit' 를 입력하면 네트워크 메뉴로 돌아갑니다.")
+
+    while True:
+        prompt = net_connect.find_prompt()
+        command = input(f"{prompt} ").strip()
+
+        if command.lower() == 'exit':
+            print("명령어 입력 모드를 종료합니다.")
+            break
+        
+        if not command:
+            continue
+        
+        try:
+            output = net_connect.send_command(command, read_timeout=20)
+            print("\n[OUTPUT]---------------------------")
+            print(output)
+            print("-----------------------------------")
+
+        except Exception as e:
+            print(f"명령어 실행 중 오류 발생: {e}")
+
+def handle_network_menu(net_connect: netmiko.base_connection.BaseConnection, device_type: str):
+    """
+    라우터/스위치 관리 메뉴 (자동 감지된 유형을 받음)
+    """
+    
+    while True:
+        print("\n[--- 네트워크 장비 관리 메뉴 ---]")
+        
+        # 공통 명령어 목록
+        commands = [
+            ("1. sh ip int bri (인터페이스 요약)", 'show ip interface brief'),
+            ("2. sh vtp status (VTP 상태 확인)", 'show vtp status')
+        ]
+        
+        # === 자동 감지된 유형(R/S)에 따라 메뉴 동적 구성 ===
+        if device_type == 'R':
+            print("   (유형: 라우터로 자동 감지됨)")
+            commands.append(("3. sh ip route (라우팅 테이블)", 'show ip route'))
+            commands.append(("4. sh ip dhcp binding (DHCP 할당목록)", 'show ip dhcp binding'))
+            
+        elif device_type == 'S':
+            print("   (유형: 스위치로 자동 감지됨)")
+            commands.append(("3. sh vlan-sw bri (VLAN 요약)", 'show vlan brief'))
+            commands.append(("4. sh mac-address table (MAC 테이블)", 'show mac address-table'))
+            commands.append(("5. sh spanning-tree (STP 상태확인)", 'show spanning-tree'))
+            commands.append(("6. sh int tr (TRANK 포트 상태확인)", 'show interfaces trunk'))
+            
+            
+        # 메뉴 출력
+        for label, _ in commands:
+            print(f"   {label}")
+            
+        print("\n    S. Running-config 저장 (sh run)")
+        print("    C. CLI 명령어 직접 입력")
+        print("    R. 메인 메뉴로 돌아가기")
+
+        choice = input("선택하세요 (1-5/S/C/R): ").strip().upper()
+        
+        if choice == 'C':
+            handle_network_cli(net_connect)
+        elif choice == 'S':
+            handle_save_running_config(net_connect)
+        elif choice == 'R':
+            break
+        elif choice.isdigit() and 1 <= int(choice) <= len(commands):
+            selected_command = commands[int(choice) - 1][1]
+            handle_specific_command(net_connect, selected_command)
+        else:
+            print("유효하지 않은 선택입니다.")
+
+# =========================================================================
+# === 서버 관리 (2. 서버 장비) 기능 (Zone 이름 동적 사용) ===
+# =========================================================================
+
+def ping_target_with_specific_dns(domain: str, dns_server: str):
+    """특정 DNS 서버를 사용해 도메인을 IP로 해석 후 Ping 테스트."""
+    try:
+        resolver = dns.resolver.Resolver()
+        resolver.nameservers = [dns_server]
+        resolved_ip = str(resolver.resolve(domain, 'A')[0])
+    except dns.resolver.NoNameservers:
+        print(f"❌ DNS 조회 실패: {dns_server}가 유효한 네임서버가 아닙니다.")
+        return
+    except dns.resolver.NXDOMAIN:
+        print(f"❌ DNS 조회 실패: 도메인 '{domain}'이(가) 존재하지 않습니다 (NXDOMAIN).")
+        return
+    except Exception:
+        print(f"❌ DNS 조회 실패: {domain} -> {dns_server}에서 IP를 찾을 수 없습니다.")
+        return
+
+    print(f"    [DNS 응답] 도메인 {domain}의 IP: {resolved_ip}")
+    
+    command = ['ping', '-c', '1', '-W', '2', resolved_ip]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=3)
+    except FileNotFoundError:
+        print("❌ 오류: 'ping' 명령어를 찾을 수 없습니다.")
+        return
+    except subprocess.TimeoutExpired:
+        print(f"    ❌ PING 실패: {resolved_ip} - 타임아웃 발생.")
+        return
+
+    if result.returncode == 0:
+        time_match = re.search(r'time=(\S+)', result.stdout)
+        ping_time = time_match.group(1) if time_match else "N/A"
+        print(f"    ✅ PING 성공: 응답 시간: {ping_time}")
+    else:
+        print(f"    ❌ PING 실패: {resolved_ip}에 응답 없음.")
+
+def parse_zone_content(zone_content: str) -> dict:
+    """Zone 파일 내용을 파싱하여 호스트 이름과 IP를 딕셔너리로 반환"""
+    records = {}
+    for line in zone_content.splitlines():
+        line = line.strip()
+        if not line or line.startswith(';'):
+            continue
+            
+        match = re.search(r'^\s*(\S+)\s+IN\s+A\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', line, re.IGNORECASE)
+        
+        if match:
+            hostname = match.group(1).strip()
+            ip = match.group(2).strip()
+            
+            if hostname.lower() not in ('@', 'ns', 'a', 'mx'):
+                records[hostname] = ip
+            
+    return records
+
+def handle_command_input(ssh_client: paramiko.SSHClient):
+    """원격 서버에 직접 명령어를 입력하고 결과를 확인하는 함수"""
+    print("\n[--- 원격 명령어 입력 모드 ---]")
+    print(" 'exit' 를 입력하면 메인 메뉴로 돌아갑니다.")
+    try:
+        target_host = ssh_client.get_transport().getpeername()[0]
+    except AttributeError:
+        print("❌ SSH 연결이 유효하지 않습니다. 메인 메뉴로 돌아갑니다.")
+        return
+    
+    while True:
+        command = input(f"[{SSH_USERNAME}@{target_host}]$ ").strip()
+        
+        if command.lower() == 'exit':
+            print("명령어 입력 모드를 종료하고 메인 메뉴로 돌아갑니다.")
+            break
+        
+        if not command:
+            continue
+            
+        print(f"Executing: {command}")
+        
+        try:
+            stdin, stdout, stderr = ssh_client.exec_command(command, timeout=10)
+            
+            stdout_output = stdout.read().decode('utf-8').strip()
+            stderr_output = stderr.read().decode('utf-8').strip()
+            
+            if stdout_output:
+                print("\n[STDOUT]---------------------------")
+                print(stdout_output)
+                print("-----------------------------------")
+            
+            if stderr_output:
+                print("\n[STDERR] (오류)----------------------")
+                print(stderr_output)
+                print("-----------------------------------")
+                
+        except Exception as e:
+            print(f"명령어 실행 중 오류 발생: {e}")
+
+def handle_check_zone(ssh_client: paramiko.SSHClient, zone_name: str):
+    """named-checkzone을 사용하여 DNS Zone 파일의 구문 오류를 검사"""
+    zone_path = f"{NAMED_ZONE_DIR}/{zone_name}.zone"
+    check_command = f"sudo named-checkzone {zone_name} {zone_path}"
+    
+    print(f"\n[--- Zone 파일 구문 검사: {zone_name} ---]")
+    print(f"Executing: {check_command}")
+    
+    stdin, stdout, stderr = ssh_client.exec_command(check_command)
+    
+    output = stdout.read().decode('utf-8').strip() + stderr.read().decode('utf-8').strip()
+    
+    if "loaded serial" in output and "OK" in output:
+        print("✅ 구문 검사 성공: Zone 파일에 심각한 문법적 오류가 없습니다.")
+    else:
+        print("❌ 구문 검사 실패: Zone 파일에 오류가 발견되었습니다.")
+    
+    print("\n[검사 결과]---------------------------")
+    print(output)
+    print("-----------------------------------")
+
+
+def handle_add_a_record(ssh_client: paramiko.SSHClient, zone_name: str):
+    """DNS Zone 파일에 새로운 A 레코드를 추가하고 서비스를 재시작하는 함수"""
+    zone_path = f"{NAMED_ZONE_DIR}/{zone_name}.zone"
+    
+    print(f"\n[--- A 레코드 추가 (Zone: {zone_name}) ---]")
+    new_hostname = input("추가할 호스트 이름 (예: WebServer): ").strip()
+    new_ip = input("추가할 IP 주소 (예: 172.16.1.100): ").strip()
+    
+    if not re.match(r'^[a-zA-Z0-9_-]+$', new_hostname):
+        print("❌ 유효하지 않은 호스트 이름 형식입니다.")
+        return
+    if not re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', new_ip):
+        print("❌ 유효하지 않은 IP 주소 형식입니다.")
+        return
+        
+    new_record = f"{new_hostname.upper()}\t\tIN\tA\t{new_ip}"
+    print(f"\n[Preview] 추가할 레코드: {new_record}")
+    
+    append_command = f'echo "{new_record}" | sudo tee -a {zone_path}'
+    
+    print(f"\nExecuting: {append_command}")
+    stdin, stdout, stderr = ssh_client.exec_command(append_command)
+    
+    error_output = stderr.read().decode('utf-8').strip()
+    if error_output and "Permission denied" in error_output:
+        print(f"❌ Zone 파일 쓰기 오류: {error_output}")
+        print(f"   (팁: SSH 사용자 '{SSH_USERNAME}'가 '{zone_path}' 파일에 sudo 쓰기 권한이 있는지 확인하세요.)")
+        return
+    
+    print(f"✅ 레코드가 {zone_path} 파일에 성공적으로 추가되었습니다.")
+    
+    reload_command = "sudo systemctl reload named"
+    print(f"\nDNS 서비스 리로드 시도: {reload_command}")
+    
+    stdin, stdout, stderr = ssh_client.exec_command(reload_command)
+    reload_output = stdout.read().decode('utf-8').strip() + stderr.read().decode('utf-8').strip()
+    
+    if "Failed" in reload_output or "error" in reload_output.lower():
+        print(f"❌ DNS 서비스 리로드 실패: {reload_output}")
+    else:
+        print("✅ DNS 서비스 (named) 리로드 성공. 새로운 레코드가 적용되었습니다.")
+    print("\n💡 변경 사항을 목록에 반영하려면 'A/D 선택 후' Zone 메뉴로 돌아가세요.")
+
+
+def handle_delete_a_record(ssh_client: paramiko.SSHClient, zone_name: str):
+    """DNS Zone 파일에서 A 레코드를 삭제하고 서비스를 재시작하는 함수"""
+    zone_path = f"{NAMED_ZONE_DIR}/{zone_name}.zone"
+    
+    print(f"\n[--- A 레코드 삭제 (Zone: {zone_name}) ---]")
+    del_hostname = input("삭제할 호스트 이름 (예: R5, WebServer): ").strip().upper()
+    
+    if not del_hostname:
+        print("❌ 호스트 이름이 입력되지 않았습니다.")
+        return
+
+    sed_pattern = f"^\\s*{del_hostname}\\s+IN\\s+A"
+    delete_command = f"sudo sed -i '/{sed_pattern}/dI' {zone_path}"
+    
+    print(f"\n[Preview] 실행할 명령: {delete_command}")
+    stdin, stdout, stderr = ssh_client.exec_command(delete_command)
+    
+    error_output = stderr.read().decode('utf-8').strip()
+    if error_output:
+        print(f"❌ Zone 파일 삭제 오류: {error_output}")
+        print(f"   (팁: SSH 사용자 '{SSH_USERNAME}'가 sudo sed 실행 권한이 있는지 확인하세요.)")
+        return
+        
+    print(f"✅ 레코드 '{del_hostname}.{zone_name}'이(가) {zone_path} 파일에서 삭제되었습니다.")
+    
+    reload_command = "sudo systemctl reload named"
+    print(f"\nDNS 서비스 리로드 시도: {reload_command}")
+    stdin, stdout, stderr = ssh_client.exec_command(reload_command)
+    reload_output = stdout.read().decode('utf-8').strip() + stderr.read().decode('utf-8').strip()
+    
+    if "Failed" in reload_output:
+        print(f"❌ DNS 서비스 리로드 실패: {reload_output}")
+    else:
+        print("✅ DNS 서비스 (named) 리로드 성공. 변경 사항이 적용되었습니다.")
+    print("\n💡 변경 사항을 목록에 반영하려면 'A/D 선택 후' Zone 메뉴로 돌아가세요.")
+
+# === [신규 기능 1] DNS 레코드 수정 ===
+def handle_modify_a_record(ssh_client: paramiko.SSHClient, zone_name: str):
+    """DNS Zone 파일의 A 레코드 IP를 수정합니다."""
+    zone_path = f"{NAMED_ZONE_DIR}/{zone_name}.zone"
+    
+    print(f"\n[--- A 레코드 수정 (Zone: {zone_name}) ---]")
+    mod_hostname = input("IP를 수정할 호스트 이름 (예: R1): ").strip().upper()
+    new_ip = input("새로운 IP 주소 (예: 172.16.1.200): ").strip()
+
+    if not (mod_hostname and new_ip):
+        print("❌ 호스트 이름과 새 IP 주소를 모두 입력해야 합니다.")
+        return
+    if not re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', new_ip):
+        print("❌ 유효하지 않은 IP 주소 형식입니다.")
+        return
+
+    # sed 패턴: (R1 IN A) (오래된 IP) -> (R1 IN A) (새 IP)
+    # s/ (찾을 패턴) / (바꿀 내용) /I (대소문자 무시)
+    # ^\s*MOD_HOSTNAME\s+IN\s+A\s+.* : R1 IN A (오래된 IP)
+    # \1NEW_IP : (R1 IN A) (새 IP)
+    # sed -i 's/^\(\s*R1\s\+IN\s\+A\s\+\).*$/\1172.16.1.200/I' /path/to/zone
+    
+    sed_pattern = f"^\\s*{mod_hostname}\\s+IN\\s+A\\s+.*"
+    replacement = f"{mod_hostname}\t\tIN\tA\t{new_ip}"
+    
+    # sed -i 's/패턴/교체/I' 파일. (참고: MAC/BSD sed는 -i '' 옵션 필요)
+    modify_command = f"sudo sed -i 's|{sed_pattern}|{replacement}|I' {zone_path}"
+
+    print(f"\n[Preview] 실행할 명령: {modify_command}")
+    
+    stdin, stdout, stderr = ssh_client.exec_command(modify_command)
+    error_output = stderr.read().decode('utf-8').strip()
+    if error_output:
+        print(f"❌ Zone 파일 수정 오류: {error_output}")
+        print("   (팁: sed 패턴이 정확한지, sudo 권한이 있는지 확인하세요.)")
+        return
+
+    print(f"✅ 레코드 '{mod_hostname}.{zone_name}'이(가) 새 IP({new_ip})로 수정되었습니다.")
+
+    # DNS 서비스 리로드
+    reload_command = "sudo systemctl reload named"
+    print(f"\nDNS 서비스 리로드 시도: {reload_command}")
+    
+    stdin, stdout, stderr = ssh_client.exec_command(reload_command)
+    reload_output = stdout.read().decode('utf-8').strip() + stderr.read().decode('utf-8').strip()
+    
+    if "Failed" in reload_output:
+        print(f"❌ DNS 서비스 리로드 실패: {reload_output}")
+    else:
+        print("✅ DNS 서비스 (named) 리로드 성공. 변경 사항이 적용되었습니다.")
+    print("\n💡 변경 사항을 목록에 반영하려면 'M 선택 후' Zone 메뉴로 돌아가세요.")
+
+
+def handle_dns_menu(ssh_client: paramiko.SSHClient, dns_server_ip: str):
+    """DNS 메뉴 선택 시 Zone 파일 정보를 동적으로 가져와 Ping 테스트 메뉴를 표시"""
+    while True:
+        print("\n[--- DNS Zone 파일 관리 ---]")
+        
+        zone_name_input = input("관리할 **Zone 이름** (예: owner.com) [메인 메뉴: R]: ").strip().lower()
+        if not zone_name_input or zone_name_input == 'r':
+            print("메인 메뉴로 돌아갑니다.")
+            return
+
+        current_zone_name = zone_name_input
+        zone_path = f"{NAMED_ZONE_DIR}/{current_zone_name}.zone"
+        
+        command = f"cat {zone_path}"
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        zone_content = stdout.read().decode('utf-8')
+        
+        error_output = stderr.read().decode('utf-8')
+        if "No such file or directory" in error_output or error_output:
+            print(f"❌ 오류: Zone 파일 접근 실패. 경로를 확인하세요: {zone_path}")
+            print(f"   (팁: {NAMED_ZONE_DIR} 경로에 {current_zone_name}.zone 파일이 있는지 확인)")
+            continue 
+        
+        a_records = parse_zone_content(zone_content)
+        if not a_records:
+            print(f"ℹ️ {current_zone_name} Zone 파일에서 유효한 A 레코드를 찾을 수 없습니다.")
+        else:
+            print(f"✅ Zone 파일에서 총 {len(a_records)}개의 A 레코드를 가져왔습니다.")
+        
+        while True:
+            if a_records:
+                print(f"\n[Zone 파일 호스트 목록: {current_zone_name}]")
+                for i, (host, ip) in enumerate(a_records.items()):
+                    print(f"   {i+1}. {host}.{current_zone_name} ({ip})")
+            
+            print("\n[작업 선택]")
+            print("   T. Ping Test 시작 (전체 도메인)")
+            print("   A. A 레코드 추가")
+            print("   D. A 레코드 삭제")
+            print("   M. A 레코드 수정 (IP 변경) [신규]")
+            print("   C. Zone 파일 구문 검사")
+            print("   R. Zone 이름 다시 입력 (현재 메뉴 종료)")
+            
+            choice = input("선택하세요 (T/A/D/M/C/R): ").strip().upper()
+            
+            if choice == 'T':
+                if not a_records:
+                    print("❌ 핑 테스트할 A 레코드가 없습니다.")
+                    continue
+                print("\n--- DNS 기반 Ping 테스트 시작 ---")
+                for host in a_records.keys():
+                    full_domain = f"{host}.{current_zone_name}"
+                    ping_target_with_specific_dns(full_domain, dns_server_ip)
+            elif choice == 'A':
+                handle_add_a_record(ssh_client, current_zone_name)
+                break 
+            elif choice == 'D': 
+                handle_delete_a_record(ssh_client, current_zone_name)
+                break
+            elif choice == 'M': # === [신규] 수정 기능 호출 ===
+                handle_modify_a_record(ssh_client, current_zone_name)
+                break
+            elif choice == 'C': 
+                handle_check_zone(ssh_client, current_zone_name)
+            elif choice == 'R':
+                return
+            else:
+                print("유효하지 않은 선택입니다.")
+        
+        # A, D, M 선택 후 목록 갱신을 위해 Zone 이름 입력 루프로 돌아감
+        continue
+
+# =========================================================================
+# === [신규 기능 3 & 4] 일괄 작업 (Batch Jobs) ===
+# =========================================================================
+
+def _batch_ping_device(ip: str):
+    """(내부 함수) 일괄 핑 테스트를 위한 subprocess 래퍼"""
+    print(f"--- Pinging {ip} ...")
+    # Linux/macOS 기준.
+    command = ['ping', '-c', '1', '-W', '1', ip] 
+    
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=2)
+        
+        if result.returncode == 0:
+            print(f"✅ Ping 성공: {ip}")
+        else:
+            print(f"❌ Ping 실패: {ip}")
+
+    except subprocess.TimeoutExpired:
+        print(f"❌ Ping 실패: {ip} - 타임아웃 발생.")
+    except Exception as e:
+        print(f"❌ Ping 오류: {ip} - {e}")
+
+def handle_batch_ping_test():
+    """[신규] 3. ip_list.txt를 읽어 일괄 핑 테스트를 수행"""
+    ip_list_file = 'ip_list.txt'
+    print(f"\n[--- 일괄 핑 테스트 (from {ip_list_file}) ---]")
+    
+    try:
+        with open(ip_list_file, 'r') as f:
+            ip_addresses = [line.strip() for line in f if line.strip()]
+        
+        if not ip_addresses:
+            print(f"❌ '{ip_list_file}' 파일이 비어있거나 유효한 IP가 없습니다.")
+            return
+            
+        print(f"총 {len(ip_addresses)}개의 IP에 대해 핑 테스트를 시작합니다...")
+        
+        for ip in ip_addresses:
+            _batch_ping_device(ip)
+            
+    except FileNotFoundError:
+        print(f"❌ 오류: '{ip_list_file}' 파일을 찾을 수 없습니다.")
+        print("   (팁: 스크립트와 동일한 위치에 파일을 생성하세요.)")
+
+def _batch_get_device_info(ip: str, user: str, pw: str):
+    """(내부 함수) 일괄 SSH 접속 테스트를 위한 Netmiko 래퍼"""
+    print(f"\n--- {ip} SSH 접속 시도 ---")
+
+    device = {
+        'device_type': DEVICE_TYPE,
+        'ip': ip,
+        'username': user,
+        'password': pw,
+        'timeout': 10, # 접속 타임아웃
+        'read_timeout_override': 15, # show version 응답 대기
+    }
+
+    try:
+        with netmiko.ConnectHandler(**device) as net_connect:
+            print(f"✅ SSH 접속 성공: {ip}")
+            
+            hostname = net_connect.find_prompt().replace("#", "").replace(">", "")
+            output = net_connect.send_command('show version', read_timeout=20)
+            
+            serial_number = "N/A" # 기본값
+            for line in output.splitlines():
+                if "Processor board ID" in line:
+                    serial_number = line.split("Processor board ID")[1].strip()
+                    break
+            
+            print(f"   - 호스트네임: {hostname}")
+            print(f"   - 시리얼 번호: {serial_number}")
+    
+    except NetmikoTimeoutException:
+        print(f"❌ SSH 실패: {ip} - 장비가 응답하지 않습니다 (타임아웃).")
+    except NetmikoAuthenticationException:
+        print(f"❌ SSH 실패: {ip} - 아이디 또는 비밀번호가 틀렸습니다.")
+    except Exception as e:
+        print(f"❌ SSH 실패: {ip} - 알 수 없는 오류 발생: {e}")
+
+def handle_batch_ssh_test():
+    """[신규] 4. ip_list.txt를 읽어 일괄 SSH 접속 및 정보 수집"""
+    ip_list_file = 'ip_list.txt'
+    print(f"\n[--- 일괄 SSH 시리얼 확인 테스트 (from {ip_list_file}) ---]")
+    
+    # 일괄 작업에 사용할 ID/PW를 한 번만 입력받음
+    batch_user = input(f"일괄 작업에 사용할 ID (기본: {NET_USERNAME}): ") or NET_USERNAME
+    batch_pass = getpass.getpass(f"일괄 작업에 사용할 PW (기본: {NET_PASSWORD}): ") or NET_PASSWORD
+    
+    try:
+        with open(ip_list_file, 'r') as f:
+            ip_addresses = [line.strip() for line in f if line.strip()]
+
+        if not ip_addresses:
+            print(f"❌ '{ip_list_file}' 파일이 비어있거나 유효한 IP가 없습니다.")
+            return
+
+        print(f"총 {len(ip_addresses)}개의 IP에 대해 SSH 접속 테스트를 시작합니다...")
+        
+        for ip in ip_addresses:
+            _batch_get_device_info(ip, batch_user, batch_pass)
+            
+    except FileNotFoundError:
+        print(f"❌ 오류: '{ip_list_file}' 파일을 찾을 수 없습니다.")
+        print("   (팁: 스크립트와 동일한 위치에 파일을 생성하세요.)")
+
+# =========================================================================
+# === 메인 메뉴 및 접속 핸들러 (수정됨) ===
+# =========================================================================
+
+def server_main_menu(ssh_client: paramiko.SSHClient, target_ip: str) -> bool:
+    """서버 접속 후 메뉴를 제공하는 함수. 로그아웃 시 True 반환."""
+    while True:
+        print("\n====================================")
+        print(f"  접속됨: {target_ip} (리눅스 DNS 서버)")
+        print("====================================")
+        print("1. 명령어 입력 (CLI)")
+        print("2. DNS Zone 파일 관리")
+        print("9. 로그아웃 (다른 장비로 재접속)")
+        print("0. 프로그램 종료")
+        
+        menu_choice = input("메뉴 번호를 입력해주세요: ").strip()
+        
+        if menu_choice == '1':
+            handle_command_input(ssh_client)
+        elif menu_choice == '2':
+            handle_dns_menu(ssh_client, target_ip)
+        elif menu_choice == '9':
+            print(f"\n✅ {target_ip} 에서 로그아웃합니다. 다른 장비로 접속할 수 있습니다.")
+            return True 
+        elif menu_choice == '0':
+            print(f"\n접속 종료: {target_ip}. 프로그램을 종료합니다.")
+            sys.exit(0) 
+        else:
+            print("유효하지 않은 메뉴 선택입니다.")
+    return False
+
+def network_connect_and_menu(target_ip: str, net_connect_info: dict):
+    """Netmiko로 네트워크 장비에 접속하고 메뉴를 실행"""
+    print(f"\nSSH 접속 시도: {target_ip} (Netmiko)...")
+    
+    net_connect = None
+    try:
+        net_connect = netmiko.ConnectHandler(**net_connect_info)
+        # print(f"✅ Netmiko 접속 성공: {target_ip}") # detect_device_type에서 성공 메시지 출력
+        
+        detected_type = detect_device_type(net_connect)
+        handle_network_menu(net_connect, detected_type)
+        
+    except NetmikoTimeoutException:
+        print(f"❌ 접속 실패: {target_ip} - 장비가 응답하지 않습니다 (타임아웃).")
+    except NetmikoAuthenticationException:
+        print(f"❌ 접속 실패: {target_ip} - 인증 실패 (아이디/비밀번호 확인).")
+    except Exception as e:
+        print(f"❌ 접속 실패: {target_ip} - 알 수 없는 오류: {e}")
+    finally:
+        if net_connect:
+            net_connect.disconnect()
+            print(f"연결 종료: {target_ip}")
+    
+    return False
+
+def server_connect_and_menu(target_ip: str, user: str, pw: str) -> bool:
+    """Paramiko로 서버에 접속하고 메뉴를 실행"""
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    print(f"SSH 접속 시도: {target_ip} (Paramiko)...")
+    
+    try:
+        ssh_client.connect(
+            hostname=target_ip,
+            username=user,
+            password=pw,
+            timeout=10
+        )
+        print(f"✅ SSH 접속 성공: {target_ip}")
+        return server_main_menu(ssh_client, target_ip)
+
+    except paramiko.AuthenticationException:
+        print(f"❌ 접속 실패: {target_ip} - 인증 실패 (아이디/비밀번호 확인).")
+    except paramiko.SSHException as e:
+        print(f"❌ 접속 실패: {target_ip} - SSH 오류 발생: {e}")
+    except Exception as e:
+        print(f"❌ 접속 실패: {target_ip} - 알 수 없는 오류: {e}")
+    finally:
+        if ssh_client:
+            ssh_client.close()
+            
+    return False
+
+def run_automation():
+    """스크립트의 시작점: 장비 유형 선택 및 접속 시도"""
+    global SSH_IP, SSH_USERNAME, SSH_PASSWORD
+    
+    while True:
+        print("\n====================================")
+        print("      ✨ 자동화 통합 관리 도구 ✨")
+        print("====================================")
+        print("1. 네트워크 장비 접속 (Netmiko)")
+        print("2. 서버 장비 접속 (Paramiko)")
+        print("------------------------------------")
+        print("3. 일괄 핑 테스트 (ip_list.txt)")
+        print("4. 일괄 시리얼 확인 테스트 (ip_list.txt)")
+        print("------------------------------------")
+        print("0. 프로그램 종료")
+        
+        type_choice = input("선택하세요 (1/2/3/4/0): ").strip()
+        
+        if type_choice == '0':
+            print("프로그램을 종료합니다.")
+            break
+        
+        logout_requested = False
+            
+        if type_choice == '1':
+            SSH_IP = input("\n접속할 IP를 입력해주세요: ").strip()
+            if not SSH_IP:
+                print("IP가 입력되지 않았습니다.")
+                continue
+                
+            net_connect_info = {
+                'device_type': DEVICE_TYPE,
+                'ip': SSH_IP,
+                'username': input(f"네트워크 장비 ID (기본: {NET_USERNAME}): ") or NET_USERNAME,
+                'password': getpass.getpass(f"네트워크 장비 PW (기본: {NET_PASSWORD}): ") or NET_PASSWORD,
+            }
+            network_connect_and_menu(SSH_IP, net_connect_info)
+            
+        elif type_choice == '2':
+            SSH_IP = input("\n접속할 IP를 입력해주세요: ").strip()
+            if not SSH_IP:
+                print("IP가 입력되지 않았습니다.")
+                continue
+
+            SSH_USERNAME = input("서버 ID를 입력해주세요 (예: root): ").strip()
+            SSH_PASSWORD = getpass.getpass("서버 비밀번호를 입력해주세요 :").strip()
+            
+            logout_requested = server_connect_and_menu(SSH_IP, SSH_USERNAME, SSH_PASSWORD)
+            
+        elif type_choice == '3': # [신규] 일괄 핑 테스트
+            handle_batch_ping_test()
+            
+        elif type_choice == '4': # [신규] 일괄 SSH 테스트
+            handle_batch_ssh_test()
+            
+        else:
+            print("유효하지 않은 메뉴 선택입니다.")
+            continue
+            
+        if logout_requested:
+             continue
+
+if __name__ == "__main__":
+    run_automation()

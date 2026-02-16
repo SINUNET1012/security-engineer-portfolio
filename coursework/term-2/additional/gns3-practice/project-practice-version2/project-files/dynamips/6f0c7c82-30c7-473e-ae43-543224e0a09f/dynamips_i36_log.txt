@@ -1,0 +1,26 @@
+Jan 12 10:53:29.442 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 12 10:53:29.443 HYPERVISOR: Started on IP = 172.16.3.1, TCP port = 65386.
+Jan 12 10:53:29.853 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 12 10:53:29.854 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 12 10:53:29.854 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 12 10:53:29.854 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\b6ae9b06-d958-4b1e-9766-654c2557cdbc 
+Jan 12 10:53:29.855 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\b6ae9b06-d958-4b1e-9766-654c2557cdbc
+Jan 12 10:53:29.855 HYPERVISOR: exec_cmd: vm create R15 37 c7200 
+Jan 12 10:53:29.860 VM: VM R15 created.
+Jan 12 10:53:29.861 HYPERVISOR: exec_cmd: vm set_con_tcp_port R15 5076 
+Jan 12 10:53:29.861 HYPERVISOR: exec_cmd: c7200 get_mac_addr R15 
+Jan 12 10:53:29.861 HYPERVISOR: exec_cmd: vm get_status R15 
+Jan 12 10:53:29.861 HYPERVISOR: exec_cmd: vm slot_add_binding R15 0 0 C7200-IO-FE 
+Jan 12 10:53:29.862 HYPERVISOR: exec_cmd: vm set_disk0 R15 0 
+Jan 12 10:53:29.862 HYPERVISOR: exec_cmd: vm set_exec_area R15 64 
+Jan 12 10:53:29.863 HYPERVISOR: exec_cmd: vm get_status R15 
+Jan 12 10:53:29.863 HYPERVISOR: exec_cmd: vm set_idle_pc R15 0x60645960 
+Jan 12 10:53:29.864 HYPERVISOR: exec_cmd: vm set_ios R15 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 12 10:53:29.865 HYPERVISOR: exec_cmd: c7200 set_mac_addr R15 ca25.cc9c.0000 
+Jan 12 10:53:29.865 HYPERVISOR: exec_cmd: vm set_nvram R15 512 
+Jan 12 10:53:29.866 HYPERVISOR: exec_cmd: vm get_status R15 
+Jan 12 10:53:29.866 HYPERVISOR: exec_cmd: vm slot_add_binding R15 1 0 PA-4T+ 
+Jan 12 10:53:29.867 HYPERVISOR: exec_cmd: vm get_status R15 
+Jan 12 10:53:29.867 HYPERVISOR: exec_cmd: vm slot_add_binding R15 2 0 PA-4T+ 
+Jan 12 10:53:29.867 HYPERVISOR: exec_cmd: vm get_status R15 
+Jan 12 10:53:29.868 HYPERVISOR: exec_cmd: vm slot_add_binding R15 3 0 PA-4E 

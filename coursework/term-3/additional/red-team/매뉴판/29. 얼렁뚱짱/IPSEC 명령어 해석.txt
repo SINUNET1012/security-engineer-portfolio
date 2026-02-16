@@ -1,0 +1,100 @@
+conf t
+crypto isakmp policy 10
+# 10번이라는 이름의 보안 정책을 만듭니다
+authentication pre-share
+# 서로 미리 공유한 비밀번호(PSK)로 본인 확인을 하겠다는 뜻입니다.
+encryption 3des
+# 대화 내용을 남이 못 읽게 3DES 방식으로 암호화합니다.
+group 2
+# 암호 키를 교환할 때 Diffie-Hellman 그룹 2 방식을 사용합니다.
+hash md5
+# 데이터가 변조되지 않았는지 확인하기 위해 MD5 해시 알고리즘을 씁니다.
+lifetime 60
+# 보안을 위해 60초마다 암호 키를 새로 바꿉니다.
+end
+conf t
+crypto isakmp key 6 cisco address 1.1.4.2
+# 상대방(1.1.4.2)과 나만 아는 암호를 'cisco'로 정합니다.
+end
+conf t
+access-list 110 permit gre 1.1.2.0 0.0.0.255 1.1.4.0 0.0.0.255
+# 보호 대상을 지정합니다. 여기서는 1.1.2.0 대역에서 1.1.4.0 대역으로 가는 GRE 터널 패킷만 암호화하겠다고 선언한 것입니다.
+end
+conf t
+crypto ipsec transform-set KONG esp-3des esp-sha-hmac
+#'KONG'이라는 이름의 포장지 세트를 만듭니다. 실제 데이터는 ESP 프로토콜을 사용하고, 3DES로 암호화하며, SHA로 무결성을 검사합니다.
+end
+conf t
+crypto map IPSEC 10 ipsec-isakmp
+# 'IPSEC'이라는 이름의 지도(Map) 10번 항목을 만듭니다.
+    set peer 1.1.4.2
+# 이 암호 통로의 끝점(상대방)은 1.1.4.2입니다.
+    set transform-set KONG
+# 아까 만든 'KONG' 포장 방식을 사용합니다.
+    match address 110
+# ACL 110번에 해당하는 데이터만 이 암호 지도를 따라가게 합니다.
+end
+conf t
+int s1/0
+crypto map IPSEC
+# 외부로 나가는 통로인 Serial 1/0 인터페이스에 방금 만든 설계도(IPSEC Map)를 적용합니다. 이제 이 문을 나가는 패킷 중 조건에 맞는 패킷은 암호화됩니다.
+end
+conf t
+ip route 1.1.5.0 255.255.255.0 tunnel 1
+# 상대방 내부망(1.1.5.0)으로 가려면 Tunnel 1번 길로 가라고 경로를 지정해 줍니다.
+
+
+
+
+R4
+conf t
+
+# 보안 정책 설정 (R1과 완벽하게 일치해야 함)
+crypto isakmp policy 10
+ authentication pre-share
+ encryption 3des
+ group 2
+ hash md5
+ lifetime 60
+exit
+
+# 상대방(R1) 인증 키 설정 (비밀번호: cisco / R1 외부 IP: 1.1.2.1)
+crypto isakmp key cisco address 1.1.2.1
+
+# 보호 대상 지정 (ACL 110)
+# R1에서 GRE 패킷을 지정했으므로, R4도 GRE 패킷을 지정 (출발지 1.1.4.0 -> 목적지 1.1.2.0)
+access-list 110 permit gre 1.1.4.0 0.0.0.255 1.1.2.0 0.0.0.255
+
+# 데이터 암호화 방식 (이름: KONG / 알고리즘은 R1과 동일하게)
+crypto ipsec transform-set KONG esp-3des esp-sha-hmac
+exit
+
+# 지도(Map) 만들기
+crypto map IPSEC 10 ipsec-isakmp
+ set peer 1.1.2.1
+ set transform-set KONG
+ match address 110
+exit
+
+# 외부 인터페이스에 적용
+interface Serial1/0
+ crypto map IPSEC
+exit
+
+
+conf t
+interface Tunnel1
+ ip address 10.10.10.1 255.255.255.0
+ tunnel source 1.1.2.1           
+ tunnel destination 1.1.4.2          
+exit
+
+conf t
+interface Tunnel1
+ ip address 10.10.10.2 255.255.255.0 
+ tunnel source 1.1.4.2          
+ tunnel destination 1.1.2.1         
+exit
+
+
+ip route 1.1.1.0 255.255.255.0 tunnel 1

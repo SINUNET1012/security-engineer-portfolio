@@ -1,0 +1,13 @@
+https://github.com/GodRony/security
+
+
+터미널에서 !
+# Git 설치
+sudo apt update
+sudo apt install git
+
+# GitHub 저장소 복제
+git clone https://github.com/GodRony/security
+
+# 복제된 폴더로 이동
+cd security

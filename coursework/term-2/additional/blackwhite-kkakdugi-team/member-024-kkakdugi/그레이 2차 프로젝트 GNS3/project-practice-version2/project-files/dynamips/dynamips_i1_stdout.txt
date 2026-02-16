@@ -1,0 +1,16 @@
+cygwin warning:
+  MS-DOS style path detected: Y:\2\xEC\xB0\xA8\5. \xED\x9D\x91\xEB\xB0\xB1\xEA\xB9\x8D\xEB\x91\x90\xEA\xB8\xB0\\xEC\xA7\x80\xEC\x83\x81\xEA\xB9\x8D\xEB\x91\x90\xEA\xB8\xB0\\xEA\xB7\xB8\xEB\xA0\x88\xEC\x9D\xB4 2\xEC\xB0\xA8 \xED\x94\x84\xEB\xA1\x9C\xEC\xA0\x9D\xED\x8A\xB8 GNS3\project-practice-version2\project-files\dynamips
+  Preferred POSIX equivalent is: /cygdrive/y/2\xEC\xB0\xA8/5. \xED\x9D\x91\xEB\xB0\xB1\xEA\xB9\x8D\xEB\x91\x90\xEA\xB8\xB0/\xEC\xA7\x80\xEC\x83\x81\xEA\xB9\x8D\xEB\x91\x90\xEA\xB8\xB0/\xEA\xB7\xB8\xEB\xA0\x88\xEC\x9D\xB4 2\xEC\xB0\xA8 \xED\x94\x84\xEB\xA1\x9C\xEC\xA0\x9D\xED\x8A\xB8 GNS3/project-practice-version2/project-files/dynamips
+  CYGWIN environment variable option "nodosfilewarning" turns off this warning.
+  Consult the user's guide for more details about POSIX paths:
+    http://cygwin.com/cygwin-ug-net/using.html#using-pathnames
+Cisco Router Simulation Platform (version 0.2.17-x86/Windows stable)
+Copyright (c) 2005-2011 Christophe Fillot.
+Build date: Aug 28 2017 08:26:42
+
+Log file: writing to dynamips_i1_log.txt
+Hypervisor TCP control server started (IP 172.16.22.1 port 64967).
+Hypervisor: closing control sockets.
+Hypervisor: closing remote client connections.
+Shutdown in progress...
+Shutdown completed.

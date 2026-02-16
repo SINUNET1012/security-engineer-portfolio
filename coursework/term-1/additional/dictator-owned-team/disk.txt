@@ -1,0 +1,80 @@
+#!/bin/bash
+# Rocky Linux Disk Quota 자동 설정 스크립트
+# 실행: sudo bash auto_diskquota_setup.sh
+
+# -------------------------------
+# 1. 루트 권한 확인
+# -------------------------------
+if [ "$EUID" -ne 0 ]; then
+  echo "❌ root로 실행해야 합니다. (sudo bash $0)"
+  exit 1
+fi
+
+# -------------------------------
+# 2. 패키지 설치
+# -------------------------------
+echo "📦 quota 패키지 설치 중..."
+dnf install -y quota
+
+# -------------------------------
+# 3. 대상 파티션 확인
+# -------------------------------
+echo "💿 쿼터 적용할 마운트 지점을 입력하세요 (예: /home)"
+read -p "마운트 지점: " MOUNT_POINT
+
+# -------------------------------
+# 4. /etc/fstab 수정 (usrquota,grpquota 추가)
+# -------------------------------
+echo "🧾 /etc/fstab 수정 중..."
+cp /etc/fstab /etc/fstab.bak
+sed -i "s|\(${MOUNT_POINT}.*defaults\)|\1,usrquota,grpquota|" /etc/fstab
+
+# -------------------------------
+# 5. 재마운트 및 쿼터 초기화
+# -------------------------------
+echo "🔁 ${MOUNT_POINT} 재마운트 중..."
+mount -o remount ${MOUNT_POINT}
+
+echo "⚙️ 쿼터 데이터베이스 초기화..."
+quotacheck -cum ${MOUNT_POINT}
+quotacheck -cgum ${MOUNT_POINT}
+quotaon ${MOUNT_POINT}
+
+# -------------------------------
+# 6. 테스트용 사용자 생성
+# -------------------------------
+read -p "쿼터를 적용할 사용자 이름 입력: " USERNAME
+if id "$USERNAME" &>/dev/null; then
+    echo "✅ 사용자 '$USERNAME' 이미 존재함."
+else
+    echo "👤 사용자 '$USERNAME' 생성 중..."
+    useradd -m "$USERNAME"
+fi
+
+# -------------------------------
+# 7. 사용자 쿼터 설정
+# -------------------------------
+echo "📏 디스크 쿼터 제한값을 입력하세요."
+read -p "Soft limit (MB): " SOFT
+read -p "Hard limit (MB): " HARD
+
+# KB 단위로 변환
+SOFT_KB=$((SOFT * 1024))
+HARD_KB=$((HARD * 1024))
+
+setquota -u $USERNAME $SOFT_KB $HARD_KB 0 0 ${MOUNT_POINT}
+
+# -------------------------------
+# 8. 결과 확인
+# -------------------------------
+echo "📊 쿼터 적용 결과 확인 중..."
+repquota -as
+quota -u $USERNAME
+
+echo "✅ 디스크 쿼터 설정 완료!"
+echo "------------------------------------"
+echo "사용자: $USERNAME"
+echo "Soft limit: ${SOFT}MB"
+echo "Hard limit: ${HARD}MB"
+echo "대상 파티션: ${MOUNT_POINT}"
+echo "------------------------------------"

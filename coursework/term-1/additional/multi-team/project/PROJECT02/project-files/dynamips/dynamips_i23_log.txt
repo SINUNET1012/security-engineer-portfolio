@@ -1,0 +1,34 @@
+Oct 28 11:59:37.752 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 28 11:59:37.753 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 50519.
+Oct 28 11:59:38.231 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 28 11:59:38.233 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips 
+Oct 28 11:59:38.234 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips
+Oct 28 11:59:38.234 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\TJ\Desktop\project-files\dynamips\0bb6e083-7b99-4aee-b291-8e15ae55ab74 
+Oct 28 11:59:38.235 GENERAL: working_dir=C:\Users\TJ\Desktop\project-files\dynamips\0bb6e083-7b99-4aee-b291-8e15ae55ab74
+Oct 28 11:59:38.236 HYPERVISOR: exec_cmd: vm create R3 3 c7200 
+Oct 28 11:59:38.240 VM: VM R3 created.
+Oct 28 11:59:38.242 HYPERVISOR: exec_cmd: vm set_con_tcp_port R3 5002 
+Oct 28 11:59:38.243 HYPERVISOR: exec_cmd: c7200 get_mac_addr R3 
+Oct 28 11:59:38.243 HYPERVISOR: exec_cmd: vm get_status R3 
+Oct 28 11:59:38.244 HYPERVISOR: exec_cmd: vm slot_add_binding R3 0 0 C7200-IO-FE 
+Oct 28 11:59:38.247 HYPERVISOR: exec_cmd: vm set_ios R3 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 11:59:38.248 HYPERVISOR: exec_cmd: vm get_status R3 
+Oct 28 11:59:38.249 HYPERVISOR: exec_cmd: vm set_idle_pc R3 0x601bde04 
+Oct 28 11:59:38.250 HYPERVISOR: exec_cmd: vm set_exec_area R3 64 
+Oct 28 11:59:38.251 HYPERVISOR: exec_cmd: vm set_nvram R3 512 
+Oct 28 11:59:38.252 HYPERVISOR: exec_cmd: vm set_disk0 R3 0 
+Oct 28 11:59:38.254 HYPERVISOR: exec_cmd: vm get_status R3 
+Oct 28 11:59:38.254 HYPERVISOR: exec_cmd: vm slot_add_binding R3 1 0 PA-4T+ 
+Oct 28 11:59:38.255 HYPERVISOR: exec_cmd: vm get_status R3 
+Oct 28 11:59:38.255 HYPERVISOR: exec_cmd: vm slot_add_binding R3 2 0 PA-4E 
+Oct 28 11:59:38.347 HYPERVISOR: exec_cmd: vm set_ios R3 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 11:59:41.269 HYPERVISOR: exec_cmd: vm set_ios R3 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 28 12:01:59.843 HYPERVISOR: exec_cmd: nio create_udp udp-1aa90846-b3d4-4068-9c41-ebd9ffc4bf46 10010 127.0.0.1 10011 
+Oct 28 12:02:00.171 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R3 1 0 udp-1aa90846-b3d4-4068-9c41-ebd9ffc4bf46 
+Oct 28 12:02:00.173 HYPERVISOR: exec_cmd: vm get_status R3 
+Oct 28 12:04:11.193 HYPERVISOR: exec_cmd: vm set_ghost_status R3 2 
+Oct 28 12:04:11.193 HYPERVISOR: exec_cmd: vm set_ghost_file R3 C:\Users\TJ\Desktop\project-files\dynamips\c7200-adventerprisek9-mz.124-22.T.BIN-256.ghost 
+Oct 28 12:04:11.194 HYPERVISOR: exec_cmd: vm get_status R3 
+Oct 28 12:04:11.199 HYPERVISOR: exec_cmd: vm set_config R3 configs\i3_startup-config.cfg 
+Oct 28 12:04:11.200 HYPERVISOR: exec_cmd: vm start R3 
+Oct 28 12:04:41.530 HYPERVISOR: exec_cmd: vm extract_config R3 

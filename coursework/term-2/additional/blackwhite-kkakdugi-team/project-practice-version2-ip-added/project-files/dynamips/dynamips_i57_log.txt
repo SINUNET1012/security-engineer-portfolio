@@ -1,0 +1,26 @@
+Feb 08 14:42:40.808 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Feb 08 14:42:40.809 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 62557.
+Feb 08 14:42:41.231 HYPERVISOR: exec_cmd: hypervisor version 
+Feb 08 14:42:41.233 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips 
+Feb 08 14:42:41.233 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\project-practice-version2 IP주소부분 추가\project-files\dynamips
+Feb 08 14:42:41.233 HYPERVISOR: exec_cmd: frsw create FRSW1 
+Feb 08 14:44:57.713 HYPERVISOR: exec_cmd: nio create_udp udp-5beba753-570f-4545-a6f7-8fee03b28e61 10507 172.16.22.1 10506 
+Feb 08 14:44:58.217 HYPERVISOR: exec_cmd: nio create_udp udp-08b3ea7e-32ce-4bfe-a537-ecfa78f4dfc2 10510 172.16.22.1 10511 
+Feb 08 14:44:58.218 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-5beba753-570f-4545-a6f7-8fee03b28e61 101 udp-08b3ea7e-32ce-4bfe-a537-ecfa78f4dfc2 202 
+Feb 08 14:44:58.227 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-08b3ea7e-32ce-4bfe-a537-ecfa78f4dfc2 202 udp-5beba753-570f-4545-a6f7-8fee03b28e61 101 
+Feb 08 14:44:58.741 HYPERVISOR: exec_cmd: nio create_udp udp-315266f1-a15a-4d36-8909-b8712896bd5e 10514 172.16.22.1 10515 
+Feb 08 14:44:58.742 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-08b3ea7e-32ce-4bfe-a537-ecfa78f4dfc2 102 udp-315266f1-a15a-4d36-8909-b8712896bd5e 203 
+Feb 08 14:44:58.748 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-315266f1-a15a-4d36-8909-b8712896bd5e 203 udp-08b3ea7e-32ce-4bfe-a537-ecfa78f4dfc2 102 
+Feb 08 14:44:59.246 HYPERVISOR: exec_cmd: nio create_udp udp-c0f2f5c8-54d2-4529-a8c2-eb484f45a7ee 10518 172.16.22.1 10519 
+Feb 08 14:44:59.247 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-315266f1-a15a-4d36-8909-b8712896bd5e 103 udp-c0f2f5c8-54d2-4529-a8c2-eb484f45a7ee 204 
+Feb 08 14:44:59.270 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-c0f2f5c8-54d2-4529-a8c2-eb484f45a7ee 204 udp-315266f1-a15a-4d36-8909-b8712896bd5e 103 
+Feb 08 14:45:01.980 HYPERVISOR: exec_cmd: nio create_udp udp-2a6fe6ed-7670-4256-802a-d519ab0401cb 10522 172.16.22.1 10523 
+Feb 08 14:45:01.981 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-c0f2f5c8-54d2-4529-a8c2-eb484f45a7ee 104 udp-2a6fe6ed-7670-4256-802a-d519ab0401cb 205 
+Feb 08 14:45:02.007 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-2a6fe6ed-7670-4256-802a-d519ab0401cb 205 udp-c0f2f5c8-54d2-4529-a8c2-eb484f45a7ee 104 
+Feb 08 14:45:04.770 HYPERVISOR: exec_cmd: nio create_udp udp-9aae0e72-c124-441a-b7e4-a789afee2e8c 10526 172.16.22.1 10527 
+Feb 08 14:45:04.771 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-2a6fe6ed-7670-4256-802a-d519ab0401cb 105 udp-9aae0e72-c124-441a-b7e4-a789afee2e8c 206 
+Feb 08 14:45:04.774 HYPERVISOR: exec_cmd: frsw create_vc FRSW1 udp-9aae0e72-c124-441a-b7e4-a789afee2e8c 206 udp-2a6fe6ed-7670-4256-802a-d519ab0401cb 105 
+Feb 08 20:35:22.533 HYPERVISOR: exec_cmd: frsw delete FRSW1 
+Feb 08 20:35:28.007 HYPERVISOR: exec_cmd: hypervisor stop 
+Feb 08 20:35:28.425 HYPERVISOR: Stopped.
+Feb 08 20:35:28.425 GENERAL: reset done.

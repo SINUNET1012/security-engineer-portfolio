@@ -1,0 +1,39 @@
+Oct 29 18:07:03.215 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 29 18:07:03.217 HYPERVISOR: Started on IP = 172.16.26.1, TCP port = 50746.
+Oct 29 18:07:03.333 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 29 18:07:03.334 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips 
+Oct 29 18:07:03.335 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips
+Oct 29 18:07:03.335 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips\6e578825-e165-4af4-80a8-6bf4f3a474e9 
+Oct 29 18:07:03.336 GENERAL: working_dir=Y:\4.여러명\1차 프로젝트\네트워크\team_project_new\project-files\dynamips\6e578825-e165-4af4-80a8-6bf4f3a474e9
+Oct 29 18:07:03.336 HYPERVISOR: exec_cmd: vm create R5 17 c7200 
+Oct 29 18:07:03.344 VM: VM R5 created.
+Oct 29 18:07:03.345 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5039 
+Oct 29 18:07:03.345 HYPERVISOR: exec_cmd: c7200 get_mac_addr R5 
+Oct 29 18:07:03.345 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 29 18:07:03.345 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-FE 
+Oct 29 18:07:03.346 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:07:03.346 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 29 18:07:03.347 HYPERVISOR: exec_cmd: vm set_idle_pc R5 0x601bde04 
+Oct 29 18:07:03.347 HYPERVISOR: exec_cmd: vm set_exec_area R5 64 
+Oct 29 18:07:03.348 HYPERVISOR: exec_cmd: vm set_nvram R5 512 
+Oct 29 18:07:03.349 HYPERVISOR: exec_cmd: vm set_disk0 R5 0 
+Oct 29 18:07:03.350 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 29 18:07:03.350 HYPERVISOR: exec_cmd: vm slot_add_binding R5 1 0 PA-4T+ 
+Oct 29 18:07:03.350 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 29 18:07:03.350 HYPERVISOR: exec_cmd: vm slot_add_binding R5 2 0 PA-4E 
+Oct 29 18:07:03.755 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:07:04.887 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:07:14.534 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:07:39.937 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:07:45.095 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:13:32.930 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:24:36.970 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:31:32.944 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:53:33.387 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Oct 29 18:54:00.385 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 29 18:54:00.441 HYPERVISOR: exec_cmd: vm extract_config R5 
+Oct 29 18:54:00.443 HYPERVISOR: exec_cmd: vm delete R5 
+Oct 29 18:54:00.444 VM: VM R5 destroyed.
+Oct 29 18:54:00.693 HYPERVISOR: exec_cmd: hypervisor stop 
+Oct 29 18:54:00.860 HYPERVISOR: Stopped.
+Oct 29 18:54:00.861 GENERAL: reset done.

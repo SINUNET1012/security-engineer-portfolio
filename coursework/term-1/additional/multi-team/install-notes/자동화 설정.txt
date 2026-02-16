@@ -1,0 +1,36 @@
+vim a.sh
+
+echo "초기화를 시작합니다."
+
+echo "1. 현재 IP를 확인합니다."
+ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+
+echo "2. 게이트 웨이와 ping 테스트를 실행합니다."
+ping -c 5 172.16.0.1
+
+echo "3. DNS Server 주소 확인."
+cat/etc/resolv.conf
+
+echo "4. Repository 설치"
+sudo dnf install epel-release -y
+sudo dnf install https://rpms.remirepo.net/enterprise/remi-release-9.rpm -y
+
+echo "5. 짜투리 패키지 설치"
+dnf -y install vim wget net-tools
+
+echo "6. Miniconda3 설치"
+cd ~
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh
+
+echo “export PATH=$PATH:/root/miniconda3/bin/” >> /etc/bashrc
+source /etc/bashrc
+
+echo "7. jupyter notebook 설치"
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+conda install jupyter -y
+
+echo "8. jupyter notebook 실행 테스트"
+jupyter notebook --allow-root --ip=172.16.26.12 --port=8000

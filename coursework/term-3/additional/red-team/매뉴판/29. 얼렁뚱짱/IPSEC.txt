@@ -1,0 +1,77 @@
+VPN (NAT + IPSEC)
+(R1 기준)
+1. 개념
+ 보안의 3요소와 '도구 박스'데이터를 안전하게 보내기 위해 우리가 준비해야 할 재료들.
+
+기밀성 (Confidentiality): 남이 못 읽게 암호를 거는 것.
+순위: DES < 3DES < AES (오른쪽으로 갈수록 강력함)
+
+무결성 (Integrity): 데이터가 오는 길에 바뀌지 않았는지 확인하는 것.
+순위: MD5 < SHA-1 < SHA-2 (오른쪽으로 갈수록 안전함)
+
+인증 (Authentication): 상대방 라우터가 진짜 내 파트너가 맞는지 확인하는 것.
+방법: Pre-Shared Key (미리 약속된 암호), RSA (디지털 인증서)
+
+
+2. 개념
+ IPSEC 구축의 2단계 (건물 짓기 흐름)IPSEC은 한 번에 터널을 뚫지 않고, 관리용 통로를 먼저 만든 뒤 그 안에 실제 데이터용 통로를 만듦.
+
+1단계: IKE Phase 1 (ISAKMP SA): "우리 대화하기 전에 서로 믿을 수 있는지 확인하고, 앞으로 쓸 암호 키를 정하자"는 단계.
+
+2단계: IKE Phase 2 (IPSEC SA): "이제 믿음이 생겼으니, 실제로 너랑 나랑 주고받을 데이터를 어떤 방식으로 포장할지 정하자"는 단계.
+
+
+3. 실습
+ 1단계: 기본 인터페이스 및 NAT 설정패킷이 나갈 수 있는 길을 만들고, 내부 사설 IP를 인터넷용으로 변환해주는 기초 공사.
+
+# 내부 인터페이스 (Inside)
+interface FastEthernet0/0
+ ip address 10.1.1.1 255.255.255.0
+ ip nat inside
+ no sh
+
+# 외부 인터페이스 (Outside)
+interface Serial1/0
+ ip address 192.168.1.1 255.255.255.0
+ ip nat outside
+ no sh
+exit
+
+# NAT 설정 (내부 사설망 인터넷 연결용)
+access-list 10 permit 10.1.1.0 0.0.0.255
+ip nat pool ul 192.168.1.10 192.168.1.20 netmask 255.255.255.0
+ip nat inside source list 10 pool ul overload
+4. 실습
+2단계: IPSEC Phase 1 & 2 설정본격적으로 암호화 정책을 세우고 실제 데이터를 포장하는 약속을 함
+[Phase 1] 관리 채널 약속 (Policy 10)
+crypto isakmp policy 10
+ authentication pre-share
+ encryption 3des
+ group 2
+ hash md5
+ lifetime 60
+exit
+
+# [Phase 1] 상대방(R4)과 공유할 비밀번호 (비밀번호: cisco / 상대 외부IP: 1.1.4.2)
+crypto isakmp key cisco address 1.1.4.2
+
+# [Phase 2] 보호할 트래픽 지정 (ACL 110)
+# 우리쪽(1.1.1.0)에서 상대쪽(1.1.5.0)으로 가는 데이터만 보호함
+access-list 110 permit ip 1.1.1.0 0.0.0.255 1.1.5.0 0.0.0.255
+
+# [Phase 2] 실제 데이터 포장 방식 (이름: KONG)
+crypto ipsec transform-set KONG esp-3des esp-sha-hmac
+exit
+5. [실습] 3단계: 마무리 (Crypto Map 적용)설정된 모든 정책을 하나로 묶어 인터페이스에 직접 걸어주는 최종 단계.
+## 지도(Map) 만들기
+crypto map MY_VPN 10 ipsec-isakmp
+ set peer 1.1.4.2
+ set transform-set KONG
+ match address 110
+exit
+
+# 외부와 통하는 인터페이스에 지도(Map)를 걸어줌
+interface Serial1/0
+ crypto map MY_VPN
+exit
+🔍 설정 확인 및 모니터링 테이블설정이 끝난 후 터널이 잘 작동하는지 확인하는 필수 명령어들입니다.명령어용도show ip nat translationsNAT 변환이 정상적으로 일어나고 있는지 확인show crypto isakmp sa1단계 관리 터널 성공 여부 확인 (QM_IDLE 상태여야 함)show crypto ipsec sa2단계 데이터 터널을 통해 실제 암호화 패킷이 오가는지 확인ping 1.1.5.x source 1.1.1.x터널을 뚫기 위해 실제 트래픽을 발생시켜보는 테스트

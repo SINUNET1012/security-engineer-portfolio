@@ -1,0 +1,29 @@
+Jan 13 12:00:30.117 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 13 12:00:30.119 HYPERVISOR: Started on IP = 172.16.22.1, TCP port = 64989.
+Jan 13 12:00:30.600 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 13 12:00:30.601 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips 
+Jan 13 12:00:30.601 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips
+Jan 13 12:00:30.601 HYPERVISOR: exec_cmd: hypervisor working_dir Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\513acb78-e28b-4d59-ac48-f09f6e4f0a30 
+Jan 13 12:00:30.602 GENERAL: working_dir=Y:\2차\5. 흑백깍두기\지상깍두기\그레이 2차 프로젝트 GNS3\project-practice-version2\project-files\dynamips\513acb78-e28b-4d59-ac48-f09f6e4f0a30
+Jan 13 12:00:30.602 HYPERVISOR: exec_cmd: vm create R3 3 c7200 
+Jan 13 12:00:30.605 VM: VM R3 created.
+Jan 13 12:00:30.606 HYPERVISOR: exec_cmd: vm set_con_tcp_port R3 5143 
+Jan 13 12:00:30.606 HYPERVISOR: exec_cmd: c7200 get_mac_addr R3 
+Jan 13 12:00:30.606 HYPERVISOR: exec_cmd: vm get_status R3 
+Jan 13 12:00:30.607 HYPERVISOR: exec_cmd: vm slot_add_binding R3 0 0 C7200-IO-FE 
+Jan 13 12:00:30.608 HYPERVISOR: exec_cmd: vm set_disk0 R3 0 
+Jan 13 12:00:30.608 HYPERVISOR: exec_cmd: vm set_exec_area R3 64 
+Jan 13 12:00:30.609 HYPERVISOR: exec_cmd: vm get_status R3 
+Jan 13 12:00:30.609 HYPERVISOR: exec_cmd: vm set_idle_pc R3 0x60645960 
+Jan 13 12:00:30.610 HYPERVISOR: exec_cmd: vm set_ios R3 C:/Users/TJ/GNS3/images/IOS/c7200-adventerprisek9-mz.124-22.T.BIN 
+Jan 13 12:00:30.610 HYPERVISOR: exec_cmd: c7200 set_mac_addr R3 ca03.d52c.0000 
+Jan 13 12:00:30.611 HYPERVISOR: exec_cmd: vm set_nvram R3 512 
+Jan 13 12:00:30.611 HYPERVISOR: exec_cmd: vm get_status R3 
+Jan 13 12:00:30.611 HYPERVISOR: exec_cmd: vm slot_add_binding R3 1 0 PA-4T+ 
+Jan 13 12:00:30.612 HYPERVISOR: exec_cmd: vm get_status R3 
+Jan 13 12:00:30.612 HYPERVISOR: exec_cmd: vm slot_add_binding R3 2 0 PA-8T 
+Jan 13 12:00:30.612 HYPERVISOR: exec_cmd: vm get_status R3 
+Jan 13 12:00:30.613 HYPERVISOR: exec_cmd: vm slot_add_binding R3 3 0 PA-4E 
+Jan 13 12:00:49.831 HYPERVISOR: Stopped.
+Jan 13 12:00:49.834 VM: VM R3 destroyed.
+Jan 13 12:00:54.854 GENERAL: reset done.

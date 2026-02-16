@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Traffic Mirroring - SPAN, RSPAN, ERSPAN</title>
+    <!-- 귀여운 폰트 로드: Jua(제목용), Gowun Dodum(본문용 - 부드러운 돋움), Gamja Flower(손글씨 느낌 포인트) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gowun+Dodum&family=Jua&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CORE SETUP & THEME */
+        :root {
+            --bg-color: #fff0f5; /* Lavender Blush */
+            --slide-bg: #ffffff;
+            --text-main: #5d5d5d;
+            --text-accent: #ff8fab; /* Pop Pink */
+            --primary-pastel: #ffb7b2;
+            --secondary-pastel: #b5ead7; /* Mint */
+            --tertiary-pastel: #c7ceea; /* Periwinkle */
+            --code-bg: #282a36;
+            --border-radius-lg: 30px;
+            --border-radius-sm: 15px;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); /* Soft Cloud Gradient */
+            display: grid;
+            gap: 40px;
+            grid-template-columns: 1fr;
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 0;
+            place-items: center;
+            font-family: 'Gowun Dodum', sans-serif; /* 기본 폰트를 고운돋움으로 변경 */
+            color: var(--text-main);
+        }
+
+        /* 2. SLIDE CONTAINER - 몽글몽글 스타일 */
+        .slide-container {
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 
+                0 10px 25px rgba(162, 194, 250, 0.5), 
+                inset 0 0 0 8px rgba(255, 255, 255, 0.5); /* 이중 테두리 느낌 */
+            display: flex;
+            flex-direction: column;
+            height: 720px;
+            justify-content: center;
+            overflow: hidden;
+            padding: 50px;
+            position: relative;
+            width: 1280px;
+            border: 4px solid #fff;
+        }
+
+        /* Decorative blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        .blob-1 { top: -50px; left: -50px; width: 200px; height: 200px; background: var(--secondary-pastel); filter: blur(40px); }
+        .blob-2 { bottom: -50px; right: -50px; width: 250px; height: 250px; background: var(--primary-pastel); filter: blur(50px); }
+
+        /* 3. TYPOGRAPHY - 귀여운 폰트 적용 */
+        h1, h2, h3 { margin: 0; font-family: 'Jua', sans-serif; position: relative; z-index: 1; }
+        
+        h1 { 
+            font-size: 72px; 
+            line-height: 1.1; 
+            color: #6c5ce7; 
+            text-shadow: 3px 3px 0px #a29bfe; 
+        }
+        
+        h2.slide-title { 
+            font-size: 48px; 
+            margin-bottom: 30px; 
+            width: 100%; 
+            color: #ff7675;
+            border-bottom: 4px dashed #dfe6e9; /* 점선 밑줄 */
+            padding-bottom: 15px; 
+            text-align: center;
+        }
+
+        h3 { font-size: 32px; color: #74b9ff; margin-bottom: 15px; }
+        
+        p, li { 
+            font-size: 19px; /* 고운돋움은 살짝 작게 느껴질 수 있어 크기를 1px 키움 */
+            line-height: 1.7; 
+            color: #636e72; 
+            margin-bottom: 10px; 
+            font-family: 'Gowun Dodum', sans-serif; /* 부드러운 고운돋움 적용 */
+            font-weight: 400;
+        }
+
+        /* 4. LAYOUT UTILITIES */
+        .content-area { display: flex; flex-direction: column; width: 100%; flex-grow: 1; justify-content: center; z-index: 1; }
+        
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; align-items: center; height: 100%; }
+        
+        /* Card Style for Columns */
+        .two-column.tiled > div { 
+            background: #ffffff; 
+            padding: 35px; 
+            border-radius: var(--border-radius-sm); 
+            border: 2px solid #f0f0f0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+        }
+
+        /* Image Handling - 폴라로이드 느낌 */
+        .image-wrapper { 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            border-radius: var(--border-radius-sm); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #fff;
+            border: 8px solid #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+        .contain-img img { object-fit: contain; }
+
+        /* Tiled Content - 카드 놀이 느낌 */
+        .tiled-content { display: flex; gap: 30px; width: 100%; height: 100%; align-items: stretch; }
+        .tile { 
+            flex: 1; 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 20px; 
+            border: 3px solid #f1f2f6; 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .tile:hover { transform: translateY(-10px); }
+
+        .tile .icon { 
+            font-size: 48px; 
+            color: #fff; 
+            margin-bottom: 20px; 
+            background: #fd79a8; /* Cute Pink Icon Bg */
+            width: 90px; 
+            height: 90px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 50%; 
+            box-shadow: 0 4px 10px rgba(253, 121, 168, 0.4);
+        }
+        .tile:nth-child(2) .icon { background: #00cec9; box-shadow: 0 4px 10px rgba(0, 206, 201, 0.4); }
+        .tile:nth-child(3) .icon { background: #fdcb6e; box-shadow: 0 4px 10px rgba(253, 203, 110, 0.4); }
+
+        /* Terminal / Code Block Styling - 귀여운 맥 윈도우 스타일 */
+        .terminal-window {
+            background-color: #2d3436;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            overflow: hidden;
+            height: 100%;
+            max-height: 480px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            background: #dfe6e9;
+            padding: 10px 15px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background: #ff7675; }
+        .dot.yellow { background: #fdcb6e; }
+        .dot.green { background: #00b894; }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            color: #f1f2f6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            flex-grow: 1;
+        }
+
+        .term-comment { color: #fab1a0; font-style: italic; font-family: 'Gamja Flower', cursive; } /* 주석도 귀엽게 */
+        .term-command { color: #81ecec; font-weight: bold; }
+        .term-prompt { color: #a29bfe; }
+        .term-output { color: #b2bec3; }
+
+        /* List Styling */
+        ul { padding-left: 10px; margin: 0; }
+        li { 
+            margin-bottom: 12px; 
+            position: relative; 
+            list-style: none; 
+            padding-left: 25px;
+            color: #555;
+        }
+        li::before { 
+            content: "☁️"; /* 구름 불릿 */
+            font-size: 16px;
+            position: absolute; 
+            left: 0; 
+            top: 2px;
+        }
+
+        /* Table - 스티커 메모 느낌 */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
+        th { 
+            padding: 15px; 
+            text-align: left; 
+            color: #6c5ce7; 
+            font-family: 'Jua', sans-serif; 
+            font-size: 22px;
+            border-bottom: 2px solid #a29bfe;
+        }
+        td { 
+            background: #fff; 
+            padding: 15px; 
+            border: 1px solid #eee;
+            color: #2d3436;
+            font-family: 'Gowun Dodum', sans-serif; /* 표 내용도 고운돋움으로 */
+            font-size: 19px;
+        }
+        tr td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
+        /* Title Slide Specific */
+        .title-layout { text-align: center; z-index: 2; }
+        .tagline { color: #636e72; font-size: 28px; margin-top: 20px; font-family: 'Gowun Dodum', sans-serif; font-weight: 400; }
+        .author { margin-top: 50px; font-size: 22px; color: #fd79a8; font-family: 'Jua', sans-serif; background: #fff; padding: 10px 20px; border-radius: 20px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .title-bg-icon {
+            font-size: 150px;
+            color: #74b9ff;
+            opacity: 0.2;
+            position: absolute;
+            z-index: 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 다운로드 버튼 스타일 */
+        .download-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #ff7675;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(255, 118, 117, 0.4);
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid white;
+        }
+        .download-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            background-color: #fab1a0;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title Slide -->
+<div class="slide-container" id="slide1">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <i class="fa-solid fa-cloud title-bg-icon" style="top: 100px; left: 150px;"></i>
+    <i class="fa-solid fa-network-wired title-bg-icon" style="bottom: 100px; right: 150px; color: #ff7675; font-size: 120px;"></i>
+    
+    <div class="title-layout">
+        <h1>네트워크 트래픽 미러링<br><span style="color: #ff7675;">완전 정복하기!</span></h1>
+        <p class="tagline">SPAN, RSPAN, ERSPAN 개념부터 GNS3 실습까지 ☁️</p>
+        <div class="author">작성자: [발표자 이름/소속]</div>
+    </div>
+</div>
+
+<!-- Slide 2: Traffic Mirroring Overview -->
+<div class="slide-container" id="slide2">
+    <div class="blob blob-1"></div>
+    <h2 class="slide-title">트래픽 미러링이 뭐에요? 🤔</h2>
+    <div class="content-area">
+        <div class="two-column tiled">
+            <div>
+                <h3><i class="fa-solid fa-network-wired" style="color: #74b9ff;"></i> 개념 잡기</h3>
+                <ul>
+                    <li>네트워크 장비(스위치/라우터)를 지나가는 데이터를 <strong>복사</strong>해서 다른 곳으로 보내는 기술이에요.</li>
+                    <li>흔히 <strong>'포트 미러링(Port Mirroring)'</strong>이라고도 불러요.</li>
+                    <li><strong>핵심 포인트:</strong> 원래 데이터는 그대로 두고, '복사본'만 쓱- 분석 장비로 보내는거죠!</li>
+                </ul>
+            </div>
+            <div>
+                <h3><i class="fa-solid fa-bullseye" style="color: #ff7675;"></i> 왜 할까요?</h3>
+                <ul>
+                    <li><strong>모니터링:</strong> 네트워크가 느려지거나 끊기지 않게 감시해요.</li>
+                    <li><strong>장애 해결:</strong> "왜 안되지?" 싶을 때 패킷을 잡아서 뜯어봐요 (Wireshark).</li>
+                    <li><strong>보안:</strong> 나쁜 해커가 침입했는지 감시해요 (IDS/IPS).</li>
+                    <li><strong>기록:</strong> 누가 무엇을 했는지 기록으로 남겨둬요.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Three Protocols -->
+<div class="slide-container" id="slide3">
+    <h2 class="slide-title">주요 미러링 삼총사 🕵️‍♀️</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-share-nodes"></i></div>
+                <h3>1. SPAN</h3>
+                <p style="color: #b2bec3; font-size: 16px;">Switched Port Analyzer</p>
+                <p><strong>동네 친구 (Local).</strong> 같은 스위치 안에서 트래픽을 복사해서 옆 포트로 넘겨줘요.</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-globe"></i></div>
+                <h3>2. RSPAN</h3>
+                <p style="color: #b2bec3; font-size: 16px;">Remote SPAN</p>
+                <p><strong>옆 동네 친구 (L2 Remote).</strong> 스위치가 서로 다를 때 사용해요. 트렁크(Trunk)를 타고 이동해요!</p>
+            </div>
+            <div class="tile">
+                <div class="icon"><i class="fa-solid fa-cloud-arrow-right"></i></div>
+                <h3>3. ERSPAN</h3>
+                <p style="color: #b2bec3; font-size: 16px;">Encapsulated Remote SPAN</p>
+                <p><strong>해외 친구 (L3 Remote).</strong> IP 네트워크를 타고 멀~리 있는 곳까지 캡슐에 싸서 보내줘요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Deep Dive SPAN -->
+<div class="slide-container" id="slide4">
+    <div class="blob blob-2"></div>
+    <h2 class="slide-title">자세히 보기: SPAN (Local)</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h3>이론 뽀개기</h3>
+                <ul>
+                    <li>가장 기본적이고 쉬운 방법이에요.</li>
+                    <li><strong>동작:</strong> Layer 2 (같은 스위치 안에서만).</li>
+                    <li><strong>Source:</strong> 감시하고 싶은 포트나 VLAN. (들어오는거? 나가는거? 둘다? 선택 가능!)</li>
+                    <li><strong>Destination:</strong> 분석 장비(Sniffer)가 연결된 포트.</li>
+                    <li><strong>주의:</strong> 목적지 포트는 감시용으로만 쓰여서 일반 인터넷은 안돼요 🙅‍♀️</li>
+                </ul>
+            </div>
+            <div class="image-wrapper contain-img">
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/13725484270299154540" alt="Cisco Switch Port Closeup">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Lab 1 Topology -->
+<div class="slide-container" id="slide5">
+    <h2 class="slide-title">[실습 1] GNS3로 SPAN 해보기! 🛠️</h2>
+    <div class="content-area">
+        <div class="two-column">
+             <div class="image-wrapper contain-img" style="background: #fff; border: 4px solid #fab1a0;">
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/2935026634214103863" alt="Star Topology Diagram">
+            </div>
+            <div>
+                <h3>실습 시나리오</h3>
+                <p><strong>준비물:</strong> L2 스위치 1대 (SW1), PC 2대, Sniffer</p>
+                
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    </div>
+                    <div class="terminal-body">
+PC1 (Source) -> SW1 (Gi0/1)
+PC2 (Target) -> SW1 (Gi0/2)
+Sniffer     -> SW1 (Gi0/3)
+                    </div>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>목표:</strong> PC1이랑 PC2가 대화하는 내용을 몰래(?) 복사해서 Gi0/3에 있는 Sniffer에게 보내자!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Lab 1 CLI -->
+<div class="slide-container" id="slide6">
+    <h2 class="slide-title">[실습 1] 명령어 입력하기 (Cisco IOS)</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h3>설정 순서</h3>
+                <ol>
+                    <li>혹시 모를 기존 설정 지우기</li>
+                    <li><strong>누구를 감시할까?</strong> (Source 설정)</li>
+                    <li><strong>어디로 보낼까?</strong> (Destination 설정)</li>
+                    <li>잘 됐나 확인하기 (Ping & Wireshark)</li>
+                </ol>
+                <p style="margin-top: 20px; background: #fff0f5; padding: 10px; border-radius: 10px; color: #ff7675;">⚠️ 목적지 포트는 설정하면 인터넷이 끊기니 놀라지 마세요!</p>
+            </div>
+            
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    <span style="font-size: 12px; color: #636e72; margin-left: 10px;">Switch-Terminal</span>
+                </div>
+                <div class="terminal-body">
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 1. 기존꺼 지우기</span>
+<span class="term-prompt">SW1(config)#</span> no monitor session 1
+
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 2. 소스 설정 (Gi0/1 양방향 감시)</span>
+<span class="term-prompt">SW1(config)#</span> monitor session 1 source interface Gi0/1 both
+
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 3. 목적지 설정 (Sniffer 쪽)</span>
+<span class="term-prompt">SW1(config)#</span> monitor session 1 destination interface Gi0/3
+
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 4. 잘 들어갔나 확인</span>
+<span class="term-prompt">SW1#</span> show monitor session 1
+Session 1
+---------
+Type                   : Local Session
+Source Ports           :
+    Both               : Gi0/1
+Destination Ports      : Gi0/3
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Deep Dive RSPAN -->
+<div class="slide-container" id="slide7">
+    <div class="blob blob-1"></div>
+    <div class="content-container" style="display: flex; gap: 40px; align-items: center; height: 100%;">
+        <div style="flex: 1;">
+            <h2 class="slide-title" style="text-align: left;">자세히 보기: RSPAN</h2>
+            <h3>Remote SPAN (멀리 있는 친구)</h3>
+            <p>스위치가 서로 떨어져 있을 때 사용하는 L2 미러링 기술이에요.</p>
+            <ul style="margin-top: 20px;">
+                <li><strong>핵심 준비물:</strong> 스위치 사이를 연결하는 트렁크(Trunk) 선.</li>
+                <li><strong>RSPAN VLAN:</strong> 미러링 데이터 전용 택배 트럭 🚚 (일반 데이터는 못 타요).</li>
+                <li><strong>구성요소:</strong> 보내는 애(Source), 중간 전달자(Intermediate), 받는 애(Destination).</li>
+            </ul>
+        </div>
+        <div class="image-wrapper" style="flex: 1; height: 400px; transform: rotate(3deg);">
+            <img src="http://googleusercontent.com/image_collection/image_retrieval/3547090280576314421" alt="Switches connected via trunk">
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Lab 2 Topology -->
+<div class="slide-container" id="slide8">
+    <h2 class="slide-title">[실습 2] GNS3로 RSPAN 해보기! 🔧</h2>
+    <div class="content-area">
+        <div class="two-column">
+             <div class="image-wrapper contain-img" style="background: #fff; border: 4px solid #74b9ff;">
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/3547090280576314421" alt="Trunk Link Diagram">
+            </div>
+            <div>
+                <h3>토폴로지 및 시나리오</h3>
+                <p><strong>장비:</strong> 스위치 2대 (SW1이 보내고, SW2가 받고), PC, Sniffer</p>
+                
+                <div class="terminal-window" style="max-height: 200px;">
+                    <div class="terminal-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="terminal-body">
+PC1 (Source) -> SW1 (Gi0/1)
+SW1 (Gi0/0) <-> SW2 (Gi0/0) [트렁크 연결!]
+Sniffer     -> SW2 (Gi0/2)
+                    </div>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>미션:</strong> SW1의 데이터를 복사해서, <strong>VLAN 999번 트럭</strong>에 태워 SW2로 보낸 뒤 Sniffer에게 전달하라!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Lab 2 CLI Source -->
+<div class="slide-container" id="slide9">
+    <h2 class="slide-title">[실습 2] RSPAN - VLAN & Source 설정</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h3>1. RSPAN VLAN 만들기 (모든 스위치에!)</h3>
+                <p>일반 VLAN이 아니라 <code>remote-span</code>이라고 꼭 알려줘야 해요.</p>
+                <div class="terminal-window" style="height: 150px; margin-bottom: 20px;">
+                    <div class="terminal-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="terminal-body">
+<span class="term-prompt">SW(config)#</span> vlan 999
+<span class="term-prompt">SW(config-vlan)#</span> name RSPAN_VLAN
+<span class="term-prompt">SW(config-vlan)#</span> remote-span  <span class="term-comment">! 중요!!</span>
+                    </div>
+                </div>
+                
+                <h3>2. 보내는 스위치 (SW1)</h3>
+                <p>목적지를 포트가 아닌 <strong>Remote VLAN</strong>으로 설정해요.</p>
+            </div>
+            
+            <div class="terminal-window">
+                <div class="terminal-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <div class="terminal-body">
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 소스 포트 지정</span>
+<span class="term-prompt">SW1(config)#</span> monitor session 1 source interface Gi0/1 both
+
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 목적지는 RSPAN VLAN 999번!</span>
+<span class="term-prompt">SW1(config)#</span> monitor session 1 destination remote vlan 999
+
+<span class="term-prompt">SW1(config)#</span> <span class="term-comment">! 트렁크 확인 (VLAN 999 지나가게)</span>
+<span class="term-prompt">SW1(config)#</span> interface Gi0/0
+<span class="term-prompt">SW1(config-if)#</span> switchport mode trunk
+<span class="term-prompt">SW1(config-if)#</span> switchport trunk allowed vlan add 999
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Lab 2 CLI Destination -->
+<div class="slide-container" id="slide10">
+    <h2 class="slide-title">[실습 2] RSPAN - 받는 스위치 설정</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                <h3>3. 받는 스위치 (SW2)</h3>
+                <p>이번에는 소스가 <strong>Remote VLAN</strong>이 돼요. (트럭에서 짐 내리기)</p>
+                <ul>
+                    <li>트렁크 타고 온 VLAN 999 데이터를 꺼내요.</li>
+                    <li>최종적으로 Sniffer가 있는 포트(Gi0/2)로 보내요.</li>
+                </ul>
+                <h3 style="margin-top: 20px; color: #fd79a8;">확인하기</h3>
+                <p>Wireshark를 보면 VLAN 태그가 떼어진 깨끗한 원본 패킷이 보여야 성공!</p>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                <div class="terminal-body">
+<span class="term-prompt">SW2(config)#</span> <span class="term-comment">! 소스는 RSPAN VLAN 999번</span>
+<span class="term-prompt">SW2(config)#</span> monitor session 1 source remote vlan 999
+
+<span class="term-prompt">SW2(config)#</span> <span class="term-comment">! 목적지는 실제 포트</span>
+<span class="term-prompt">SW2(config)#</span> monitor session 1 destination interface Gi0/2
+
+<span class="term-prompt">SW2#</span> show monitor session 1
+Session 1
+---------
+Type                   : Remote Destination Session
+Source RSPAN VLANs     : 999
+Destination Ports      : Gi0/2
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Deep Dive ERSPAN -->
+<div class="slide-container" id="slide11">
+    <div class="blob blob-2"></div>
+    <h2 class="slide-title">자세히 보기: ERSPAN (캡슐화) 💊</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+             <div class="tile">
+                <div class="icon" style="background: #a29bfe;"><i class="fa-solid fa-layer-group"></i></div>
+                <h3>L3 라우팅</h3>
+                <p>IP 주소만 있으면 지구 반대편으로도 보낼 수 있어요! 거리 제약 끝판왕.</p>
+            </div>
+            <div class="tile">
+                <div class="icon" style="background: #81ecec;"><i class="fa-solid fa-box-open"></i></div>
+                <h3>GRE 캡슐화</h3>
+                <p>패킷을 GRE라는 캡슐에 넣고, 새 우편주소(IP)를 붙여서 보내요.</p>
+            </div>
+             <div class="tile">
+                <div class="icon" style="background: #ff7675;"><i class="fa-solid fa-server"></i></div>
+                <h3>단점?</h3>
+                <p>포장이(Header) 추가돼서 데이터가 커지고, 장비가 포장하느라 힘들어해요(CPU 부하).</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Lab 3 ERSPAN Concept -->
+<div class="slide-container" id="slide12">
+    <h2 class="slide-title">[개념 실습] ERSPAN 그림으로 이해하기 🎨</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div>
+                 <h3>개념도</h3>
+                 <p>일반 스위치는 잘 지원 안해서, 고성능 라우터(CSR1000v) 같은게 필요해요.</p>
+                 <div class="terminal-window" style="height: auto; padding: 0;">
+                    <div class="terminal-header"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="terminal-body">
+R1(보내는 곳) [10.1.1.1]
+   |
+(인터넷 구름 ☁️)
+   |
+R3(받는 곳) [20.2.2.2] -> Sniffer
+                    </div>
+                 </div>
+                 <p style="margin-top: 15px;"><strong>흐름:</strong> R1이 패킷을 캡슐에 싸서 R3 주소(20.2.2.2)로 택배를 보냅니다. R3는 뜯어서 Sniffer에게 주고요.</p>
+            </div>
+            <div class="image-wrapper contain-img" style="background: #fff; border: 4px solid #a29bfe;">
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/16520715720978550838" alt="Cloud Network Diagram">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: Lab 3 ERSPAN CLI -->
+<div class="slide-container" id="slide13">
+    <h2 class="slide-title">[개념 실습] ERSPAN 명령어 맛보기 🍭</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    <span style="font-size: 12px; color: #888; margin-left: 10px;">R1 (Source)</span>
+                </div>
+                <div class="terminal-body">
+<span class="term-comment">! 보내는 라우터 (R1)</span>
+<span class="term-prompt">R1(config)#</span> monitor session 1 type erspan-source
+<span class="term-prompt">R1(config-mon)#</span> source interface Gi1
+<span class="term-prompt">R1(config-mon)#</span> destination ip address 20.2.2.2
+<span class="term-prompt">R1(config-mon)#</span> origin ip address 10.1.1.1
+<span class="term-prompt">R1(config-mon)#</span> erspan-id 100
+<span class="term-prompt">R1(config-mon)#</span> no shutdown
+                </div>
+            </div>
+            <div class="terminal-window">
+                 <div class="terminal-header">
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    <span style="font-size: 12px; color: #888; margin-left: 10px;">R3 (Destination)</span>
+                </div>
+                <div class="terminal-body">
+<span class="term-comment">! 받는 라우터 (R3)</span>
+<span class="term-prompt">R3(config)#</span> monitor session 1 type erspan-destination
+<span class="term-prompt">R3(config-mon)#</span> destination interface Gi2
+<span class="term-prompt">R3(config-mon)#</span> source ip address 20.2.2.2
+<span class="term-prompt">R3(config-mon)#</span> erspan-id 100
+<span class="term-prompt">R3(config-mon)#</span> no shutdown
+                </div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 20px; color: #6c5ce7; font-weight: bold; font-family: 'Jua'; font-size: 24px;">핵심: VLAN이 아니라 IP 주소로 통신해요! ✨</p>
+    </div>
+</div>
+
+<!-- Slide 14: Comparison Table -->
+<div class="slide-container" id="slide14">
+    <h2 class="slide-title">한 눈에 정리하기 📝</h2>
+    <div class="content-area">
+        <div class="table-layout">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">구분</th>
+                        <th style="width: 28%; color: #fd79a8;">SPAN (Local)</th>
+                        <th style="width: 28%; color: #00cec9;">RSPAN (L2)</th>
+                        <th style="width: 29%; color: #fdcb6e;">ERSPAN (L3)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>어디까지?</strong></td>
+                        <td>스위치 하나 안에서</td>
+                        <td>트렁크로 연결된 옆동네</td>
+                        <td>인터넷 건너 지구 끝까지</td>
+                    </tr>
+                    <tr>
+                        <td><strong>배달 방식</strong></td>
+                        <td>직접 전달</td>
+                        <td>전용 VLAN 트럭 이용</td>
+                        <td>GRE 캡슐 포장 택배</td>
+                    </tr>
+                    <tr>
+                        <td><strong>필요한 것</strong></td>
+                        <td>그냥 선 연결</td>
+                        <td>트렁크 선, 전용 VLAN</td>
+                        <td>IP 통신(Ping), 좋은 장비</td>
+                    </tr>
+                     <tr>
+                        <td><strong>힘든 정도</strong></td>
+                        <td>아주 쉬움 (부하 적음)</td>
+                        <td>보통 (트렁크 좀 씀)</td>
+                        <td>힘듦 (CPU 열일함 💦)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 15: L2 vs L3 Perspective -->
+<div class="slide-container" id="slide15">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <h2 class="slide-title">L2 vs L3, 느낌 오죠?</h2>
+    <div class="content-area">
+        <div class="two-column">
+             <div class="tile" style="border-color: #74b9ff;">
+                <h3 style="color: #74b9ff;"><i class="fa-solid fa-ethernet"></i> L2 세상 (SPAN/RSPAN)</h3>
+                <p><strong>"난 주소(IP) 몰라, 그냥 MAC만 보고 던져!"</strong></p>
+                <div class="terminal-window" style="height: auto; min-height: 100px; margin-top: 15px;">
+                     <div class="terminal-header"><div class="dot red"></div></div>
+                    <div class="terminal-body" style="padding: 10px;">
+[이더넷 헤더] [데이터]
+-> 스위치: "IP가 뭐임? 난 L2 헤더만 봄"
+                    </div>
+                </div>
+                <p>스위치는 내용물 안 보고, 그냥 정해진 길로 휙 던져요.</p>
+            </div>
+            <div class="tile" style="border-color: #ff7675;">
+                <h3 style="color: #ff7675;"><i class="fa-solid fa-network-wired"></i> L3 세상 (ERSPAN)</h3>
+                <p><strong>"주소(IP) 보고 네비게이션 찍고 가!"</strong></p>
+                 <div class="terminal-window" style="height: auto; min-height: 100px; margin-top: 15px;">
+                    <div class="terminal-header"><div class="dot red"></div></div>
+                    <div class="terminal-body" style="padding: 10px;">
+[새 IP] [GRE] [원래 데이터]
+-> 라우터: "목적지 IP 보고 길 찾아가렴"
+                    </div>
+                </div>
+                <p>중간 라우터들은 이게 미러링인지 모르고 그냥 일반 데이터인 줄 알고 배달해줘요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: Q&A -->
+<div class="slide-container" id="slide16">
+    <div class="blob blob-1" style="width: 400px; height: 400px; top: 100px; left: 100px; opacity: 0.4;"></div>
+    <div class="blob blob-2" style="width: 400px; height: 400px; bottom: 100px; right: 100px; opacity: 0.4;"></div>
+    
+    <div class="qa-layout" style="z-index: 2; text-align: center;">
+        <h2 style="font-size: 100px; color: #6c5ce7; margin-bottom: 20px; text-shadow: 4px 4px 0px #a29bfe;">Q & A</h2>
+        <p style="font-size: 32px; margin-top: 30px; color: #555;">궁금한 점 있으신가요? 🙋‍♂️</p>
+        <p style="margin-top: 60px; color: #fd79a8; font-size: 24px;">네트워크 트래픽 미러링 끝!</p>
+        <i class="fa-solid fa-heart" style="color: #ff7675; font-size: 50px; margin-top: 30px; animation: beat 1s infinite;"></i>
+    </div>
+    
+    <style>
+        @keyframes beat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</div>
+
+<!-- 다운로드 버튼 기능 추가 -->
+<button class="download-btn" onclick="downloadHTML()" title="슬라이드 다운로드">
+    <i class="fa-solid fa-cloud-arrow-down"></i>
+</button>
+
+<script>
+    function downloadHTML() {
+        // 현재 문서의 HTML 내용을 가져옵니다
+        const htmlContent = document.documentElement.outerHTML;
+        
+        // Blob 객체 생성
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        
+        // 다운로드 링크 생성
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'network_traffic_mirroring_slides.html'; // 저장될 파일명
+        
+        // 링크 클릭 트리거
+        document.body.appendChild(a);
+        a.click();
+        
+        // 뒷정리
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>

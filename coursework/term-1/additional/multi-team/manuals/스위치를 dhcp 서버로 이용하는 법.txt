@@ -1,0 +1,14 @@
+스위치에 ip 할당 후 dhcp로 ip 할당하는방법
+conf t 
+service dhcp
+int vlan 1
+ip add 192.168.1.254 255.255.255.0
+no sh
+end
+conf t 
+ip dhcp pool XX
+network 192.168.10.0 255.255.255.0
+dns-server 8.8.8.8
+default-router 192.168.10.254
+end
+pc에서 ip dhcp

@@ -1,0 +1,13 @@
+선생님 수업 듣고 바로 다음날 정리발표 진행
+
+각 팀은 목표를 가지고 이야기를 하기
+
+일정 : 1/14 - 2/23
+
+각 팀 해야할 내용
+Net -> OSPF, IPv6, 6 to 4 tunnel, VPNd (GRE : 헤더(기밀성), 페이로드 암호화(무결성) -> IPsec), ASA, 이더채널
+Server -> 본딩(랜카드들을 하나로 묶어 속도를 높이는 기술?), Port 센츄리(침해대응 자동화 시스템?), fail2ban(방화벽), rootkit hunter, Clam av(AV, Anti Virus), amavis(Round Cube + amavis를 하는 것을 목적으로 함), WAF(Web Application Firewall) (mod security), wafwoof, Ansible을 이용한 자동화, HA Proxy
+Purple -> ELK, cuckoo(python2), ISMS
+Red -> 루트킷(rootkit), MSF Venom (좀비 PC로 만드는 프로그램)
+공통 -> 악성코드 분석
+

@@ -1,0 +1,1 @@
+apachectl configtest && systemctl reload httpd
